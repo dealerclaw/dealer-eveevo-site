@@ -29,6 +29,7 @@
 - [x] Verify Firebase connection and data sync
 - [x] Load all EVs from OneAuto spreadsheet into database
 - [x] Import 5 sample cars for testing
+- [x] Fix car images not displaying on Browse page
 - [x] Implement URL parameter filtering on Browse page
 - [x] Build car detail pages with specifications and images
 - [x] Add reservation functionality to car detail pages

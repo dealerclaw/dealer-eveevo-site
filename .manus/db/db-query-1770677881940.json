@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&h=600&fit=crop' WHERE make = 'Tesla';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&h=600&fit=crop' WHERE make = 'BMW';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=800&h=600&fit=crop' WHERE make = 'Audi';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop' WHERE make = 'Mercedes-Benz';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1611566026373-c6c8da0ea861?w=800&h=600&fit=crop' WHERE make = 'Porsche';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute UPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&h=600&fit=crop' WHERE make = 'Tesla';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&h=600&fit=crop' WHERE make = 'BMW';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=800&h=600&fit=crop' WHERE make = 'Audi';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop' WHERE make = 'Mercedes-Benz';\nUPDATE cars SET mainImage = 'https://images.unsplash.com/photo-1611566026373-c6c8da0ea861?w=800&h=600&fit=crop' WHERE make = 'Porsche';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 285
+}
