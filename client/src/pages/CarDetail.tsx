@@ -20,6 +20,7 @@ import {
   DollarSign,
   Loader2,
 } from "lucide-react";
+import RebeccaChat from "@/components/RebeccaChat";
 import { useState } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -94,6 +95,7 @@ export default function CarDetail() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      <RebeccaChat carId={id} />
 
       <main className="flex-1 py-8">
         <div className="container">

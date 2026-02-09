@@ -34,6 +34,11 @@
 - [x] Import all real inventory with actual images from OneAuto
 - [x] Import 9,604 vehicles with real images from OneAuto Excel
 - [x] Fix Browse page to display imported cars with actual photos
+- [ ] Import remaining 88,848 vehicles from Excel (currently 9,604 of 98,452)
+- [x] Fix Rebecca chatbot to use Pinecone vector search
+- [x] Connect Rebecca to actual car database with AI semantic search
+- [x] Update Rebecca to accept carId for car-specific queries
+- [x] Integrate Rebecca chat on car detail pages
 - [x] Implement URL parameter filtering on Browse page
 - [x] Build car detail pages with specifications and images
 - [x] Add reservation functionality to car detail pages

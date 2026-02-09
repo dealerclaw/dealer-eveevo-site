@@ -12,7 +12,11 @@ interface Message {
   timestamp: Date;
 }
 
-export default function RebeccaChat() {
+interface RebeccaChatProps {
+  carId?: string;
+}
+
+export default function RebeccaChat({ carId }: RebeccaChatProps = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -53,9 +57,10 @@ export default function RebeccaChat() {
     setIsLoading(true);
 
     try {
-      // Call Rebecca AI endpoint
+      // Call Rebecca AI endpoint with car-specific or general context
+      const docId = carId || "general";
       const response = await fetch(
-        `https://eveevo-af2fa.nw.r.appspot.com/querydata?querytext=${encodeURIComponent(messageText)}&docid=general`,
+        `https://eveevo-af2fa.nw.r.appspot.com/querydata?querytext=${encodeURIComponent(messageText)}&docid=${docId}`,
         {
           method: "GET",
         }
