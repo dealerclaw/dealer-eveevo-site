@@ -28,16 +28,12 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="text-lg">
                   <Link href="/browse">
-                    <a className="flex items-center">
-                      Browse EVs <ArrowRight className="ml-2 h-5 w-5" />
-                    </a>
+                    Browse EVs <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="text-lg">
                   <Link href="/lifestyle-search">
-                    <a className="flex items-center">
-                      Lifestyle Search <Zap className="ml-2 h-5 w-5" />
-                    </a>
+                    Lifestyle Search <Zap className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
               </div>
@@ -62,7 +58,7 @@ export default function Home() {
                       asChild
                     >
                       <Link href={`/browse?bodyType=${type}`}>
-                        <a>{type}</a>
+                        {type}
                       </Link>
                     </Button>
                   ))}
@@ -86,7 +82,7 @@ export default function Home() {
                       asChild
                     >
                       <Link href={`/browse?minPrice=${range.min || 0}&maxPrice=${range.max || 999999}`}>
-                        <a>{range.label}</a>
+                        {range.label}
                       </Link>
                     </Button>
                   ))}
@@ -110,10 +106,8 @@ export default function Home() {
                       asChild
                     >
                       <Link href={`/browse?minRange=${range.min || 0}&maxRange=${range.max || 999}`}>
-                        <a className="flex items-center">
-                          <Battery className="w-3 h-3 mr-1" />
-                          {range.label}
-                        </a>
+                        <Battery className="w-3 h-3 mr-1" />
+                        {range.label}
                       </Link>
                     </Button>
                   ))}
@@ -126,25 +120,23 @@ export default function Home() {
                 <div className="flex flex-wrap gap-2">
                   <Button variant="outline" size="sm" asChild>
                     <Link href="/browse?seats=7">
-                      <a>7 Seater</a>
+                      7 Seater
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
                     <Link href="/browse?fastCharging=true">
-                      <a className="flex items-center">
-                        <Zap className="w-3 h-3 mr-1" />
-                        Fast Charging
-                      </a>
+                      <Zap className="w-3 h-3 mr-1" />
+                      Fast Charging
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
                     <Link href="/browse?performance=true">
-                      <a>Performance (0-60 &lt; 5s)</a>
+                      Performance (0-60 &lt; 5s)
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
                     <Link href="/browse?segment=Luxury">
-                      <a>Luxury</a>
+                      Luxury
                     </Link>
                   </Button>
                 </div>

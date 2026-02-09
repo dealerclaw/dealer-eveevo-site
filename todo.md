@@ -18,6 +18,8 @@
 - [x] Integrate OneAuto API to load 15k+ EV cars inventory
 - [x] Update copy to reflect 54k+ EVs and Hybrids
 - [x] Fix navigation errors and page routing issues
+- [x] Fix Select.Item empty value error
+- [x] Fix nested anchor tag errors in Link components
 - [x] Implement one-click filter buttons based on EV database mapping
 - [x] Build home page with featured cars
 - [x] Create car listing/browse page with grid/list views

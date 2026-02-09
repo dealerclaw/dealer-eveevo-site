@@ -26,7 +26,7 @@ export default function Browse() {
 
   // Fetch cars with filters
   const { data: cars, isLoading } = trpc.cars.list.useQuery({
-    make: selectedMake || undefined,
+    make: selectedMake && selectedMake !== 'all_makes' ? selectedMake : undefined,
     model: selectedModel || undefined,
     minPrice: priceRange[0],
     maxPrice: priceRange[1],
@@ -114,7 +114,7 @@ export default function Browse() {
                         <SelectValue placeholder="All makes" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All makes</SelectItem>
+                        <SelectItem value="all_makes">All makes</SelectItem>
                         {makes.map((make) => (
                           <SelectItem key={make} value={make}>
                             {make}
