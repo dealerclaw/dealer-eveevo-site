@@ -61,10 +61,10 @@ export default function Browse() {
   const { data: cars, isLoading } = trpc.cars.list.useQuery({
     make: selectedMake && selectedMake !== 'all_makes' ? selectedMake : undefined,
     model: selectedModel || undefined,
-    minPrice: priceRange[0],
-    maxPrice: priceRange[1],
-    minRange: rangeFilter[0],
-    maxRange: rangeFilter[1],
+    minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
+    maxPrice: priceRange[1] < 100000 ? priceRange[1] : undefined,
+    minRange: rangeFilter[0] > 0 ? rangeFilter[0] : undefined,
+    maxRange: rangeFilter[1] < 400 ? rangeFilter[1] : undefined,
     condition: condition === "all" ? undefined : condition,
     limit: 50,
   });

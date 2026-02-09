@@ -30,6 +30,10 @@
 - [x] Load all EVs from OneAuto spreadsheet into database
 - [x] Import 5 sample cars for testing
 - [x] Fix car images not displaying on Browse page
+- [x] Create batch import script for 54k+ vehicles from Excel
+- [x] Import all real inventory with actual images from OneAuto
+- [x] Import 9,604 vehicles with real images from OneAuto Excel
+- [x] Fix Browse page to display imported cars with actual photos
 - [x] Implement URL parameter filtering on Browse page
 - [x] Build car detail pages with specifications and images
 - [x] Add reservation functionality to car detail pages

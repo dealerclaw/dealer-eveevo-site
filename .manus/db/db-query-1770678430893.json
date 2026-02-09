@@ -1,0 +1,31 @@
+{
+  "query": "SELECT COUNT(*) as total FROM cars; SELECT make, model, mainImage FROM cars ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT COUNT(*) as total FROM cars; SELECT make, model, mainImage FROM cars ORDER BY id DESC LIMIT 5;",
+  "rows": [
+    {
+      "total": "20878"
+    },
+    {
+      "total": "make\tmodel\tmainImage"
+    },
+    {
+      "total": "Ford\tKuga\thttps://bluesky.cdn.imgeng.in/cogstock-images/autoimg-928f5dd1cc4301c46f3e76542f4b073f5be56d30.jpg"
+    },
+    {
+      "total": "Ford\tTransit Custom\thttps://images.netdirector.auto/eyJrZXkiOiJuZHN0b2NrXC9pbWFnZXNcL3N0b2NrXC9hOWI5MWY3MGM0ZDI5MWQ2Y2QzMWNiMTgwNjYzYzJiZTMwZmZiYTBiXC9TQzI1QlZOX2Jncl8wNjkzMmZiOWVhYTJiYy5qcGciLCJidWNrZXQiOiJuZC1zdG9jay1pcmVsYW5kLXByb2R1Y3Rpb24iLCJsYXN0X21vZGlmaWVkIjoiMTc2NDk1MDc2OCIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6NDAwLCJoZWlnaHQiOjMwMCwiZml0IjoiY29udGFpbiIsImJhY2tncm91bmQiOnsiciI6MjU1LCJnIjoyNTUsImIiOjI1NSwiYWxwaGEiOjF9fX19"
+    },
+    {
+      "total": "Nissan\tJuke\thttps://toomey.imgix.net/used-vehicle-photos/1/EY75XPJ-1_1764825361.jpg"
+    },
+    {
+      "total": "Hyundai\tKona\thttps://toomey.imgix.net/used-vehicle-photos/1/EA75WVV-1_1765398003.jpg"
+    },
+    {
+      "total": "Nissan\tJuke\thttps://toomey.imgix.net/used-vehicle-photos/1/EJ75KZS-1_1765057804.jpg"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n20878\nmake\tmodel\tmainImage\nFord\tKuga\thttps://bluesky.cdn.imgeng.in/cogstock-images/autoimg-928f5dd1cc4301c46f3e76542f4b073f5be56d30.jpg\nFord\tTransit Custom\thttps://images.netdirector.auto/eyJrZXkiOiJuZHN0b2NrXC9pbWFnZXNcL3N0b2NrXC9hOWI5MWY3MGM0ZDI5MWQ2Y2QzMWNiMTgwNjYzYzJiZTMwZmZiYTBiXC9TQzI1QlZOX2Jncl8wNjkzMmZiOWVhYTJiYy5qcGciLCJidWNrZXQiOiJuZC1zdG9jay1pcmVsYW5kLXByb2R1Y3Rpb24iLCJsYXN0X21vZGlmaWVkIjoiMTc2NDk1MDc2OCIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6NDAwLCJoZWlnaHQiOjMwMCwiZml0IjoiY29udGFpbiIsImJhY2tncm91bmQiOnsiciI6MjU1LCJnIjoyNTUsImIiOjI1NSwiYWxwaGEiOjF9fX19\nNissan\tJuke\thttps://toomey.imgix.net/used-vehicle-photos/1/EY75XPJ-1_1764825361.jpg\nHyundai\tKona\thttps://toomey.imgix.net/used-vehicle-photos/1/EA75WVV-1_1765398003.jpg\nNissan\tJuke\thttps://toomey.imgix.net/used-vehicle-photos/1/EJ75KZS-1_1765057804.jpg\n",
+  "stderr": "",
+  "execution_time_ms": 88
+}

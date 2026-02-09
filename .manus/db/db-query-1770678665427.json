@@ -1,0 +1,31 @@
+{
+  "query": "SELECT COUNT(*) as total FROM cars; SELECT id, make, model, year, price, mainImage, isAvailable FROM cars LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT COUNT(*) as total FROM cars; SELECT id, make, model, year, price, mainImage, isAvailable FROM cars LIMIT 5;",
+  "rows": [
+    {
+      "total": "9604"
+    },
+    {
+      "total": "id\tmake\tmodel\tyear\tprice\tmainImage\tisAvailable"
+    },
+    {
+      "total": "30505\tPorsche\t911\t2025\t149995.00\thttps://images.clickdealer.co.uk/vehicles/7316/7316182/large1/176183575.jpg\t1"
+    },
+    {
+      "total": "30506\tMercedes-amg\tC-Class\t2024\t149995.00\thttps://brabus-topcars.co.uk/photos/7510/44da4e78-d28c-4c46-e788-71f4be52bb96_infinity.jpg\t1"
+    },
+    {
+      "total": "30507\tPorsche\t911\t2025\t149990.00\thttps://cdn.dicklovett.co.uk/uploads/used_stock_image/1_2555179_ns.jpg?v=1759939148\t1"
+    },
+    {
+      "total": "30508\tMcLaren\tArtura\t2024\t149990.00\thttps://images.netdirector.auto/eyJrZXkiOiJuZHN0b2NrXC9pbWFnZXNcL3N0b2NrXC9hOWI5MWY3MGM0ZDI5MWQ2Y2QzMWNiMTgwNjYzYzJiZTMwZmZiYTBiXC9ZRDc0SlZOX3Bob3RvXzAwMDAuanBnIiwiYnVja2V0IjoibmQtc3RvY2staXJlbGFuZC1wcm9kdWN0aW9uIiwibGFzdF9tb2RpZmllZCI6IjE3NDM2ODMxNTQiLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjQwMCwiaGVpZ2h0IjozMDAsImZpdCI6ImNvbnRhaW4iLCJiYWNrZ3JvdW5kIjp7InIiOjI1NSwiZyI6MjU1LCJiIjoyNTUsImFscGhhIjoxfX19fQ==\t1"
+    },
+    {
+      "total": "30509\tPorsche\t911\t2025\t149990.00\thttps://images.finder.porsche.com/b5db0a41-4caf-4c3d-9012-bcaa42bbcd5c/960\t1"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n9604\nid\tmake\tmodel\tyear\tprice\tmainImage\tisAvailable\n30505\tPorsche\t911\t2025\t149995.00\thttps://images.clickdealer.co.uk/vehicles/7316/7316182/large1/176183575.jpg\t1\n30506\tMercedes-amg\tC-Class\t2024\t149995.00\thttps://brabus-topcars.co.uk/photos/7510/44da4e78-d28c-4c46-e788-71f4be52bb96_infinity.jpg\t1\n30507\tPorsche\t911\t2025\t149990.00\thttps://cdn.dicklovett.co.uk/uploads/used_stock_image/1_2555179_ns.jpg?v=1759939148\t1\n30508\tMcLaren\tArtura\t2024\t149990.00\thttps://images.netdirector.auto/eyJrZXkiOiJuZHN0b2NrXC9pbWFnZXNcL3N0b2NrXC9hOWI5MWY3MGM0ZDI5MWQ2Y2QzMWNiMTgwNjYzYzJiZTMwZmZiYTBiXC9ZRDc0SlZOX3Bob3RvXzAwMDAuanBnIiwiYnVja2V0IjoibmQtc3RvY2staXJlbGFuZC1wcm9kdWN0aW9uIiwibGFzdF9tb2RpZmllZCI6IjE3NDM2ODMxNTQiLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjQwMCwiaGVpZ2h0IjozMDAsImZpdCI6ImNvbnRhaW4iLCJiYWNrZ3JvdW5kIjp7InIiOjI1NSwiZyI6MjU1LCJiIjoyNTUsImFscGhhIjoxfX19fQ==\t1\n30509\tPorsche\t911\t2025\t149990.00\thttps://images.finder.porsche.com/b5db0a41-4caf-4c3d-9012-bcaa42bbcd5c/960\t1\n",
+  "stderr": "",
+  "execution_time_ms": 71
+}
