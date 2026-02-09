@@ -21,6 +21,9 @@
 - [x] Fix Select.Item empty value error
 - [x] Fix nested anchor tag errors in Link components
 - [x] Implement one-click filter buttons based on EV database mapping
+- [x] Sync car data from Firebase to local database
+- [x] Display real car listings from Firebase
+- [x] Create admin sync page at /admin/sync
 - [x] Build home page with featured cars
 - [x] Create car listing/browse page with grid/list views
 - [x] Implement classic search with filters (make, model, price, range, location)

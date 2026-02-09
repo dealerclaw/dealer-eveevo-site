@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Browse from "./pages/Browse";
+import AdminSync from "./pages/AdminSync";
 import LifestyleSearch from "./pages/LifestyleSearch";
 
 function Router() {
@@ -13,8 +14,8 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path="/browse" component={Browse} />
-      <Route path="/lifestyle-search" component={LifestyleSearch} />
+      <Route path={"/browse"} component={Browse} />
+      <Route path={"/admin/sync"} component={AdminSync} />     <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
