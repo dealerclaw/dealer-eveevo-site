@@ -24,6 +24,11 @@
 - [x] Sync car data from Firebase to local database
 - [x] Display real car listings from Firebase
 - [x] Create admin sync page at /admin/sync
+- [ ] Run Firebase sync to populate database with car data
+- [x] Implement URL parameter filtering on Browse page
+- [x] Build car detail pages with specifications and images
+- [x] Add reservation functionality to car detail pages
+- [x] Update tagline to "Smart. Easy. Electric." (remove Hybrid)
 - [x] Build home page with featured cars
 - [x] Create car listing/browse page with grid/list views
 - [x] Implement classic search with filters (make, model, price, range, location)

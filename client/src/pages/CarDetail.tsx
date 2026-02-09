@@ -1,0 +1,340 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import Header from "@/components/Header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { trpc } from "@/lib/trpc";
+import {
+  ArrowLeft,
+  Battery,
+  Calendar,
+  Car,
+  Fuel,
+  Gauge,
+  Heart,
+  MapPin,
+  Settings,
+  Zap,
+  Clock,
+  DollarSign,
+  Loader2,
+} from "lucide-react";
+import { useState } from "react";
+import { Link, useParams, useLocation } from "wouter";
+import { toast } from "sonner";
+
+export default function CarDetail() {
+  const { id } = useParams();
+  const [, navigate] = useLocation();
+  const { isAuthenticated, user } = useAuth();
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  // Fetch car details
+  const { data: car, isLoading } = trpc.cars.getById.useQuery(
+    { id: parseInt(id || "0") },
+    { enabled: !!id }
+  );
+
+  // Reservation mutation
+  const createReservation = trpc.reservations.create.useMutation({
+    onSuccess: () => {
+      toast.success("Reservation created successfully!");
+      navigate("/dashboard/reservations");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create reservation");
+    },
+  });
+
+  const handleReserve = () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in to reserve a vehicle");
+      return;
+    }
+
+    if (!car) return;
+
+    createReservation.mutate({
+      carId: car.id,
+      reservationDate: new Date(),
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </main>
+      </div>
+    );
+  }
+
+  if (!car) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-2">Car not found</h2>
+            <p className="text-muted-foreground mb-4">The vehicle you're looking for doesn't exist.</p>
+            <Button asChild>
+              <Link href="/browse">Browse Vehicles</Link>
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const images = car.images && car.images.length > 0 ? car.images : [car.mainImage || "/placeholder-car.jpg"];
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+
+      <main className="flex-1 py-8">
+        <div className="container">
+          {/* Back button */}
+          <Button variant="ghost" asChild className="mb-6">
+            <Link href="/browse">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Browse
+            </Link>
+          </Button>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left column - Images and main info */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Main image */}
+              <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+                <img
+                  src={images[selectedImage]}
+                  alt={`${car.make} ${car.model}`}
+                  className="w-full h-full object-cover"
+                />
+                {!car.isAvailable && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <Badge variant="destructive" className="text-lg px-4 py-2">
+                      Not Available
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              {/* Thumbnail images */}
+              {images.length > 1 && (
+                <div className="grid grid-cols-4 gap-4">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(idx)}
+                      className={`aspect-video rounded-lg overflow-hidden border-2 transition-colors ${
+                        selectedImage === idx ? "border-primary" : "border-transparent"
+                      }`}
+                    >
+                      <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Vehicle title and badges */}
+              <div>
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h1 className="text-3xl font-bold mb-2">
+                      {car.year} {car.make} {car.model}
+                    </h1>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary">{car.condition}</Badge>
+                      {car.bodyType && <Badge variant="outline">{car.bodyType}</Badge>}
+                      {car.isFeatured && <Badge className="bg-primary">Featured</Badge>}
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon">
+                    <Heart className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                <p className="text-3xl font-bold text-primary mb-4">
+                  £{car.price ? parseInt(car.price).toLocaleString() : "N/A"}
+                </p>
+              </div>
+
+              {/* Key specifications */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Key Specifications</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Battery className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Range</p>
+                        <p className="font-semibold">{car.range || "N/A"} miles</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Zap className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Battery</p>
+                        <p className="font-semibold">{car.batteryCapacity || "N/A"} kWh</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Gauge className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">0-60 mph</p>
+                        <p className="font-semibold">{car.acceleration || "N/A"}s</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Settings className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Transmission</p>
+                        <p className="font-semibold">{car.transmission || "Automatic"}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Car className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Mileage</p>
+                        <p className="font-semibold">{car.mileage?.toLocaleString() || "N/A"} miles</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Clock className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Charging Time</p>
+                        <p className="font-semibold">{car.chargingTime || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Description */}
+              {car.description && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Description</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{car.description}</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Features */}
+              {car.features && car.features.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Features</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {car.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-primary" />
+                          <span className="text-sm">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Right column - Reservation card */}
+            <div className="lg:col-span-1">
+              <Card className="sticky top-8">
+                <CardHeader>
+                  <CardTitle>Reserve This Vehicle</CardTitle>
+                  <CardDescription>
+                    Secure your test drive and get priority access
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-muted-foreground">Price</span>
+                      <span className="font-semibold text-lg">
+                        £{car.price ? parseInt(car.price).toLocaleString() : "N/A"}
+                      </span>
+                    </div>
+
+                    {car.color && (
+                      <div className="flex items-center justify-between py-2">
+                        <span className="text-muted-foreground">Color</span>
+                        <span className="font-medium">{car.color}</span>
+                      </div>
+                    )}
+
+                    {car.vin && (
+                      <div className="flex items-center justify-between py-2">
+                        <span className="text-muted-foreground">VIN</span>
+                        <span className="font-mono text-xs">{car.vin}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <Separator />
+
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    onClick={handleReserve}
+                    disabled={!car.isAvailable || createReservation.isPending}
+                  >
+                    {createReservation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Reserving...
+                      </>
+                    ) : !car.isAvailable ? (
+                      "Not Available"
+                    ) : (
+                      "Reserve Now"
+                    )}
+                  </Button>
+
+                  <Button variant="outline" className="w-full" size="lg">
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    Get Finance Quote
+                  </Button>
+
+                  <div className="pt-4 space-y-2 text-sm text-muted-foreground">
+                    <p>✓ Free test drive</p>
+                    <p>✓ No obligation</p>
+                    <p>✓ Expert advice included</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

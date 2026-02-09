@@ -20,10 +20,10 @@ export default function Home() {
           <div className="container">
             <div className="max-w-3xl">
                 <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                Smart. Easy. <span className="text-primary">Electric & Hybrid</span>
+                Smart. Easy. <span className="text-primary">Electric</span>
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-                Find your perfect electric vehicle or hybrid from 54,000+ listings. Compare specs, get finance quotes, and reserve with confidence.
+                Find your perfect electric vehicle from 54,000+ listings. Compare specs, get finance quotes, and reserve with confidence.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="text-lg">

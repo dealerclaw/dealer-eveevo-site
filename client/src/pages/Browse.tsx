@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,15 +14,48 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { trpc } from "@/lib/trpc";
 import { Battery, Car, Heart, Search } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Browse() {
+  const [location] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [priceRange, setPriceRange] = useState([0, 100000]);
   const [rangeFilter, setRangeFilter] = useState([0, 400]);
   const [condition, setCondition] = useState<"all" | "new" | "used">("all");
+
+  // Read URL parameters and set filters
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    
+    // Body type filter
+    const bodyType = params.get('bodyType');
+    if (bodyType) {
+      // Note: This would need proper body type filtering in the backend
+      setSearchTerm(bodyType);
+    }
+    
+    // Price range filters
+    const minPrice = params.get('minPrice');
+    const maxPrice = params.get('maxPrice');
+    if (minPrice || maxPrice) {
+      setPriceRange([
+        minPrice ? parseInt(minPrice) : 0,
+        maxPrice ? parseInt(maxPrice) : 100000
+      ]);
+    }
+    
+    // Range filters
+    const minRange = params.get('minRange');
+    const maxRange = params.get('maxRange');
+    if (minRange || maxRange) {
+      setRangeFilter([
+        minRange ? parseInt(minRange) : 0,
+        maxRange ? parseInt(maxRange) : 400
+      ]);
+    }
+  }, [location]);
 
   // Fetch cars with filters
   const { data: cars, isLoading } = trpc.cars.list.useQuery({
