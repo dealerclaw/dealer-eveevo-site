@@ -51,7 +51,10 @@
 - [ ] Add fuel cost per mile calculator
 
 ## Phase 4: AI Chat, Finance & Dealers
-- [ ] Integrate Rebecca AI chat assistant (existing backend endpoint)
+- [x] Fix nested anchor tag error on home page
+- [x] Integrate Rebecca AI chat assistant (existing backend endpoint)
+- [x] Create floating chat widget component
+- [x] Connect chat to Rebecca AI backend
 - [ ] Build finance calculator interface
 - [ ] Implement Evolution Funding API integration for credit checks
 - [ ] Create finance quote form

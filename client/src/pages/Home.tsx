@@ -150,8 +150,8 @@ export default function Home() {
           <div className="container">
             <h2 className="text-3xl font-bold text-center mb-12">How Do You Want to Search?</h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
-                <Link href="/browse">
+              <Link href="/browse">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
                   <CardHeader>
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <Search className="w-6 h-6 text-primary" />
@@ -165,15 +165,15 @@ export default function Home() {
                     <p className="text-sm text-muted-foreground mb-4">
                       Perfect if you know what you're looking for. Use advanced filters to narrow down your options.
                     </p>
-                    <Button variant="ghost" className="w-full">
+                    <div className="flex items-center text-sm font-medium text-primary">
                       Start Classic Search <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    </div>
                   </CardContent>
-                </Link>
-              </Card>
+                </Card>
+              </Link>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
-                <Link href="/lifestyle-search">
+              <Link href="/lifestyle-search">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
                   <CardHeader>
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <Zap className="w-6 h-6 text-primary" />
@@ -187,12 +187,12 @@ export default function Home() {
                     <p className="text-sm text-muted-foreground mb-4">
                       Not sure where to start? Answer a few questions about your lifestyle and we'll recommend the perfect EV.
                     </p>
-                    <Button variant="ghost" className="w-full">
+                    <div className="flex items-center text-sm font-medium text-primary">
                       Start Lifestyle Search <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    </div>
                   </CardContent>
-                </Link>
-              </Card>
+                </Card>
+              </Link>
             </div>
           </div>
         </section>
