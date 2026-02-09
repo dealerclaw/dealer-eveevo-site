@@ -280,7 +280,7 @@ export default function LifestyleSearch() {
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold mb-2">Lifestyle Search</h1>
             <p className="text-xl text-muted-foreground">
-              Answer a few questions to find your perfect electric vehicle
+              Answer a few questions to find your perfect electric or hybrid vehicle from 54,000+ listings
             </p>
           </div>
 
@@ -288,7 +288,7 @@ export default function LifestyleSearch() {
             <CardHeader>
               <CardTitle>Tell Us About Your Lifestyle</CardTitle>
               <CardDescription>
-                We'll match you with EVs from both new and used inventory
+                We'll match you with EVs and hybrids from both new and used inventory (54,000+ vehicles)
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">

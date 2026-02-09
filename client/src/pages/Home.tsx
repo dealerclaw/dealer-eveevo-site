@@ -19,11 +19,11 @@ export default function Home() {
         <section className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/10 py-20 md:py-32">
           <div className="container">
             <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                Smart. Easy. Electric <span className="text-primary">EVs</span>
+                <h1 className="text-4xl md:text-6xl font-bold mb-6">
+                Smart. Easy. <span className="text-primary">Electric & Hybrid</span>
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-                Find your perfect electric vehicle from 15,000+ listings. Compare specs, get finance quotes, and reserve with confidence.
+                Find your perfect electric vehicle or hybrid from 54,000+ listings. Compare specs, get finance quotes, and reserve with confidence.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="text-lg">
@@ -40,6 +40,114 @@ export default function Home() {
                     </a>
                   </Link>
                 </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* One-Click Filters */}
+        <section className="py-12 border-b">
+          <div className="container">
+            <h2 className="text-2xl font-bold text-center mb-8">Quick Search</h2>
+            <div className="space-y-6 max-w-5xl mx-auto">
+              {/* Body Type */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">Body Type</h3>
+                <div className="flex flex-wrap gap-2">
+                  {['SUV', 'Hatchback', 'Saloon', 'Estate', 'Coupe', 'MPV', 'Sports'].map((type) => (
+                    <Button
+                      key={type}
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <Link href={`/browse?bodyType=${type}`}>
+                        <a>{type}</a>
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">Price Range</h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'Under £20k', max: 20000 },
+                    { label: '£20k-£30k', min: 20000, max: 30000 },
+                    { label: '£30k-£50k', min: 30000, max: 50000 },
+                    { label: 'Over £50k', min: 50000 },
+                  ].map((range) => (
+                    <Button
+                      key={range.label}
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <Link href={`/browse?minPrice=${range.min || 0}&maxPrice=${range.max || 999999}`}>
+                        <a>{range.label}</a>
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Range */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">Electric Range</h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'Under 150 miles', max: 150 },
+                    { label: '150-250 miles', min: 150, max: 250 },
+                    { label: '250-350 miles', min: 250, max: 350 },
+                    { label: 'Over 350 miles', min: 350 },
+                  ].map((range) => (
+                    <Button
+                      key={range.label}
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <Link href={`/browse?minRange=${range.min || 0}&maxRange=${range.max || 999}`}>
+                        <a className="flex items-center">
+                          <Battery className="w-3 h-3 mr-1" />
+                          {range.label}
+                        </a>
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Special Features */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">Special Features</h3>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/browse?seats=7">
+                      <a>7 Seater</a>
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/browse?fastCharging=true">
+                      <a className="flex items-center">
+                        <Zap className="w-3 h-3 mr-1" />
+                        Fast Charging
+                      </a>
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/browse?performance=true">
+                      <a>Performance (0-60 &lt; 5s)</a>
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/browse?segment=Luxury">
+                      <a>Luxury</a>
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -207,9 +315,9 @@ export default function Home() {
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <Car className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">15,000+ EVs</h3>
+                <h3 className="text-xl font-semibold mb-2">54,000+ EVs & Hybrids</h3>
                 <p className="text-muted-foreground">
-                  Largest selection of electric vehicles in the UK
+                  Largest selection of electric and hybrid vehicles in the UK
                 </p>
               </div>
 

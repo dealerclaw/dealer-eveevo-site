@@ -63,9 +63,9 @@ export default function Browse() {
       <main className="flex-1 py-8">
         <div className="container">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Browse Electric Vehicles</h1>
+            <h1 className="text-4xl font-bold mb-2">Browse Electric & Hybrid Vehicles</h1>
             <p className="text-xl text-muted-foreground">
-              Explore our collection of {cars?.length || 0} electric vehicles
+              Explore our collection of {cars?.length || 0} electric and hybrid vehicles from 54,000+ listings
             </p>
           </div>
 

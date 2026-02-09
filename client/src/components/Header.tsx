@@ -47,9 +47,9 @@ export default function Header() {
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <Link href="/browse">
+                  <Link href="/browse">
                   <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
-                    Browse EVs
+                    Browse Vehicles
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -159,7 +159,7 @@ export default function Header() {
             <SheetContent side="right">
               <nav className="flex flex-col space-y-4 mt-8">
                 <Link href="/browse">
-                  <a className="text-lg font-medium hover:text-primary">Browse EVs</a>
+                  <a className="text-lg font-medium hover:text-primary">Browse Vehicles</a>
                 </Link>
                 <Link href="/dealers">
                   <a className="text-lg font-medium hover:text-primary">Dealers</a>
