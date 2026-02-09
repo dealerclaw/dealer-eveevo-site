@@ -1,0 +1,31 @@
+{
+  "query": "SELECT COUNT(*) as total FROM cars; SELECT make, model, year, price FROM cars LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT COUNT(*) as total FROM cars; SELECT make, model, year, price FROM cars LIMIT 5;",
+  "rows": [
+    {
+      "total": "7043"
+    },
+    {
+      "total": "make\tmodel\tyear\tprice"
+    },
+    {
+      "total": "PORSCHE\tTaycan\t2021\t49990.00"
+    },
+    {
+      "total": "PORSCHE\tTaycan\t2022\t54990.00"
+    },
+    {
+      "total": "BMW\ti7\t2023\t62495.00"
+    },
+    {
+      "total": "TESLA\tModel S\t2018\t33990.00"
+    },
+    {
+      "total": "BMW\tIX3\t2021\t24499.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n7043\nmake\tmodel\tyear\tprice\nPORSCHE\tTaycan\t2021\t49990.00\nPORSCHE\tTaycan\t2022\t54990.00\nBMW\ti7\t2023\t62495.00\nTESLA\tModel S\t2018\t33990.00\nBMW\tIX3\t2021\t24499.00\n",
+  "stderr": "",
+  "execution_time_ms": 89
+}

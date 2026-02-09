@@ -24,7 +24,11 @@
 - [x] Sync car data from Firebase to local database
 - [x] Display real car listings from Firebase
 - [x] Create admin sync page at /admin/sync
-- [ ] Run Firebase sync to populate database with car data
+- [x] Run Firebase sync to populate database with car data
+- [x] Debug why EVs are not being returned from database
+- [x] Verify Firebase connection and data sync
+- [x] Load all EVs from OneAuto spreadsheet into database
+- [x] Import 5 sample cars for testing
 - [x] Implement URL parameter filtering on Browse page
 - [x] Build car detail pages with specifications and images
 - [x] Add reservation functionality to car detail pages

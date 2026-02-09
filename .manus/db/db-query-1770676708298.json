@@ -1,0 +1,25 @@
+{
+  "query": "SELECT COUNT(*) as total FROM cars; SELECT * FROM cars LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT COUNT(*) as total FROM cars; SELECT * FROM cars LIMIT 3;",
+  "rows": [
+    {
+      "total": "7038"
+    },
+    {
+      "total": "id\tfirebaseId\tdealerId\tmake\tmodel\tyear\tprice\tmileage\tcondition\tbodyType\tcolor\tfuelType\ttransmission\tbatteryCapacity\trange\tchargingTime\tacceleration\ttopSpeed\tpower\timages\tmainImage\tdescription\tfeatures\tvin\tregistrationNumber\tisAvailable\tisFeatured\tcreatedAt\tupdatedAt"
+    },
+    {
+      "total": "1\t60JV\tNULL\tPORSCHE\tTaycan\t2021\t49990.00\t27500\tused\tEstate\tNULL\tElectric\tAutomatic\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t[]\tNULL\tNULL\t[]\tNULL\tNULL\t1\t0\t2026-02-09 22:30:58\t2026-02-09 22:30:58"
+    },
+    {
+      "total": "2\t6NYT\tNULL\tPORSCHE\tTaycan\t2022\t54990.00\t13980\tused\tCoupe\tNULL\tElectric\tAutomatic\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t[]\tNULL\tNULL\t[]\tNULL\tNULL\t1\t0\t2026-02-09 22:30:58\t2026-02-09 22:30:58"
+    },
+    {
+      "total": "3\t72GF\tNULL\tBMW\ti7\t2023\t62495.00\t25000\tused\tSaloon\tNULL\tElectric\tAutomatic\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t[]\tNULL\tNULL\t[]\tNULL\tNULL\t1\t0\t2026-02-09 22:30:58\t2026-02-09 22:30:58"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n7038\nid\tfirebaseId\tdealerId\tmake\tmodel\tyear\tprice\tmileage\tcondition\tbodyType\tcolor\tfuelType\ttransmission\tbatteryCapacity\trange\tchargingTime\tacceleration\ttopSpeed\tpower\timages\tmainImage\tdescription\tfeatures\tvin\tregistrationNumber\tisAvailable\tisFeatured\tcreatedAt\tupdatedAt\n1\t60JV\tNULL\tPORSCHE\tTaycan\t2021\t49990.00\t27500\tused\tEstate\tNULL\tElectric\tAutomatic\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t[]\tNULL\tNULL\t[]\tNULL\tNULL\t1\t0\t2026-02-09 22:30:58\t2026-02-09 22:30:58\n2\t6NYT\tNULL\tPORSCHE\tTaycan\t2022\t54990.00\t13980\tused\tCoupe\tNULL\tElectric\tAutomatic\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t[]\tNULL\tNULL\t[]\tNULL\tNULL\t1\t0\t2026-02-09 22:30:58\t2026-02-09 22:30:58\n3\t72GF\tNULL\tBMW\ti7\t2023\t62495.00\t25000\tused\tSaloon\tNULL\tElectric\tAutomatic\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\t[]\tNULL\tNULL\t[]\tNULL\tNULL\t1\t0\t2026-02-09 22:30:58\t2026-02-09 22:30:58\n",
+  "stderr": "",
+  "execution_time_ms": 157
+}

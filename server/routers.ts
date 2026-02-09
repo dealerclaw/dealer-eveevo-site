@@ -6,10 +6,12 @@ import { z } from "zod";
 import * as db from "./db";
 import * as evDb from "./evDatabase";
 import { syncRouter } from "./syncRouter";
+import { importRouter } from "./importCars";
 
 export const appRouter = router({
   system: systemRouter,
   sync: syncRouter,
+  import: importRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

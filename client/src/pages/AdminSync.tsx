@@ -12,19 +12,36 @@ export default function AdminSync() {
   const [syncing, setSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<{ cars: number; dealers: number } | null>(null);
 
-  const syncAllMutation = trpc.sync.syncAll.useMutation();
+  const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "success" | "error">("idle");
+
+  const importSample = trpc.import.importSampleCars.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setSyncStatus("success");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to import sample cars");
+      setSyncStatus("error");
+    },
+  });
+
+  const syncAll = trpc.sync.syncAll.useMutation({
+    onSuccess: (data) => {
+      setLastSync({ cars: data.carCount || 0, dealers: data.dealerCount || 0 });
+      setSyncStatus("success");
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      setSyncStatus("error");
+      toast.error(error.message || "Sync failed");
+    },
+  });
 
   const handleSyncAll = async () => {
     setSyncing(true);
+    setSyncStatus("syncing");
     try {
-      const result = await syncAllMutation.mutateAsync();
-      
-      if (result.success) {
-        setLastSync({ cars: result.carCount || 0, dealers: result.dealerCount || 0 });
-        toast.success(result.message);
-      } else {
-        toast.error(result.message);
-      }
+      await syncAll.mutateAsync();
     } catch (error) {
       toast.error("Failed to sync data from Firebase");
       console.error(error);
@@ -110,6 +127,21 @@ export default function AdminSync() {
                       <RefreshCw className="w-4 h-4 mr-2" />
                       Sync All Data from Firebase
                     </>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => importSample.mutate()}
+                  disabled={importSample.isPending}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {importSample.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Importing Sample Cars...
+                    </>
+                  ) : (
+                    "Import 5 Sample Cars (Quick Test)"
                   )}
                 </Button>
               </CardContent>
