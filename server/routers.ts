@@ -1,11 +1,14 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { z } from "zod";
+import * as db from "./db";
+import * as evDb from "./evDatabase";
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
+  
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -17,12 +20,260 @@ export const appRouter = router({
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  // Cars router
+  cars: router({
+    list: publicProcedure
+      .input(z.object({
+        make: z.string().optional(),
+        model: z.string().optional(),
+        minPrice: z.number().optional(),
+        maxPrice: z.number().optional(),
+        minRange: z.number().optional(),
+        maxRange: z.number().optional(),
+        condition: z.enum(['new', 'used']).optional(),
+        dealerId: z.number().optional(),
+        isFeatured: z.boolean().optional(),
+        limit: z.number().optional(),
+        offset: z.number().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        return await db.getCars(input);
+      }),
+
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getCarById(input.id);
+      }),
+
+    getByIds: publicProcedure
+      .input(z.object({ ids: z.array(z.number()) }))
+      .query(async ({ input }) => {
+        return await db.getCarsByIds(input.ids);
+      }),
+
+    featured: publicProcedure
+      .query(async () => {
+        return await db.getCars({ isFeatured: true, limit: 10 });
+      }),
+  }),
+
+  // Dealers router
+  dealers: router({
+    list: publicProcedure
+      .input(z.object({
+        city: z.string().optional(),
+        isVerified: z.boolean().optional(),
+        limit: z.number().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        return await db.getDealers(input);
+      }),
+
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getDealerById(input.id);
+      }),
+
+    getCars: publicProcedure
+      .input(z.object({ dealerId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getCars({ dealerId: input.dealerId });
+      }),
+  }),
+
+  // Reservations router
+  reservations: router({
+    myReservations: protectedProcedure
+      .query(async ({ ctx }) => {
+        return await db.getUserReservations(ctx.user.id);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        dealerId: z.number().optional(),
+        reservationDate: z.date(),
+        viewingDate: z.date().optional(),
+        userName: z.string().optional(),
+        userEmail: z.string().email().optional(),
+        userPhone: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createReservation({
+          userId: ctx.user.id,
+          ...input,
+        });
+      }),
+
+    updateStatus: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']),
+      }))
+      .mutation(async ({ input }) => {
+        await db.updateReservationStatus(input.id, input.status);
+        return { success: true };
+      }),
+  }),
+
+  // Favorites router
+  favorites: router({
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        return await db.getUserFavorites(ctx.user.id);
+      }),
+
+    add: protectedProcedure
+      .input(z.object({ carId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.addFavorite(ctx.user.id, input.carId);
+        return { success: true };
+      }),
+
+    remove: protectedProcedure
+      .input(z.object({ carId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.removeFavorite(ctx.user.id, input.carId);
+        return { success: true };
+      }),
+  }),
+
+  // Saved searches router
+  savedSearches: router({
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        return await db.getUserSavedSearches(ctx.user.id);
+      }),
+
+    save: protectedProcedure
+      .input(z.object({
+        name: z.string(),
+        searchParams: z.record(z.string(), z.any()),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.saveSearch(ctx.user.id, input.name, input.searchParams);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.deleteSavedSearch(input.id, ctx.user.id);
+        return { success: true };
+      }),
+  }),
+
+  // EV-Database router
+  evDatabase: router({
+    getAllSpecs: publicProcedure
+      .query(async () => {
+        return await evDb.getAllEVSpecs();
+      }),
+
+    searchSpecs: publicProcedure
+      .input(z.object({
+        make: z.string().optional(),
+        model: z.string().optional(),
+        minRange: z.number().optional(),
+        maxRange: z.number().optional(),
+        minPrice: z.number().optional(),
+        maxPrice: z.number().optional(),
+        segment: z.string().optional(),
+        seats: z.number().optional(),
+        minBatteryCapacity: z.number().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        return await evDb.searchEVSpecs(input || {});
+      }),
+
+    getMakes: publicProcedure
+      .query(async () => {
+        return await evDb.getEVMakes();
+      }),
+
+    getModels: publicProcedure
+      .input(z.object({ make: z.string() }))
+      .query(async ({ input }) => {
+        return await evDb.getEVModels(input.make);
+      }),
+  }),
+
+  // Lifestyle search router
+  lifestyle: router({
+    search: publicProcedure
+      .input(z.object({
+        dailyMileage: z.number().optional(),
+        primaryUse: z.enum(['city', 'highway', 'mixed']).optional(),
+        passengers: z.number().optional(),
+        budget: z.number().optional(),
+        chargingAccess: z.enum(['home', 'public', 'both']).optional(),
+        priorities: z.array(z.enum(['range', 'performance', 'space', 'price', 'luxury'])).optional(),
+        bodyType: z.array(z.string()).optional(),
+      }))
+      .query(async ({ input }) => {
+        // Get new cars from EV-Database
+        const result = await evDb.lifestyleSearch(input);
+        
+        // Get matching used cars from local database
+        const usedCarFilters: any = {};
+        
+        if (input.dailyMileage) {
+          const requiredRange = Math.ceil(input.dailyMileage * 7 * 1.3);
+          usedCarFilters.minRange = requiredRange;
+        }
+        
+        if (input.budget) {
+          usedCarFilters.maxPrice = input.budget;
+        }
+        
+        const usedCars = await db.getCars(usedCarFilters);
+        
+        return {
+          ...result,
+          usedCars: usedCars.slice(0, 20),
+        };
+      }),
+  }),
+
+  // Finance router
+  finance: router({
+    createApplication: protectedProcedure
+      .input(z.object({
+        carId: z.number().optional(),
+        loanAmount: z.number().optional(),
+        depositAmount: z.number().optional(),
+        term: z.number().optional(),
+        applicantData: z.record(z.string(), z.any()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return await db.createFinanceApplication({
+          userId: ctx.user.id,
+          ...input,
+        });
+      }),
+
+    myApplications: protectedProcedure
+      .query(async ({ ctx }) => {
+        return await db.getUserFinanceApplications(ctx.user.id);
+      }),
+
+    updateApplication: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(['draft', 'submitted', 'approved', 'rejected']).optional(),
+        externalApplicationId: z.string().optional(),
+        responseData: z.record(z.string(), z.any()).optional(),
+        monthlyPayment: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateFinanceApplication(id, data);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

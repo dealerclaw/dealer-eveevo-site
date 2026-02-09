@@ -1,11 +1,25 @@
-import { eq } from "drizzle-orm";
+import { eq, and, gte, lte, like, inArray, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { 
+  InsertUser, 
+  users, 
+  cars, 
+  dealers, 
+  reservations, 
+  favorites, 
+  savedSearches,
+  financeApplications,
+  type Car,
+  type Dealer,
+  type Reservation,
+  type Favorite,
+  type SavedSearch,
+  type FinanceApplication
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
@@ -35,7 +49,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     const updateSet: Record<string, unknown> = {};
 
-    const textFields = ["name", "email", "loginMethod"] as const;
+    const textFields = ["name", "email", "loginMethod", "phone"] as const;
     type TextField = (typeof textFields)[number];
 
     const assignNullable = (field: TextField) => {
@@ -58,6 +72,10 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     } else if (user.openId === ENV.ownerOpenId) {
       values.role = 'admin';
       updateSet.role = 'admin';
+    }
+    if (user.accountType !== undefined) {
+      values.accountType = user.accountType;
+      updateSet.accountType = user.accountType;
     }
 
     if (!values.lastSignedIn) {
@@ -85,8 +103,267 @@ export async function getUserByOpenId(openId: string) {
   }
 
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Car queries
+export async function getCars(filters?: {
+  make?: string;
+  model?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minRange?: number;
+  maxRange?: number;
+  condition?: 'new' | 'used';
+  dealerId?: number;
+  isFeatured?: boolean;
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let query = db.select().from(cars).where(eq(cars.isAvailable, true));
+  
+  const conditions = [eq(cars.isAvailable, true)];
+  
+  if (filters?.make) {
+    conditions.push(eq(cars.make, filters.make));
+  }
+  if (filters?.model) {
+    conditions.push(like(cars.model, `%${filters.model}%`));
+  }
+  if (filters?.minPrice !== undefined) {
+    conditions.push(gte(cars.price, filters.minPrice.toString()));
+  }
+  if (filters?.maxPrice !== undefined) {
+    conditions.push(lte(cars.price, filters.maxPrice.toString()));
+  }
+  if (filters?.minRange !== undefined) {
+    conditions.push(gte(cars.range, filters.minRange));
+  }
+  if (filters?.maxRange !== undefined) {
+    conditions.push(lte(cars.range, filters.maxRange));
+  }
+  if (filters?.condition) {
+    conditions.push(eq(cars.condition, filters.condition));
+  }
+  if (filters?.dealerId) {
+    conditions.push(eq(cars.dealerId, filters.dealerId));
+  }
+  if (filters?.isFeatured !== undefined) {
+    conditions.push(eq(cars.isFeatured, filters.isFeatured));
+  }
+
+  const result = await db
+    .select()
+    .from(cars)
+    .where(and(...conditions))
+    .orderBy(desc(cars.createdAt))
+    .limit(filters?.limit ?? 50)
+    .offset(filters?.offset ?? 0);
+
+  return result;
+}
+
+export async function getCarById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(cars).where(eq(cars.id, id)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function getCarsByIds(ids: number[]) {
+  const db = await getDb();
+  if (!db || ids.length === 0) return [];
+
+  return await db.select().from(cars).where(inArray(cars.id, ids));
+}
+
+// Dealer queries
+export async function getDealers(filters?: {
+  city?: string;
+  isVerified?: boolean;
+  limit?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+  
+  if (filters?.city) {
+    conditions.push(eq(dealers.city, filters.city));
+  }
+  if (filters?.isVerified !== undefined) {
+    conditions.push(eq(dealers.isVerified, filters.isVerified));
+  }
+
+  const query = conditions.length > 0
+    ? db.select().from(dealers).where(and(...conditions))
+    : db.select().from(dealers);
+
+  return await query.limit(filters?.limit ?? 50);
+}
+
+export async function getDealerById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(dealers).where(eq(dealers.id, id)).limit(1);
+  return result.length > 0 ? result[0] : null;
+}
+
+// Reservation queries
+export async function getUserReservations(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(reservations)
+    .where(eq(reservations.userId, userId))
+    .orderBy(desc(reservations.createdAt));
+}
+
+export async function createReservation(data: {
+  userId: number;
+  carId: number;
+  dealerId?: number;
+  reservationDate: Date;
+  viewingDate?: Date;
+  userName?: string;
+  userEmail?: string;
+  userPhone?: string;
+  notes?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(reservations).values(data);
+  return result;
+}
+
+export async function updateReservationStatus(id: number, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(reservations).set({ status }).where(eq(reservations.id, id));
+}
+
+// Favorites queries
+export async function getUserFavorites(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select({
+      favorite: favorites,
+      car: cars,
+    })
+    .from(favorites)
+    .leftJoin(cars, eq(favorites.carId, cars.id))
+    .where(eq(favorites.userId, userId))
+    .orderBy(desc(favorites.createdAt));
+
+  return result;
+}
+
+export async function addFavorite(userId: number, carId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.insert(favorites).values({ userId, carId });
+}
+
+export async function removeFavorite(userId: number, carId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(favorites).where(
+    and(eq(favorites.userId, userId), eq(favorites.carId, carId))
+  );
+}
+
+// Saved searches queries
+export async function getUserSavedSearches(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(savedSearches)
+    .where(eq(savedSearches.userId, userId))
+    .orderBy(desc(savedSearches.createdAt));
+}
+
+export async function saveSearch(userId: number, name: string, searchParams: Record<string, any>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.insert(savedSearches).values({ userId, name, searchParams });
+}
+
+export async function deleteSavedSearch(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(savedSearches).where(
+    and(eq(savedSearches.id, id), eq(savedSearches.userId, userId))
+  );
+}
+
+// Finance application queries
+export async function createFinanceApplication(data: {
+  userId: number;
+  carId?: number;
+  loanAmount?: number;
+  depositAmount?: number;
+  term?: number;
+  applicantData?: Record<string, any>;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const insertData: any = { ...data };
+  if (data.loanAmount !== undefined) {
+    insertData.loanAmount = data.loanAmount.toString();
+  }
+  if (data.depositAmount !== undefined) {
+    insertData.depositAmount = data.depositAmount.toString();
+  }
+
+  const result = await db.insert(financeApplications).values(insertData);
+  return result;
+}
+
+export async function getUserFinanceApplications(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(financeApplications)
+    .where(eq(financeApplications.userId, userId))
+    .orderBy(desc(financeApplications.createdAt));
+}
+
+export async function updateFinanceApplication(
+  id: number,
+  data: {
+    status?: 'draft' | 'submitted' | 'approved' | 'rejected';
+    externalApplicationId?: string;
+    responseData?: Record<string, any>;
+    monthlyPayment?: number;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const updateData: any = { ...data };
+  if (data.monthlyPayment !== undefined) {
+    updateData.monthlyPayment = data.monthlyPayment.toString();
+  }
+
+  await db.update(financeApplications).set(updateData).where(eq(financeApplications.id, id));
+}
