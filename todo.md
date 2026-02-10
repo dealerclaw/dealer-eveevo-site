@@ -124,3 +124,9 @@
 ## Display Updates
 - [x] Add mileage to Browse page car cards (front page of advert)
 - [x] Verify fast charge time displays on car detail page
+
+## Bug Fixes
+- [x] Investigate why mileage is blank on Browse page
+- [x] Verify mileage data exists in database
+- [x] Ensure Browse page query includes mileage field
+- [x] Fix mileage display on car cards
