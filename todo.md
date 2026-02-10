@@ -197,3 +197,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [ ] Add delete vehicle functionality
 - [ ] Create analytics dashboard showing listing views and inquiries
 - [ ] Test dealer portal with full CRUD operations
+
+## Complete Dealer Portal UI
+- [x] Build AddVehicle form with all specification fields
+- [ ] Build EditVehicle form (reuse AddVehicle with pre-filled data)
+- [x] Implement S3 photo upload component for vehicle images
+- [x] Add dealer portal routes to App.tsx (/dealer/dashboard, /dealer/inventory, /dealer/add-vehicle)
+- [x] Test complete dealer workflow (add, edit, delete, toggle availability)

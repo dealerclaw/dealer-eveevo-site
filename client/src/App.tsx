@@ -11,6 +11,9 @@ import AdminSync from "./pages/AdminSync";
 import CarDetail from "./pages/CarDetail";
 import LifestyleSearch from "./pages/LifestyleSearch";
 import Compare from "./pages/Compare";
+import DealerDashboard from "./pages/dealer/DealerDashboard";
+import MyInventory from "./pages/dealer/MyInventory";
+import AddVehicle from "./pages/dealer/AddVehicle";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -22,6 +25,9 @@ function Router() {
       <Route path={'/cars/:id'} component={CarDetail} />
       <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path="/compare" component={Compare} />
+      <Route path="/dealer/dashboard" component={DealerDashboard} />
+      <Route path="/dealer/inventory" component={MyInventory} />
+      <Route path="/dealer/add-vehicle" component={AddVehicle} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
