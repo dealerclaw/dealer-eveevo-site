@@ -62,7 +62,8 @@ export const cars = mysqlTable("cars", {
   
   // EV specific fields
   batteryCapacity: decimal("batteryCapacity", { precision: 6, scale: 2 }),
-  range: int("range"), // in miles
+  range: int("range"), // WLTP range in miles
+  realRange: int("realRange"), // Real-world range in miles
   chargingTime: varchar("chargingTime", { length: 100 }),
   acceleration: varchar("acceleration", { length: 50 }),
   topSpeed: int("topSpeed"),

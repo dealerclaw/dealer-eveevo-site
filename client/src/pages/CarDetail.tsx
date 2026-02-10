@@ -178,8 +178,8 @@ export default function CarDetail() {
                         <Battery className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Range</p>
-                        <p className="font-semibold">{car.range || "N/A"} miles</p>
+                        <p className="text-sm text-muted-foreground">Real Range</p>
+                        <p className="font-semibold">{car.realRange || "N/A"} miles</p>
                       </div>
                     </div>
 

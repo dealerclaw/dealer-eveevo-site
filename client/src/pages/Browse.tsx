@@ -301,12 +301,12 @@ export default function Browse() {
                                   </span>
                                 </div>
                               )}
-                              {car.range && (
+                              {car.realRange && (
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-muted-foreground flex items-center">
-                                    <Battery className="w-4 h-4 mr-1" /> Range
+                                    <Battery className="w-4 h-4 mr-1" /> Real Range
                                   </span>
-                                  <span className="font-medium">{car.range} miles</span>
+                                  <span className="font-medium">{car.realRange} miles</span>
                                 </div>
                               )}
                               {car.batteryCapacity && (

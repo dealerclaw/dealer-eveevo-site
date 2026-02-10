@@ -15,6 +15,13 @@
       "when": 1770674089759,
       "tag": "0001_curious_dormammu",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770746214266,
+      "tag": "0002_curious_skreet",
+      "breakpoints": true
     }
   ]
 }
