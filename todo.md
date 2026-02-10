@@ -43,6 +43,9 @@
 - [x] Verify image URLs from merged data are correct
 - [x] Update image field parsing in import script
 - [x] Re-imported all 14,569 vehicles with correct photoURLs
+- [x] Display real range (WLTP miles) on car cards
+- [x] Display charging time on car cards
+- [x] Update car detail pages to show range and charging specs
 - [x] Fix vehicle count showing only 50 instead of actual count
 - [x] Verify actual number of cars in database
 - [x] Increase Browse page limit from 50 to 1000 vehicles

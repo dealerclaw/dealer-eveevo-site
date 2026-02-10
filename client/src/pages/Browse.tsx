@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { trpc } from "@/lib/trpc";
-import { Battery, Car, Heart, Search } from "lucide-react";
+import { Battery, Car, Heart, Search, Zap } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 export default function Browse() {
@@ -313,6 +313,14 @@ export default function Browse() {
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-muted-foreground">Battery</span>
                                   <span className="font-medium">{car.batteryCapacity} kWh</span>
+                                </div>
+                              )}
+                              {car.chargingTime && (
+                                <div className="flex items-center justify-between text-sm">
+                                  <span className="text-muted-foreground flex items-center">
+                                    <Zap className="w-4 h-4 mr-1" /> Charging
+                                  </span>
+                                  <span className="font-medium">{car.chargingTime}h (10-100%)</span>
                                 </div>
                               )}
                             </div>
