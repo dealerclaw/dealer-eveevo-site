@@ -387,7 +387,7 @@ export default function Home() {
               <h3 className="font-semibold mb-4">Browse</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/browse"><a className="text-muted-foreground hover:text-foreground">All EVs</a></Link></li>
-                <li><Link href="/dealers"><a className="text-muted-foreground hover:text-foreground">Dealers</a></Link></li>
+                <li><Link href="/dealer/dashboard"><a className="text-muted-foreground hover:text-foreground">Dealers</a></Link></li>
                 <li><Link href="/compare"><a className="text-muted-foreground hover:text-foreground">Compare</a></Link></li>
               </ul>
             </div>

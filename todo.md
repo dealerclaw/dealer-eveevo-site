@@ -204,3 +204,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Implement S3 photo upload component for vehicle images
 - [x] Add dealer portal routes to App.tsx (/dealer/dashboard, /dealer/inventory, /dealer/add-vehicle)
 - [x] Test complete dealer workflow (add, edit, delete, toggle availability)
+
+## Fix Dealers Navigation
+- [x] Update Dealers tab in navigation to point to /dealer/dashboard
+- [x] Test navigation works correctly
