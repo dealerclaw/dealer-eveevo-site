@@ -21,7 +21,7 @@ import {
   Loader2,
 } from "lucide-react";
 import RebeccaChat from "@/components/RebeccaChat";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -36,6 +36,34 @@ export default function CarDetail() {
     { id: parseInt(id || "0") },
     { enabled: !!id }
   );
+  
+  // Track recently viewed vehicles
+  useEffect(() => {
+    if (car && id) {
+      const carId = parseInt(id);
+      const stored = localStorage.getItem("recentlyViewed");
+      let recentlyViewed: number[] = [];
+      
+      if (stored) {
+        try {
+          recentlyViewed = JSON.parse(stored);
+        } catch (e) {
+          console.error("Failed to parse recently viewed:", e);
+        }
+      }
+      
+      // Remove if already exists (to move to front)
+      recentlyViewed = recentlyViewed.filter(id => id !== carId);
+      
+      // Add to front
+      recentlyViewed.unshift(carId);
+      
+      // Keep only last 10
+      recentlyViewed = recentlyViewed.slice(0, 10);
+      
+      localStorage.setItem("recentlyViewed", JSON.stringify(recentlyViewed));
+    }
+  }, [car, id]);
 
   // Reservation mutation
   const createReservation = trpc.reservations.create.useMutation({

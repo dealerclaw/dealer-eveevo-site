@@ -24,6 +24,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X } from "lucide-react";
+import RecentlyViewed from "@/components/RecentlyViewed";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -281,6 +282,9 @@ export default function Browse() {
               Explore our collection of {cars?.length || 0} electric and hybrid vehicles from 54,000+ listings
             </p>
           </div>
+          
+          {/* Recently Viewed Section */}
+          <RecentlyViewed />
 
           <div className="grid lg:grid-cols-4 gap-6">
             {/* Filters Sidebar */}

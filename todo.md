@@ -177,3 +177,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Build Compare page with side-by-side specification table
 - [x] Add ability to remove vehicles from comparison
 - [x] Test comparison with 2-4 vehicles
+
+## Recently Viewed Feature
+- [x] Add tracking to CarDetail page to save viewed vehicles to localStorage
+- [x] Create RecentlyViewed component to display recently viewed vehicles
+- [x] Add RecentlyViewed component to Browse page
+- [x] Limit recently viewed to last 10 vehicles (stored 10, display 6)
+- [x] Test recently viewed tracking and display
