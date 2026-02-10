@@ -10,6 +10,7 @@ import Browse from "./pages/Browse";
 import AdminSync from "./pages/AdminSync";
 import CarDetail from "./pages/CarDetail";
 import LifestyleSearch from "./pages/LifestyleSearch";
+import Compare from "./pages/Compare";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -18,7 +19,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/browse"} component={Browse} />
       <Route path={"/admin/sync"} component={AdminSync} />
-      <Route path={"/cars/:id"} component={CarDetail} />     <Route path="/lifestyle-search" component={LifestyleSearch} />
+      <Route path={'/cars/:id'} component={CarDetail} />
+      <Route path="/lifestyle-search" component={LifestyleSearch} />
+      <Route path="/compare" component={Compare} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

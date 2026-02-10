@@ -169,3 +169,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update Browse page to use realRange instead of range for filtering (already working after backend fix)
 - [x] Test range filter with different values
 - [x] Verify filter works correctly with other filters
+
+## Vehicle Comparison Tool
+- [x] Add comparison state management (localStorage for selected vehicles)
+- [x] Add "Compare" checkbox to Browse page car cards
+- [x] Create floating comparison bar showing selected vehicles
+- [x] Build Compare page with side-by-side specification table
+- [x] Add ability to remove vehicles from comparison
+- [x] Test comparison with 2-4 vehicles

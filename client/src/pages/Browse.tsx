@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Battery, Car, Heart, Search, Zap, Save, Bookmark } from "lucide-react";
+import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -44,6 +44,40 @@ export default function Browse() {
   // Save search dialog state
   const [saveSearchOpen, setSaveSearchOpen] = useState(false);
   const [searchName, setSearchName] = useState("");
+  
+  // Comparison state
+  const [compareIds, setCompareIds] = useState<number[]>([]);
+  
+  // Load comparison IDs from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("compareVehicles");
+    if (stored) {
+      try {
+        setCompareIds(JSON.parse(stored));
+      } catch (e) {
+        console.error("Failed to parse compare vehicles:", e);
+      }
+    }
+  }, []);
+  
+  const toggleCompare = (carId: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    let newIds: number[];
+    if (compareIds.includes(carId)) {
+      newIds = compareIds.filter(id => id !== carId);
+    } else {
+      if (compareIds.length >= 4) {
+        toast.error("You can compare up to 4 vehicles at a time");
+        return;
+      }
+      newIds = [...compareIds, carId];
+    }
+    
+    setCompareIds(newIds);
+    localStorage.setItem("compareVehicles", JSON.stringify(newIds));
+  };
 
   // Read URL parameters and set filters
   useEffect(() => {
@@ -496,7 +530,7 @@ export default function Browse() {
                                 <Car className="w-16 h-16 text-muted-foreground" />
                               </div>
                             )}
-                            <div className="absolute top-2 right-2">
+                            <div className="absolute top-2 right-2 flex gap-2">
                               <Button
                                 size="icon"
                                 variant="secondary"
@@ -507,6 +541,14 @@ export default function Browse() {
                                 }}
                               >
                                 <Heart className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant={compareIds.includes(car.id) ? "default" : "secondary"}
+                                className="rounded-full"
+                                onClick={(e) => toggleCompare(car.id, e)}
+                              >
+                                <GitCompare className="h-4 w-4" />
                               </Button>
                             </div>
                             {car.condition && (
@@ -637,6 +679,40 @@ export default function Browse() {
           </div>
         </div>
       </main>
+      
+      {/* Floating Comparison Bar */}
+      {compareIds.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-primary text-primary-foreground shadow-lg border-t z-50">
+          <div className="container py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <GitCompare className="h-5 w-5" />
+                <span className="font-semibold">
+                  {compareIds.length} vehicle{compareIds.length !== 1 ? 's' : ''} selected for comparison
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setCompareIds([]);
+                    localStorage.removeItem("compareVehicles");
+                  }}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear
+                </Button>
+                <Link href="/compare">
+                  <Button variant="secondary" size="sm" disabled={compareIds.length < 2}>
+                    Compare Now ({compareIds.length}/4)
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
