@@ -38,6 +38,11 @@
 - [x] Fix vehicle count showing only 50 instead of actual count
 - [x] Verify actual number of cars in database
 - [x] Increase Browse page limit from 50 to 1000 vehicles
+- [x] Add pagination controls with Previous/Next buttons
+- [x] Add page number navigation (show 5 pages at a time)
+- [x] Display current page and total pages
+- [x] Show 24 vehicles per page
+- [x] Reset to page 1 when filters change
 - [x] Fix Rebecca chatbot to use Pinecone vector search
 - [x] Connect Rebecca to actual car database with AI semantic search
 - [x] Update Rebecca to accept carId for car-specific queries

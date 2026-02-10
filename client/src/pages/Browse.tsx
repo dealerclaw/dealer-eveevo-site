@@ -91,6 +91,20 @@ export default function Browse() {
     );
   }, [cars, searchTerm]);
 
+  // Pagination logic
+  const totalPages = Math.ceil((filteredCars?.length || 0) / itemsPerPage);
+  const paginatedCars = useMemo(() => {
+    if (!filteredCars) return [];
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredCars.slice(startIndex, endIndex);
+  }, [filteredCars, currentPage, itemsPerPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedMake, selectedModel, priceRange, rangeFilter, condition, searchTerm]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -224,11 +238,16 @@ export default function Browse() {
                 </div>
               ) : filteredCars && filteredCars.length > 0 ? (
                 <>
-                  <div className="mb-4 text-sm text-muted-foreground">
-                    Showing {filteredCars.length} vehicles
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredCars.length)} of {filteredCars.length} vehicles
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Page {currentPage} of {totalPages}
+                    </div>
                   </div>
                   <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredCars.map((car) => (
+                    {paginatedCars.map((car) => (
                       <Link key={car.id} href={`/cars/${car.id}`}>
                         <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                           <div className="relative h-48 overflow-hidden rounded-t-lg">
@@ -302,6 +321,53 @@ export default function Browse() {
                       </Link>
                     ))}
                   </div>
+                  
+                  {/* Pagination Controls */}
+                  {totalPages > 1 && (
+                    <div className="mt-8 flex items-center justify-center gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </Button>
+                      
+                      <div className="flex gap-1">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                          let pageNum;
+                          if (totalPages <= 5) {
+                            pageNum = i + 1;
+                          } else if (currentPage <= 3) {
+                            pageNum = i + 1;
+                          } else if (currentPage >= totalPages - 2) {
+                            pageNum = totalPages - 4 + i;
+                          } else {
+                            pageNum = currentPage - 2 + i;
+                          }
+                          
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={currentPage === pageNum ? "default" : "outline"}
+                              onClick={() => setCurrentPage(pageNum)}
+                              className="w-10"
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      
+                      <Button
+                        variant="outline"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  )}
                 </>
               ) : (
                 <Card>
