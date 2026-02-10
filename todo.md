@@ -164,3 +164,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Check database query filters (minRange, maxPrice)
 - [x] Fix query to return matching vehicles (changed from cars.range to cars.realRange)
 - [x] Test with different search criteria
+
+## Update Browse Page Range Filter
+- [x] Update Browse page to use realRange instead of range for filtering (already working after backend fix)
+- [x] Test range filter with different values
+- [x] Verify filter works correctly with other filters
