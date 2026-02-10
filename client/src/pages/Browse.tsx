@@ -24,6 +24,8 @@ export default function Browse() {
   const [priceRange, setPriceRange] = useState([0, 100000]);
   const [rangeFilter, setRangeFilter] = useState([0, 400]);
   const [condition, setCondition] = useState<"all" | "new" | "used">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 24;
 
   // Read URL parameters and set filters
   useEffect(() => {
@@ -66,7 +68,7 @@ export default function Browse() {
     minRange: rangeFilter[0] > 0 ? rangeFilter[0] : undefined,
     maxRange: rangeFilter[1] < 400 ? rangeFilter[1] : undefined,
     condition: condition === "all" ? undefined : condition,
-    limit: 50,
+    limit: 1000,
   });
 
   // Get unique makes from cars

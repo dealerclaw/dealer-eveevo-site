@@ -35,6 +35,9 @@
 - [x] Import 9,604 vehicles with real images from OneAuto Excel
 - [x] Fix Browse page to display imported cars with actual photos
 - [ ] Import remaining 88,848 vehicles from Excel (currently 9,604 of 98,452)
+- [x] Fix vehicle count showing only 50 instead of actual count
+- [x] Verify actual number of cars in database
+- [x] Increase Browse page limit from 50 to 1000 vehicles
 - [x] Fix Rebecca chatbot to use Pinecone vector search
 - [x] Connect Rebecca to actual car database with AI semantic search
 - [x] Update Rebecca to accept carId for car-specific queries
