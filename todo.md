@@ -144,3 +144,12 @@
 - [x] Implement sort by range (longest first)
 - [x] Implement sort by newest listings
 - [x] Test sorting functionality
+
+## Save Search Feature
+- [x] Create savedSearches table in database schema
+- [x] Add backend API endpoints for saving/retrieving/deleting saved searches
+- [x] Add "Save Search" button to Browse page filters
+- [x] Create "My Saved Searches" management UI
+- [x] Test Save Search functionality
+
+Note: Notification system for matching vehicles can be implemented as a future enhancement using background jobs to check for new vehicles matching saved search criteria.

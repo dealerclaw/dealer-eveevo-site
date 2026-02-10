@@ -12,12 +12,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { Battery, Car, Heart, Search, Zap } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Battery, Car, Heart, Search, Zap, Save, Bookmark } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { toast } from "sonner";
 
 export default function Browse() {
   const [location] = useLocation();
+  const { isAuthenticated, user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
@@ -28,6 +40,10 @@ export default function Browse() {
   const [sortBy, setSortBy] = useState<string>("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
+  
+  // Save search dialog state
+  const [saveSearchOpen, setSaveSearchOpen] = useState(false);
+  const [searchName, setSearchName] = useState("");
 
   // Read URL parameters and set filters
   useEffect(() => {
@@ -60,6 +76,27 @@ export default function Browse() {
       ]);
     }
   }, [location]);
+
+  // Saved searches
+  const { data: savedSearches } = trpc.savedSearches.list.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const saveSearchMutation = trpc.savedSearches.save.useMutation({
+    onSuccess: () => {
+      toast.success("Search saved successfully!");
+      setSaveSearchOpen(false);
+      setSearchName("");
+    },
+    onError: () => {
+      toast.error("Failed to save search. Please try again.");
+    },
+  });
+  const deleteSearchMutation = trpc.savedSearches.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Search deleted successfully!");
+    },
+  });
+  const utils = trpc.useUtils();
 
   // Fetch cars with filters
   const { data: cars, isLoading } = trpc.cars.list.useQuery({
@@ -147,6 +184,51 @@ export default function Browse() {
     const endIndex = startIndex + itemsPerPage;
     return sortedCars.slice(startIndex, endIndex);
   }, [sortedCars, currentPage, itemsPerPage]);
+
+  // Save search handler
+  const handleSaveSearch = () => {
+    if (!searchName.trim()) {
+      toast.error("Please enter a name for your search");
+      return;
+    }
+    
+    const searchParams = {
+      make: selectedMake && selectedMake !== 'all_makes' ? selectedMake : undefined,
+      model: selectedModel || undefined,
+      minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
+      maxPrice: priceRange[1] < 100000 ? priceRange[1] : undefined,
+      minRange: rangeFilter[0] > 0 ? rangeFilter[0] : undefined,
+      maxRange: rangeFilter[1] < 400 ? rangeFilter[1] : undefined,
+      minMileage: mileageFilter[0] > 0 ? mileageFilter[0] : undefined,
+      maxMileage: mileageFilter[1] < 100000 ? mileageFilter[1] : undefined,
+      condition: condition === "all" ? undefined : condition,
+      sortBy,
+    };
+    
+    saveSearchMutation.mutate({
+      name: searchName,
+      searchParams,
+    });
+  };
+  
+  // Load saved search
+  const handleLoadSearch = (search: any) => {
+    const params = search.searchParams;
+    if (params.make) setSelectedMake(params.make);
+    if (params.model) setSelectedModel(params.model);
+    if (params.minPrice || params.maxPrice) {
+      setPriceRange([params.minPrice || 0, params.maxPrice || 100000]);
+    }
+    if (params.minRange || params.maxRange) {
+      setRangeFilter([params.minRange || 0, params.maxRange || 400]);
+    }
+    if (params.minMileage || params.maxMileage) {
+      setMileageFilter([params.minMileage || 0, params.maxMileage || 100000]);
+    }
+    if (params.condition) setCondition(params.condition);
+    if (params.sortBy) setSortBy(params.sortBy);
+    toast.success(`Loaded search: ${search.name}`);
+  };
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -265,6 +347,77 @@ export default function Browse() {
                       className="mt-2"
                     />
                   </div>
+
+                  {/* Save Search */}
+                  {isAuthenticated && (
+                    <Dialog open={saveSearchOpen} onOpenChange={setSaveSearchOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="default" className="w-full">
+                          <Save className="mr-2 h-4 w-4" />
+                          Save Search
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Save Current Search</DialogTitle>
+                          <DialogDescription>
+                            Save your current filters and sorting preferences to quickly access them later.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="search-name">Search Name</Label>
+                            <Input
+                              id="search-name"
+                              placeholder="e.g., Budget EVs under £30k"
+                              value={searchName}
+                              onChange={(e) => setSearchName(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setSaveSearchOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleSaveSearch} disabled={saveSearchMutation.isPending}>
+                            {saveSearchMutation.isPending ? "Saving..." : "Save"}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+
+                  {/* Saved Searches */}
+                  {isAuthenticated && savedSearches && savedSearches.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>My Saved Searches</Label>
+                      <div className="space-y-2">
+                        {savedSearches.map((search) => (
+                          <div key={search.id} className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 justify-start"
+                              onClick={() => handleLoadSearch(search)}
+                            >
+                              <Bookmark className="mr-2 h-3 w-3" />
+                              {search.name}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                deleteSearchMutation.mutate({ id: search.id });
+                                utils.savedSearches.list.invalidate();
+                              }}
+                            >
+                              ×
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Reset Filters */}
                   <Button
