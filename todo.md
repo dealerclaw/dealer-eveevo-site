@@ -120,3 +120,7 @@
 - [x] Update acceleration field in database with 0-60 mph data
 - [x] Update Browse page to display fast charge time and acceleration
 - [x] Update CarDetail page to show fast charge time and acceleration with proper labeling
+
+## Display Updates
+- [x] Add mileage to Browse page car cards (front page of advert)
+- [x] Verify fast charge time displays on car detail page

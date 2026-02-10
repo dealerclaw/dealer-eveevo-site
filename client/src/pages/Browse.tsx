@@ -315,12 +315,12 @@ export default function Browse() {
                                   <span className="font-medium">{car.batteryCapacity} kWh</span>
                                 </div>
                               )}
-                              {car.chargingTime && (
+                              {car.mileage && (
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-muted-foreground flex items-center">
-                                    <Zap className="w-4 h-4 mr-1" /> Fast Charge
+                                    <Car className="w-4 h-4 mr-1" /> Mileage
                                   </span>
-                                  <span className="font-medium">{car.chargingTime} min (10-80%)</span>
+                                  <span className="font-medium">{car.mileage.toLocaleString()} miles</span>
                                 </div>
                               )}
                             </div>
