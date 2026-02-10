@@ -107,3 +107,8 @@
 - [x] Verify Real Range field exists in database schema
 - [x] Update Browse page to display Real Range
 - [x] Update CarDetail page to display Real Range
+
+## Current Tasks
+- [x] Add used price display to home page featured cars section
+- [x] Verify prices display correctly on car detail pages when clicking images
+- [x] Ensure price data from Excel is properly imported and displayed
