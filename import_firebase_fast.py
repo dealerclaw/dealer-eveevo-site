@@ -60,11 +60,11 @@ batch_data = []
 
 for idx, row in df.iterrows():
     try:
-        # Parse images
+        # Parse images from photoURLs column
         images = []
-        if pd.notna(row.get('image_links')):
+        if pd.notna(row.get('photoURLs')):
             try:
-                images = json.loads(row['image_links']) if isinstance(row['image_links'], str) else row['image_links']
+                images = json.loads(row['photoURLs']) if isinstance(row['photoURLs'], str) else row['photoURLs']
                 if not isinstance(images, list):
                     images = []
             except:

@@ -39,6 +39,10 @@
 - [x] Verify merged data includes EV specs and car adverts
 - [x] Test that all fields are properly mapped
 - [x] Successfully imported 14,569 vehicles from merged Firebase data with EV specs
+- [x] Fix car images not displaying after Firebase import
+- [x] Verify image URLs from merged data are correct
+- [x] Update image field parsing in import script
+- [x] Re-imported all 14,569 vehicles with correct photoURLs
 - [x] Fix vehicle count showing only 50 instead of actual count
 - [x] Verify actual number of cars in database
 - [x] Increase Browse page limit from 50 to 1000 vehicles

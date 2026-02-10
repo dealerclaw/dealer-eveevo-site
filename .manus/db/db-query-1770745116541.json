@@ -1,0 +1,31 @@
+{
+  "query": "SELECT id, make, model, year, images FROM cars LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, images FROM cars LIMIT 3;",
+  "rows": [
+    {
+      "id": "60001",
+      "make": "PORSCHE",
+      "model": "Taycan",
+      "year": "2021",
+      "images": "[]"
+    },
+    {
+      "id": "60002",
+      "make": "PORSCHE",
+      "model": "Taycan",
+      "year": "2022",
+      "images": "[]"
+    },
+    {
+      "id": "60003",
+      "make": "BMW",
+      "model": "i7",
+      "year": "2023",
+      "images": "[]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\timages\n60001\tPORSCHE\tTaycan\t2021\t[]\n60002\tPORSCHE\tTaycan\t2022\t[]\n60003\tBMW\ti7\t2023\t[]\n",
+  "stderr": "",
+  "execution_time_ms": 373
+}
