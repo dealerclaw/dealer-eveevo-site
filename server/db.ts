@@ -114,6 +114,8 @@ export async function getCars(filters?: {
   maxPrice?: number;
   minRange?: number;
   maxRange?: number;
+  minMileage?: number;
+  maxMileage?: number;
   condition?: 'new' | 'used';
   dealerId?: number;
   isFeatured?: boolean;
@@ -144,6 +146,12 @@ export async function getCars(filters?: {
   }
   if (filters?.maxRange !== undefined) {
     conditions.push(lte(cars.range, filters.maxRange));
+  }
+  if (filters?.minMileage !== undefined) {
+    conditions.push(gte(cars.mileage, filters.minMileage));
+  }
+  if (filters?.maxMileage !== undefined) {
+    conditions.push(lte(cars.mileage, filters.maxMileage));
   }
   if (filters?.condition) {
     conditions.push(eq(cars.condition, filters.condition));

@@ -130,3 +130,9 @@
 - [x] Verify mileage data exists in database
 - [x] Ensure Browse page query includes mileage field
 - [x] Fix mileage display on car cards
+
+## Mileage Filter Feature
+- [x] Add minMileage and maxMileage parameters to backend router
+- [x] Update getCars function to filter by mileage range
+- [x] Add mileage range slider to Browse page filters UI
+- [x] Test mileage filtering functionality

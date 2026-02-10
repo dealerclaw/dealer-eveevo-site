@@ -23,6 +23,7 @@ export default function Browse() {
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [priceRange, setPriceRange] = useState([0, 100000]);
   const [rangeFilter, setRangeFilter] = useState([0, 400]);
+  const [mileageFilter, setMileageFilter] = useState([0, 100000]);
   const [condition, setCondition] = useState<"all" | "new" | "used">("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
@@ -67,6 +68,8 @@ export default function Browse() {
     maxPrice: priceRange[1] < 100000 ? priceRange[1] : undefined,
     minRange: rangeFilter[0] > 0 ? rangeFilter[0] : undefined,
     maxRange: rangeFilter[1] < 400 ? rangeFilter[1] : undefined,
+    minMileage: mileageFilter[0] > 0 ? mileageFilter[0] : undefined,
+    maxMileage: mileageFilter[1] < 100000 ? mileageFilter[1] : undefined,
     condition: condition === "all" ? undefined : condition,
     limit: 1000,
   });
@@ -203,6 +206,21 @@ export default function Browse() {
                     />
                   </div>
 
+                  {/* Mileage Filter */}
+                  <div>
+                    <Label>
+                      Mileage: {mileageFilter[0].toLocaleString()} - {mileageFilter[1].toLocaleString()} miles
+                    </Label>
+                    <Slider
+                      min={0}
+                      max={100000}
+                      step={5000}
+                      value={mileageFilter}
+                      onValueChange={setMileageFilter}
+                      className="mt-2"
+                    />
+                  </div>
+
                   {/* Reset Filters */}
                   <Button
                     variant="outline"
@@ -213,6 +231,7 @@ export default function Browse() {
                       setSelectedModel("");
                       setPriceRange([0, 100000]);
                       setRangeFilter([0, 400]);
+                      setMileageFilter([0, 100000]);
                       setCondition("all");
                     }}
                   >

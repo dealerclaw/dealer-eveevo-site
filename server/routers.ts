@@ -34,6 +34,8 @@ export const appRouter = router({
         maxPrice: z.number().optional(),
         minRange: z.number().optional(),
         maxRange: z.number().optional(),
+        minMileage: z.number().optional(),
+        maxMileage: z.number().optional(),
         condition: z.enum(['new', 'used']).optional(),
         dealerId: z.number().optional(),
         isFeatured: z.boolean().optional(),
