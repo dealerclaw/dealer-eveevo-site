@@ -142,10 +142,10 @@ export async function getCars(filters?: {
     conditions.push(lte(cars.price, filters.maxPrice.toString()));
   }
   if (filters?.minRange !== undefined) {
-    conditions.push(gte(cars.range, filters.minRange));
+    conditions.push(gte(cars.realRange, filters.minRange));
   }
   if (filters?.maxRange !== undefined) {
-    conditions.push(lte(cars.range, filters.maxRange));
+    conditions.push(lte(cars.realRange, filters.maxRange));
   }
   if (filters?.minMileage !== undefined) {
     conditions.push(gte(cars.mileage, filters.minMileage));
