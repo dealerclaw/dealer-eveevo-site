@@ -196,59 +196,71 @@ export default function LifestyleSearch() {
                   <TabsContent value="new" className="mt-6">
                     {results.newCars && results.newCars.length > 0 ? (
                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {results.newCars.map((car, idx) => (
-                          <Card key={idx} className="hover:shadow-lg transition-shadow h-full">
-                            <div className="relative h-48 overflow-hidden rounded-t-lg bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                              <Car className="w-20 h-20 text-primary" />
-                              <div className="absolute top-2 left-2">
-                                <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
-                                  New
-                                </span>
-                              </div>
-                            </div>
-                            <CardHeader>
-                              <CardTitle className="line-clamp-1">
-                                {car.Vehicle_Make} {car.Vehicle_Model}
-                              </CardTitle>
-                              <CardDescription className="line-clamp-1">
-                                {car.Vehicle_Variant}
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="space-y-2 text-sm">
-                                {car.Price_From && (
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-muted-foreground">From</span>
-                                    <span className="font-semibold text-lg text-primary">
-                                      £{car.Price_From.toLocaleString()}
-                                    </span>
+                        {results.newCars.map((car) => (
+                          <Link key={car.id} href={`/cars/${car.id}`}>
+                            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                              <div className="relative h-48 overflow-hidden rounded-t-lg">
+                                {car.mainImage ? (
+                                  <img
+                                    src={car.mainImage}
+                                    alt={`${car.make} ${car.model}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                                    <Car className="w-20 h-20 text-primary" />
                                   </div>
                                 )}
-                                {(car.Range_WLTP || car.Range_Real) && (
+                                <div className="absolute top-2 left-2">
+                                  <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+                                    New
+                                  </span>
+                                </div>
+                              </div>
+                              <CardHeader>
+                                <CardTitle className="line-clamp-1">
+                                  {car.make} {car.model}
+                                </CardTitle>
+                                <CardDescription>
+                                  {car.year && <span>{car.year}</span>}
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-2 text-sm">
+                                  {car.price && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-muted-foreground">Price</span>
+                                      <span className="font-semibold text-lg text-primary">
+                                        £{parseFloat(car.price).toLocaleString()}
+                                      </span>
+                                    </div>
+                                  )}
+                                {(car.realRange || car.range) && (
                                   <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground flex items-center">
                                       <Battery className="w-4 h-4 mr-1" /> Range
                                     </span>
                                     <span className="font-medium">
-                                      {car.Range_WLTP || car.Range_Real} miles
+                                      {car.realRange || car.range} miles
                                     </span>
                                   </div>
                                 )}
-                                {car.Battery_Capacity && (
+                                {car.batteryCapacity && (
                                   <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">Battery</span>
-                                    <span className="font-medium">{car.Battery_Capacity} kWh</span>
+                                    <span className="font-medium">{parseFloat(car.batteryCapacity).toFixed(1)} kWh</span>
                                   </div>
                                 )}
-                                {car.Acceleration_0_100 && (
+                                {car.acceleration && (
                                   <div className="flex items-center justify-between">
                                     <span className="text-muted-foreground">0-60mph</span>
-                                    <span className="font-medium">{car.Acceleration_0_100}s</span>
+                                    <span className="font-medium">{car.acceleration}</span>
                                   </div>
                                 )}
                               </div>
                             </CardContent>
                           </Card>
+                          </Link>
                         ))}
                       </div>
                     ) : (

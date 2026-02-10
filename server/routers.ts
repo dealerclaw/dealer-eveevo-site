@@ -220,26 +220,60 @@ export const appRouter = router({
         bodyType: z.array(z.string()).optional(),
       }))
       .query(async ({ input }) => {
-        // Get new cars from EV-Database
-        const result = await evDb.lifestyleSearch(input);
+        // Calculate required range based on daily mileage
+        const requiredRange = input.dailyMileage 
+          ? Math.ceil(input.dailyMileage * 7 * 1.3) // Weekly range with 30% buffer
+          : 150; // Default minimum range
         
-        // Get matching used cars from local database
-        const usedCarFilters: any = {};
+        // Build filter for local database
+        const filters: any = {};
         
-        if (input.dailyMileage) {
-          const requiredRange = Math.ceil(input.dailyMileage * 7 * 1.3);
-          usedCarFilters.minRange = requiredRange;
+        if (requiredRange) {
+          filters.minRange = requiredRange;
         }
         
         if (input.budget) {
-          usedCarFilters.maxPrice = input.budget;
+          filters.maxPrice = input.budget;
         }
         
-        const usedCars = await db.getCars(usedCarFilters);
+        // Get all matching cars from local database
+        const allCars = await db.getCars(filters);
+        
+        // Separate new and used cars
+        const newCars = allCars.filter(car => car.condition === 'new').slice(0, 20);
+        const usedCars = allCars.filter(car => car.condition === 'used').slice(0, 20);
+        
+        // Generate recommendations
+        const recommendations: string[] = [];
+        
+        if (input.dailyMileage && input.dailyMileage > 50) {
+          recommendations.push(`With ${input.dailyMileage} miles daily, look for vehicles with at least ${requiredRange} miles of range.`);
+        }
+        
+        if (input.chargingAccess === 'public') {
+          recommendations.push('Consider vehicles with fast-charging capability since you rely on public charging.');
+        }
+        
+        if (input.budget && input.budget < 25000) {
+          recommendations.push('Used EVs offer excellent value. Consider models 2-3 years old for the best deals.');
+        }
+        
+        if (input.priorities?.includes('range')) {
+          recommendations.push('Focus on vehicles with larger battery capacities (60kWh+) for maximum range.');
+        }
+        
+        if (input.priorities?.includes('performance')) {
+          recommendations.push('Look for dual-motor AWD variants for better acceleration and performance.');
+        }
+        
+        if (recommendations.length === 0) {
+          recommendations.push('Browse our selection to find the perfect EV for your lifestyle.');
+        }
         
         return {
-          ...result,
-          usedCars: usedCars.slice(0, 20),
+          newCars,
+          usedCars,
+          recommendations,
         };
       }),
   }),
