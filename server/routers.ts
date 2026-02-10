@@ -421,6 +421,30 @@ export const appRouter = router({
         }
         return await db.getDealerInquiries(ctx.user.id);
       }),
+
+    submitApplication: protectedProcedure
+      .input(z.object({
+        businessName: z.string(),
+        contactName: z.string(),
+        email: z.string().email(),
+        phone: z.string(),
+        address: z.string(),
+        description: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Store dealer application
+        // For now, we'll just log it and return success
+        // In production, you'd store this in a dealer_applications table
+        console.log('Dealer application received:', {
+          userId: ctx.user.id,
+          ...input,
+        });
+        
+        // TODO: Store in database and notify admin
+        // await db.createDealerApplication(ctx.user.id, input);
+        
+        return { success: true };
+      }),
   }),
 });
 

@@ -14,6 +14,8 @@ import Compare from "./pages/Compare";
 import DealerDashboard from "./pages/dealer/DealerDashboard";
 import MyInventory from "./pages/dealer/MyInventory";
 import AddVehicle from "./pages/dealer/AddVehicle";
+import DealerAuthGuard from "./components/DealerAuthGuard";
+import BecomeADealer from "./pages/BecomeADealer";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -25,9 +27,22 @@ function Router() {
       <Route path={'/cars/:id'} component={CarDetail} />
       <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path="/compare" component={Compare} />
-      <Route path="/dealer/dashboard" component={DealerDashboard} />
-      <Route path="/dealer/inventory" component={MyInventory} />
-      <Route path="/dealer/add-vehicle" component={AddVehicle} />
+      <Route path="/become-a-dealer" component={BecomeADealer} />
+      <Route path="/dealer/dashboard">
+        <DealerAuthGuard>
+          <DealerDashboard />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/inventory">
+        <DealerAuthGuard>
+          <MyInventory />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/add-vehicle">
+        <DealerAuthGuard>
+          <AddVehicle />
+        </DealerAuthGuard>
+      </Route>
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
