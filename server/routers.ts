@@ -314,6 +314,114 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  // Dealer management router
+  dealer: router({
+    getStats: protectedProcedure
+      .query(async ({ ctx }) => {
+        // Check if user is a dealer
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        return await db.getDealerStats(ctx.user.id);
+      }),
+
+    getMyInventory: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional(),
+        offset: z.number().optional(),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        return await db.getDealerCars(ctx.user.id, input);
+      }),
+
+    addVehicle: protectedProcedure
+      .input(z.object({
+        make: z.string(),
+        model: z.string(),
+        year: z.number().optional(),
+        price: z.number().optional(),
+        mileage: z.number().optional(),
+        condition: z.enum(['new', 'used']).optional(),
+        bodyType: z.string().optional(),
+        color: z.string().optional(),
+        fuelType: z.string().optional(),
+        transmission: z.string().optional(),
+        batteryCapacity: z.number().optional(),
+        realRange: z.number().optional(),
+        chargingTime: z.string().optional(),
+        acceleration: z.string().optional(),
+        topSpeed: z.number().optional(),
+        power: z.number().optional(),
+        mainImage: z.string().optional(),
+        images: z.array(z.string()).optional(),
+        description: z.string().optional(),
+        features: z.array(z.string()).optional(),
+        vin: z.string().optional(),
+        registrationNumber: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        return await db.addDealerCar(ctx.user.id, input);
+      }),
+
+    updateVehicle: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        make: z.string().optional(),
+        model: z.string().optional(),
+        year: z.number().optional(),
+        price: z.number().optional(),
+        mileage: z.number().optional(),
+        condition: z.enum(['new', 'used']).optional(),
+        bodyType: z.string().optional(),
+        color: z.string().optional(),
+        fuelType: z.string().optional(),
+        transmission: z.string().optional(),
+        batteryCapacity: z.number().optional(),
+        realRange: z.number().optional(),
+        chargingTime: z.string().optional(),
+        acceleration: z.string().optional(),
+        topSpeed: z.number().optional(),
+        power: z.number().optional(),
+        mainImage: z.string().optional(),
+        images: z.array(z.string()).optional(),
+        description: z.string().optional(),
+        features: z.array(z.string()).optional(),
+        vin: z.string().optional(),
+        registrationNumber: z.string().optional(),
+        isAvailable: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        const { id, ...data } = input;
+        return await db.updateDealerCar(ctx.user.id, id, data);
+      }),
+
+    deleteVehicle: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        return await db.deleteDealerCar(ctx.user.id, input.id);
+      }),
+
+    getInquiries: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        return await db.getDealerInquiries(ctx.user.id);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -184,3 +184,16 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add RecentlyViewed component to Browse page
 - [x] Limit recently viewed to last 10 vehicles (stored 10, display 6)
 - [x] Test recently viewed tracking and display
+
+## Dealer Inventory Management Portal
+- [x] Add carViews and carInquiries tables to database schema
+- [x] Push database schema changes
+- [x] Add dealer router to backend with authentication
+- [x] Create dealer database functions (stats, inventory, CRUD)
+- [x] Create dealer dashboard overview page with stats
+- [x] Build vehicle listing page showing dealer's inventory
+- [ ] Create add/edit vehicle form with all fields
+- [ ] Implement photo upload to S3 for vehicle images
+- [ ] Add delete vehicle functionality
+- [ ] Create analytics dashboard showing listing views and inquiries
+- [ ] Test dealer portal with full CRUD operations

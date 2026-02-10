@@ -160,6 +160,41 @@ export const financeApplications = mysqlTable("financeApplications", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+/**
+ * Car views tracking for analytics
+ */
+export const carViews = mysqlTable("carViews", {
+  id: int("id").autoincrement().primaryKey(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  userId: int("userId").references(() => users.id),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+/**
+ * Car inquiries for dealer tracking
+ */
+export const carInquiries = mysqlTable("carInquiries", {
+  id: int("id").autoincrement().primaryKey(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  userId: int("userId").references(() => users.id),
+  dealerId: int("dealerId").references(() => dealers.id),
+  
+  // Contact info
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 20 }),
+  
+  // Inquiry details
+  message: text("message"),
+  inquiryType: mysqlEnum("inquiryType", ["test_drive", "price_inquiry", "general", "finance"]).default("general"),
+  status: mysqlEnum("status", ["new", "contacted", "closed"]).default("new"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Dealer = typeof dealers.$inferSelect;
@@ -171,3 +206,5 @@ export type InsertReservation = typeof reservations.$inferInsert;
 export type Favorite = typeof favorites.$inferSelect;
 export type SavedSearch = typeof savedSearches.$inferSelect;
 export type FinanceApplication = typeof financeApplications.$inferSelect;
+export type CarView = typeof carViews.$inferSelect;
+export type CarInquiry = typeof carInquiries.$inferSelect;

@@ -9,12 +9,16 @@ import {
   favorites, 
   savedSearches,
   financeApplications,
+  carViews,
+  carInquiries,
   type Car,
   type Dealer,
   type Reservation,
   type Favorite,
   type SavedSearch,
-  type FinanceApplication
+  type FinanceApplication,
+  type CarView,
+  type CarInquiry
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -374,4 +378,209 @@ export async function updateFinanceApplication(
   }
 
   await db.update(financeApplications).set(updateData).where(eq(financeApplications.id, id));
+}
+
+// Dealer management queries
+export async function getDealerByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(dealers)
+    .where(eq(dealers.userId, userId))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+export async function getDealerStats(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get dealer record
+  const dealer = await getDealerByUserId(userId);
+  if (!dealer) return null;
+
+  // Get total listings
+  const totalListingsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(cars)
+    .where(eq(cars.dealerId, dealer.id));
+  const totalListings = Number(totalListingsResult[0]?.count || 0);
+
+  // Get available listings
+  const availableListingsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(cars)
+    .where(and(eq(cars.dealerId, dealer.id), eq(cars.isAvailable, true)));
+  const availableListings = Number(availableListingsResult[0]?.count || 0);
+
+  // Get total views
+  const totalViewsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carViews)
+    .innerJoin(cars, eq(carViews.carId, cars.id))
+    .where(eq(cars.dealerId, dealer.id));
+  const totalViews = Number(totalViewsResult[0]?.count || 0);
+
+  // Get total inquiries
+  const totalInquiriesResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carInquiries)
+    .where(eq(carInquiries.dealerId, dealer.id));
+  const totalInquiries = Number(totalInquiriesResult[0]?.count || 0);
+
+  // Get new inquiries
+  const newInquiriesResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carInquiries)
+    .where(and(eq(carInquiries.dealerId, dealer.id), eq(carInquiries.status, 'new')));
+  const newInquiries = Number(newInquiriesResult[0]?.count || 0);
+
+  // Get recent inquiries
+  const recentInquiries = await db
+    .select()
+    .from(carInquiries)
+    .where(eq(carInquiries.dealerId, dealer.id))
+    .orderBy(desc(carInquiries.createdAt))
+    .limit(5);
+
+  // Get top performing listings
+  const topListings = await db
+    .select({
+      id: cars.id,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      views: sql<number>`count(${carViews.id})`,
+    })
+    .from(cars)
+    .leftJoin(carViews, eq(cars.id, carViews.carId))
+    .where(eq(cars.dealerId, dealer.id))
+    .groupBy(cars.id)
+    .orderBy(desc(sql<number>`count(${carViews.id})`))
+    .limit(5);
+
+  return {
+    totalListings,
+    availableListings,
+    totalViews,
+    totalInquiries,
+    newInquiries,
+    recentInquiries,
+    topListings,
+  };
+}
+
+export async function getDealerCars(userId: number, options?: { limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const dealer = await getDealerByUserId(userId);
+  if (!dealer) return [];
+
+  const query = db.select().from(cars).where(eq(cars.dealerId, dealer.id));
+
+  if (options?.limit && options?.offset) {
+    return await query.limit(options.limit).offset(options.offset);
+  } else if (options?.limit) {
+    return await query.limit(options.limit);
+  } else if (options?.offset) {
+    return await query.offset(options.offset);
+  }
+
+  return await query;
+}
+
+export async function addDealerCar(userId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const dealer = await getDealerByUserId(userId);
+  if (!dealer) throw new Error("Dealer not found");
+
+  const insertData: any = {
+    ...data,
+    dealerId: dealer.id,
+  };
+
+  // Convert decimal fields to strings
+  if (data.price !== undefined) {
+    insertData.price = data.price.toString();
+  }
+  if (data.batteryCapacity !== undefined) {
+    insertData.batteryCapacity = data.batteryCapacity.toString();
+  }
+
+  const result = await db.insert(cars).values(insertData);
+  return result;
+}
+
+export async function updateDealerCar(userId: number, carId: number, data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const dealer = await getDealerByUserId(userId);
+  if (!dealer) throw new Error("Dealer not found");
+
+  // Verify car belongs to dealer
+  const car = await db
+    .select()
+    .from(cars)
+    .where(and(eq(cars.id, carId), eq(cars.dealerId, dealer.id)))
+    .limit(1);
+
+  if (!car || car.length === 0) {
+    throw new Error("Car not found or does not belong to dealer");
+  }
+
+  const updateData: any = { ...data };
+
+  // Convert decimal fields to strings
+  if (data.price !== undefined) {
+    updateData.price = data.price.toString();
+  }
+  if (data.batteryCapacity !== undefined) {
+    updateData.batteryCapacity = data.batteryCapacity.toString();
+  }
+
+  await db.update(cars).set(updateData).where(eq(cars.id, carId));
+  return { success: true };
+}
+
+export async function deleteDealerCar(userId: number, carId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const dealer = await getDealerByUserId(userId);
+  if (!dealer) throw new Error("Dealer not found");
+
+  // Verify car belongs to dealer
+  const car = await db
+    .select()
+    .from(cars)
+    .where(and(eq(cars.id, carId), eq(cars.dealerId, dealer.id)))
+    .limit(1);
+
+  if (!car || car.length === 0) {
+    throw new Error("Car not found or does not belong to dealer");
+  }
+
+  await db.delete(cars).where(eq(cars.id, carId));
+  return { success: true };
+}
+
+export async function getDealerInquiries(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const dealer = await getDealerByUserId(userId);
+  if (!dealer) return [];
+
+  return await db
+    .select()
+    .from(carInquiries)
+    .where(eq(carInquiries.dealerId, dealer.id))
+    .orderBy(desc(carInquiries.createdAt));
 }
