@@ -228,8 +228,8 @@ export default function CarDetail() {
                         <Clock className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Charging Time</p>
-                        <p className="font-semibold">{car.chargingTime || "N/A"}</p>
+                        <p className="text-sm text-muted-foreground">Fast Charge (10-80%)</p>
+                        <p className="font-semibold">{car.chargingTime ? `${car.chargingTime} min` : "N/A"}</p>
                       </div>
                     </div>
                   </div>

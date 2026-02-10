@@ -112,3 +112,11 @@
 - [x] Add used price display to home page featured cars section
 - [x] Verify prices display correctly on car detail pages when clicking images
 - [x] Ensure price data from Excel is properly imported and displayed
+
+## Fast Charge Time and Acceleration Update
+- [x] Import Fastcharge_ChargeTime data from Excel (10-80% charge time in minutes)
+- [x] Import Performance_Acceleration data from Excel (0-60 mph time)
+- [x] Update chargingTime field in database with fast charge data
+- [x] Update acceleration field in database with 0-60 mph data
+- [x] Update Browse page to display fast charge time and acceleration
+- [x] Update CarDetail page to show fast charge time and acceleration with proper labeling

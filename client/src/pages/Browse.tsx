@@ -318,9 +318,9 @@ export default function Browse() {
                               {car.chargingTime && (
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-muted-foreground flex items-center">
-                                    <Zap className="w-4 h-4 mr-1" /> Charging
+                                    <Zap className="w-4 h-4 mr-1" /> Fast Charge
                                   </span>
-                                  <span className="font-medium">{car.chargingTime}h (10-100%)</span>
+                                  <span className="font-medium">{car.chargingTime} min (10-80%)</span>
                                 </div>
                               )}
                             </div>
