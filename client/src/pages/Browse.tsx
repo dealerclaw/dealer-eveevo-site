@@ -25,6 +25,7 @@ export default function Browse() {
   const [rangeFilter, setRangeFilter] = useState([0, 400]);
   const [mileageFilter, setMileageFilter] = useState([0, 100000]);
   const [condition, setCondition] = useState<"all" | "new" | "used">("all");
+  const [sortBy, setSortBy] = useState<string>("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
 
@@ -84,24 +85,68 @@ export default function Browse() {
   // Filter cars by search term
   const filteredCars = useMemo(() => {
     if (!cars) return [];
-    if (!searchTerm) return cars;
+    let result = cars;
     
-    const term = searchTerm.toLowerCase();
-    return cars.filter(car => 
-      car.make.toLowerCase().includes(term) ||
-      car.model.toLowerCase().includes(term) ||
-      car.description?.toLowerCase().includes(term)
-    );
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(car => 
+        car.make.toLowerCase().includes(term) ||
+        car.model.toLowerCase().includes(term) ||
+        car.description?.toLowerCase().includes(term)
+      );
+    }
+    
+    return result;
   }, [cars, searchTerm]);
 
-  // Pagination logic
-  const totalPages = Math.ceil((filteredCars?.length || 0) / itemsPerPage);
-  const paginatedCars = useMemo(() => {
+  // Sort cars
+  const sortedCars = useMemo(() => {
     if (!filteredCars) return [];
+    const sorted = [...filteredCars];
+    
+    switch (sortBy) {
+      case 'price-low':
+        return sorted.sort((a, b) => {
+          const priceA = a.price ? parseFloat(a.price) : Infinity;
+          const priceB = b.price ? parseFloat(b.price) : Infinity;
+          return priceA - priceB;
+        });
+      case 'price-high':
+        return sorted.sort((a, b) => {
+          const priceA = a.price ? parseFloat(a.price) : -Infinity;
+          const priceB = b.price ? parseFloat(b.price) : -Infinity;
+          return priceB - priceA;
+        });
+      case 'mileage-low':
+        return sorted.sort((a, b) => {
+          const mileageA = a.mileage || Infinity;
+          const mileageB = b.mileage || Infinity;
+          return mileageA - mileageB;
+        });
+      case 'range-high':
+        return sorted.sort((a, b) => {
+          const rangeA = a.realRange || a.range || -Infinity;
+          const rangeB = b.realRange || b.range || -Infinity;
+          return rangeB - rangeA;
+        });
+      case 'newest':
+      default:
+        return sorted.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
+        });
+    }
+  }, [filteredCars, sortBy]);
+
+  // Pagination logic
+  const totalPages = Math.ceil((sortedCars?.length || 0) / itemsPerPage);
+  const paginatedCars = useMemo(() => {
+    if (!sortedCars) return [];
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return filteredCars.slice(startIndex, endIndex);
-  }, [filteredCars, currentPage, itemsPerPage]);
+    return sortedCars.slice(startIndex, endIndex);
+  }, [sortedCars, currentPage, itemsPerPage]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -257,12 +302,29 @@ export default function Browse() {
                 </div>
               ) : filteredCars && filteredCars.length > 0 ? (
                 <>
-                  <div className="mb-4 flex items-center justify-between">
+                  <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
                     <div className="text-sm text-muted-foreground">
-                      Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredCars.length)} of {filteredCars.length} vehicles
+                      Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, sortedCars.length)} of {sortedCars.length} vehicles
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Page {currentPage} of {totalPages}
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <Label className="text-sm">Sort by:</Label>
+                        <Select value={sortBy} onValueChange={setSortBy}>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="newest">Newest First</SelectItem>
+                            <SelectItem value="price-low">Price: Low to High</SelectItem>
+                            <SelectItem value="price-high">Price: High to Low</SelectItem>
+                            <SelectItem value="mileage-low">Mileage: Low to High</SelectItem>
+                            <SelectItem value="range-high">Range: Longest First</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Page {currentPage} of {totalPages}
+                      </div>
                     </div>
                   </div>
                   <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">

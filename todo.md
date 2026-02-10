@@ -136,3 +136,11 @@
 - [x] Update getCars function to filter by mileage range
 - [x] Add mileage range slider to Browse page filters UI
 - [x] Test mileage filtering functionality
+
+## Sorting Feature
+- [x] Add sorting dropdown UI to Browse page
+- [x] Implement sort by price (low to high, high to low)
+- [x] Implement sort by mileage (low to high)
+- [x] Implement sort by range (longest first)
+- [x] Implement sort by newest listings
+- [x] Test sorting functionality
