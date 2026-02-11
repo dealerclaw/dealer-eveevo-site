@@ -18,6 +18,7 @@ import DealerMarketplace from "./pages/dealer/DealerMarketplace";
 import DealerAnalytics from "./pages/dealer/Analytics";
 import BulkUpload from "./pages/dealer/BulkUpload";
 import DealerAuthGuard from "./components/DealerAuthGuard";
+import AdminApplications from "./pages/AdminApplications";
 import BecomeADealer from "./pages/BecomeADealer";
 
 function Router() {
@@ -27,6 +28,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/browse"} component={Browse} />
       <Route path={"/admin/sync"} component={AdminSync} />
+      <Route path={'/admin/applications'} component={AdminApplications} />
       <Route path={'/cars/:id'} component={CarDetail} />
       <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path="/compare" component={Compare} />

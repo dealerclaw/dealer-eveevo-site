@@ -787,3 +787,71 @@ export async function getDealerAnalytics(dealerId: number) {
     topVehicles,
   };
 }
+
+/**
+ * Update application status
+ */
+export async function updateApplicationStatus(
+  applicationId: number,
+  status: 'pending' | 'approved' | 'rejected'
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(dealerApplications)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(dealerApplications.id, applicationId));
+
+  return { success: true };
+}
+
+/**
+ * Update user role
+ */
+export async function updateUserRole(
+  userId: number,
+  role: 'user' | 'dealer' | 'admin'
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(users)
+    .set({ role })
+    .where(eq(users.id, userId));
+
+  return { success: true };
+}
+
+/**
+ * Create dealer from application
+ */
+export async function createDealer(
+  userId: number,
+  data: {
+    businessName: string;
+    contactName: string;
+    email: string;
+    phone: string;
+    address: string;
+    description: string;
+    verified: boolean;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(dealers).values({
+    userId,
+    name: data.businessName,
+    email: data.email,
+    phone: data.phone,
+    whatsappNumber: data.phone,
+    address: data.address,
+    description: data.description,
+    isVerified: data.verified,
+  });
+
+  return { success: true, dealerId: Number(result[0].insertId) };
+}

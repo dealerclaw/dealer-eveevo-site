@@ -641,8 +641,81 @@ export const appRouter = router({
         });
         
         return { success: true };
+       }),
+  }),
+
+  // Admin router
+  admin: router({
+    getApplications: protectedProcedure
+      .input(z.object({
+        status: z.enum(['pending', 'approved', 'rejected']).optional(),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        
+        return await db.getDealerApplications(input);
+      }),
+
+    approveApplication: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        
+        // Get application
+        const applications = await db.getDealerApplications();
+        const application = applications.find(app => app.id === input.applicationId);
+        
+        if (!application) {
+          throw new Error('Application not found');
+        }
+        
+        if (application.status !== 'pending') {
+          throw new Error('Application has already been processed');
+        }
+        
+        if (!application.userId) {
+          throw new Error('Application has no associated user');
+        }
+        
+        // Create dealer account
+        await db.createDealer(application.userId, {
+          businessName: application.businessName,
+          contactName: application.contactName,
+          email: application.email,
+          phone: application.phone,
+          address: application.address,
+          description: application.description,
+          verified: true,
+        });
+        
+        // Update user role to dealer
+        await db.updateUserRole(application.userId, 'dealer');
+        
+        // Update application status
+        await db.updateApplicationStatus(input.applicationId, 'approved');
+        
+        return { success: true };
+      }),
+
+    rejectApplication: protectedProcedure
+      .input(z.object({
+        applicationId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        
+        await db.updateApplicationStatus(input.applicationId, 'rejected');
+        
+        return { success: true };
       }),
   }),
 });
-
 export type AppRouter = typeof appRouter;
