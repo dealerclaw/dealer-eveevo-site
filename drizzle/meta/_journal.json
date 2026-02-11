@@ -43,6 +43,13 @@
       "when": 1770835792272,
       "tag": "0005_amused_frightful_four",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1770839994699,
+      "tag": "0006_daffy_colonel_america",
+      "breakpoints": true
     }
   ]
 }

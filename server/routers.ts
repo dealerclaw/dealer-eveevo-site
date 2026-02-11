@@ -717,5 +717,64 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  // Test Drive Bookings router
+  testDrive: router({
+    create: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        dealerId: z.number(),
+        preferredDate: z.string(),
+        preferredTime: z.string(),
+        customerName: z.string(),
+        customerEmail: z.string(),
+        customerPhone: z.string(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.createTestDriveBooking({
+          userId: ctx.user.id,
+          carId: input.carId,
+          dealerId: input.dealerId,
+          preferredDate: new Date(input.preferredDate),
+          preferredTime: input.preferredTime,
+          customerName: input.customerName,
+          customerEmail: input.customerEmail,
+          customerPhone: input.customerPhone,
+          notes: input.notes || null,
+          status: "pending",
+        });
+        
+        return { success: true };
+      }),
+
+    getDealerBookings: protectedProcedure
+      .query(async ({ ctx }) => {
+        // Get dealer ID for current user
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Not a dealer');
+        }
+        
+        return await db.getDealerTestDriveBookings(dealer.id);
+      }),
+
+    updateStatus: protectedProcedure
+      .input(z.object({
+        bookingId: z.number(),
+        status: z.enum(["pending", "confirmed", "cancelled", "completed"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Verify dealer owns this booking
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Not a dealer');
+        }
+        
+        await db.updateTestDriveBookingStatus(input.bookingId, input.status);
+        
+        return { success: true };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import Header from "./Header";
-import { LayoutDashboard, Package, Plus, Store, BarChart3, Upload } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Store, BarChart3, Upload, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DealerLayoutProps {
@@ -40,6 +40,11 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
       href: "/dealer/bulk-upload",
       label: "Bulk Upload",
       icon: Upload,
+    },
+    {
+      href: "/dealer/test-drives",
+      label: "Test Drives",
+      icon: Calendar,
     },
   ];
 

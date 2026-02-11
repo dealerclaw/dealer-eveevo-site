@@ -12,6 +12,7 @@ import {
   carViews,
   carInquiries,
   dealerApplications,
+  testDriveBookings,
   type Car,
   type Dealer,
   type Reservation,
@@ -21,7 +22,9 @@ import {
   type CarView,
   type CarInquiry,
   type DealerApplication,
-  type InsertDealerApplication
+  type InsertDealerApplication,
+  type TestDriveBooking,
+  type InsertTestDriveBooking
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -870,4 +873,50 @@ export async function createDealer(
   });
 
   return { success: true, dealerId: Number(result[0].insertId) };
+}
+
+// Test Drive Booking queries
+export async function createTestDriveBooking(data: InsertTestDriveBooking) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(testDriveBookings).values(data);
+  return result;
+}
+
+export async function getDealerTestDriveBookings(dealerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      id: testDriveBookings.id,
+      userId: testDriveBookings.userId,
+      carId: testDriveBookings.carId,
+      dealerId: testDriveBookings.dealerId,
+      preferredDate: testDriveBookings.preferredDate,
+      preferredTime: testDriveBookings.preferredTime,
+      status: testDriveBookings.status,
+      customerName: testDriveBookings.customerName,
+      customerEmail: testDriveBookings.customerEmail,
+      customerPhone: testDriveBookings.customerPhone,
+      notes: testDriveBookings.notes,
+      createdAt: testDriveBookings.createdAt,
+      updatedAt: testDriveBookings.updatedAt,
+      car: cars,
+    })
+    .from(testDriveBookings)
+    .leftJoin(cars, eq(testDriveBookings.carId, cars.id))
+    .where(eq(testDriveBookings.dealerId, dealerId))
+    .orderBy(desc(testDriveBookings.preferredDate));
+}
+
+export async function updateTestDriveBookingStatus(id: number, status: "pending" | "confirmed" | "cancelled" | "completed") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(testDriveBookings)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(testDriveBookings.id, id));
 }

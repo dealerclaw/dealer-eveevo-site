@@ -306,3 +306,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add route for /reservations
 - [x] Display user's vehicle reservations
 - [x] Test reservations page
+
+## Test Drive Booking System
+- [x] Add testDriveBookings table to database schema
+- [x] Create test drive booking form on car detail page
+- [x] Add backend endpoints for creating and managing bookings
+- [x] Build dealer calendar view page in dealer portal
+- [x] Add navigation link to dealer calendar
+- [x] Test complete booking flow

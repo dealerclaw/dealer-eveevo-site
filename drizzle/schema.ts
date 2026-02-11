@@ -230,6 +230,32 @@ export const dealerApplications = mysqlTable("dealerApplications", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+/**
+ * Test drive bookings table
+ */
+export const testDriveBookings = mysqlTable("testDriveBookings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id).notNull(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  
+  // Booking details
+  preferredDate: timestamp("preferredDate").notNull(),
+  preferredTime: varchar("preferredTime", { length: 20 }), // e.g., "10:00 AM", "2:00 PM"
+  status: mysqlEnum("status", ["pending", "confirmed", "cancelled", "completed"]).default("pending").notNull(),
+  
+  // Customer contact info
+  customerName: varchar("customerName", { length: 255 }).notNull(),
+  customerEmail: varchar("customerEmail", { length: 320 }).notNull(),
+  customerPhone: varchar("customerPhone", { length: 20 }).notNull(),
+  
+  // Additional info
+  notes: text("notes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Dealer = typeof dealers.$inferSelect;
@@ -245,3 +271,5 @@ export type CarView = typeof carViews.$inferSelect;
 export type CarInquiry = typeof carInquiries.$inferSelect;
 export type DealerApplication = typeof dealerApplications.$inferSelect;
 export type InsertDealerApplication = typeof dealerApplications.$inferInsert;
+export type TestDriveBooking = typeof testDriveBookings.$inferSelect;
+export type InsertTestDriveBooking = typeof testDriveBookings.$inferInsert;

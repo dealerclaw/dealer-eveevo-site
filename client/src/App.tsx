@@ -17,6 +17,7 @@ import AddVehicle from "./pages/dealer/AddVehicle";
 import DealerMarketplace from "./pages/dealer/DealerMarketplace";
 import DealerAnalytics from "./pages/dealer/Analytics";
 import BulkUpload from "./pages/dealer/BulkUpload";
+import TestDriveCalendar from "./pages/dealer/TestDriveCalendar";
 import DealerAuthGuard from "./components/DealerAuthGuard";
 import AdminApplications from "./pages/AdminApplications";
 import BecomeADealer from "./pages/BecomeADealer";
@@ -63,6 +64,11 @@ function Router() {
       <Route path="/dealer/bulk-upload">
         <DealerAuthGuard>
           <BulkUpload />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/test-drives">
+        <DealerAuthGuard>
+          <TestDriveCalendar />
         </DealerAuthGuard>
       </Route>
       <Route path={"/404"} component={NotFound} />

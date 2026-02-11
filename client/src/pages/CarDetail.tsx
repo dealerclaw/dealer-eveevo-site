@@ -22,6 +22,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import RebeccaChat from "@/components/RebeccaChat";
+import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -366,6 +367,14 @@ export default function CarDetail() {
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Contact Dealer via WhatsApp
                   </Button>
+
+                  {car.dealer && (
+                    <TestDriveBookingDialog
+                      carId={car.id}
+                      dealerId={car.dealer.id}
+                      carName={`${car.year} ${car.make} ${car.model}`}
+                    />
+                  )}
 
                   <Button variant="outline" className="w-full" size="lg">
                     <DollarSign className="w-4 h-4 mr-2" />
