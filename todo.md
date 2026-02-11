@@ -292,3 +292,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Bug Fixes
 - [x] Fix nested anchor tag error on CarDetail page
+
+## Admin Navigation
+- [x] Add Admin dropdown menu to Header (visible only to admin users)
+- [x] Include Applications link in admin menu
+- [x] Test admin menu visibility

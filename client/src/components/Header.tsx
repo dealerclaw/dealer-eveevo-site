@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Car, Heart, Search, User, LogOut, Settings, FileText, Menu } from "lucide-react";
+import { Car, Heart, Search, User, LogOut, Settings, FileText, Menu, Shield } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Header() {
@@ -135,6 +135,17 @@ export default function Header() {
                       <span>Settings</span>
                     </DropdownMenuItem>
                   </Link>
+                  {user?.role === 'admin' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <Link href="/admin/applications">
+                        <DropdownMenuItem>
+                          <Shield className="mr-2 h-4 w-4" />
+                          <span>Admin: Applications</span>
+                        </DropdownMenuItem>
+                      </Link>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -182,6 +193,17 @@ export default function Header() {
                     <Link href="/favorites">
                       <a className="text-lg font-medium hover:text-primary">Favorites</a>
                     </Link>
+                    {user?.role === 'admin' && (
+                      <>
+                        <hr className="my-4" />
+                        <Link href="/admin/applications">
+                          <a className="text-lg font-medium hover:text-primary flex items-center gap-2">
+                            <Shield className="w-5 h-5" />
+                            Admin: Applications
+                          </a>
+                        </Link>
+                      </>
+                    )}
                   </>
                 )}
               </nav>
