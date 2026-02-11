@@ -38,6 +38,13 @@ export const dealers = mysqlTable("dealers", {
   logoUrl: varchar("logoUrl", { length: 500 }),
   rating: decimal("rating", { precision: 3, scale: 2 }),
   isVerified: boolean("isVerified").default(false),
+  
+  // Dealer-to-Dealer subscription
+  subscriptionStatus: mysqlEnum("subscriptionStatus", ["none", "active", "expired"]).default("none"),
+  subscriptionExpiresAt: timestamp("subscriptionExpiresAt"),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -82,6 +89,9 @@ export const cars = mysqlTable("cars", {
   // Status
   isAvailable: boolean("isAvailable").default(true),
   isFeatured: boolean("isFeatured").default(false),
+  
+  // Marketplace type
+  marketplace: mysqlEnum("marketplace", ["consumer", "dealer_only"]).default("consumer"),
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

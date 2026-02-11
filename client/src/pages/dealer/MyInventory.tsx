@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowRightLeft } from "lucide-react";
 import DealerLayout from "@/components/DealerLayout";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -52,6 +52,24 @@ export default function MyInventory() {
       toast.error(error.message || "Failed to update vehicle");
     },
   });
+
+  const moveToMarketplaceMutation = trpc.dealer.moveToMarketplace.useMutation({
+    onSuccess: () => {
+      toast.success("Vehicle moved successfully");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to move vehicle");
+    },
+  });
+
+  const handleMoveToMarketplace = (carId: number, currentMarketplace: string) => {
+    const newMarketplace = currentMarketplace === 'consumer' ? 'dealer_only' : 'consumer';
+    moveToMarketplaceMutation.mutate({
+      carId,
+      marketplace: newMarketplace as 'consumer' | 'dealer_only',
+    });
+  };
 
   const handleToggleAvailability = (id: number, currentStatus: boolean) => {
     updateMutation.mutate({
@@ -104,6 +122,7 @@ export default function MyInventory() {
                     <TableHead>Mileage</TableHead>
                     <TableHead>Range</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Marketplace</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -132,8 +151,21 @@ export default function MyInventory() {
                           {vehicle.isAvailable ? "Available" : "Unavailable"}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        <Badge variant={vehicle.marketplace === 'consumer' ? "outline" : "default"}>
+                          {vehicle.marketplace === 'consumer' ? "Consumer" : "Dealer Only"}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleMoveToMarketplace(vehicle.id, vehicle.marketplace || 'consumer')}
+                            title={vehicle.marketplace === 'consumer' ? "Move to Dealer Marketplace" : "Move to Consumer Marketplace"}
+                          >
+                            <ArrowRightLeft className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="ghost"
                             size="icon"

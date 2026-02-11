@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import Header from "./Header";
-import { LayoutDashboard, Package, Plus, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DealerLayoutProps {
@@ -25,6 +25,11 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
       href: "/dealer/add-vehicle",
       label: "Add Vehicle",
       icon: Plus,
+    },
+    {
+      href: "/dealer/marketplace",
+      label: "Dealer Marketplace",
+      icon: Store,
     },
   ];
 

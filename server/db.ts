@@ -123,6 +123,7 @@ export async function getCars(filters?: {
   condition?: 'new' | 'used';
   dealerId?: number;
   isFeatured?: boolean;
+  marketplace?: 'consumer' | 'dealer_only';
   limit?: number;
   offset?: number;
 }) {
@@ -165,6 +166,12 @@ export async function getCars(filters?: {
   }
   if (filters?.isFeatured !== undefined) {
     conditions.push(eq(cars.isFeatured, filters.isFeatured));
+  }
+  if (filters?.marketplace) {
+    conditions.push(eq(cars.marketplace, filters.marketplace));
+  } else {
+    // Default to consumer marketplace if not specified
+    conditions.push(eq(cars.marketplace, 'consumer'));
   }
 
   const result = await db

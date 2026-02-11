@@ -230,3 +230,16 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Configure Stripe for £99 reservation payments
 - [x] Update Reserve button to create Stripe checkout session
 - [x] Test reservation payment flow
+
+## Dealer-to-Dealer Trading Platform
+- [x] Add dealer subscription fields to dealers table (subscriptionStatus, subscriptionExpiresAt)
+- [x] Add marketplace field to cars table (consumer, dealer_only)
+- [x] Create Stripe subscription product for £99/month dealer access
+- [x] Build subscription checkout endpoint
+- [x] Create dealer marketplace listing API (only show dealer_only cars to subscribed dealers)
+- [x] Build Dealer Marketplace page (/dealer/marketplace)
+- [x] Add "Move to Dealer Marketplace" button on dealer inventory
+- [x] Add "Move to Consumer Marketplace" button on dealer marketplace
+- [x] Test subscription payment flow
+- [x] Test moving cars between marketplaces
+- [x] Test dealer marketplace visibility (only subscribed dealers can see)

@@ -499,6 +499,133 @@ export const appRouter = router({
         
         return { success: true };
       }),
+
+    // Subscription management
+    createSubscription: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        const product = PRODUCTS.DEALER_SUBSCRIPTION;
+        
+        // Get dealer info
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        // Create Stripe checkout session for subscription
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: [
+            {
+              price_data: {
+                currency: product.currency,
+                product_data: {
+                  name: product.name,
+                  description: product.description,
+                  metadata: product.metadata,
+                },
+                unit_amount: product.price,
+                recurring: {
+                  interval: product.interval,
+                },
+              },
+              quantity: 1,
+            },
+          ],
+          mode: 'subscription',
+          success_url: `${ctx.req.headers.origin}/dealer/marketplace?subscribed=true`,
+          cancel_url: `${ctx.req.headers.origin}/dealer/dashboard`,
+          customer_email: ctx.user.email || undefined,
+          client_reference_id: ctx.user.id.toString(),
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            dealer_id: dealer.id.toString(),
+            customer_email: ctx.user.email || '',
+            customer_name: ctx.user.name || '',
+          },
+          allow_promotion_codes: true,
+        });
+
+        return { checkoutUrl: session.url };
+      }),
+
+    getSubscriptionStatus: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        return {
+          status: dealer.subscriptionStatus || 'none',
+          expiresAt: dealer.subscriptionExpiresAt,
+        };
+      }),
+
+    // Dealer marketplace
+    getDealerMarketplace: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional(),
+        offset: z.number().optional(),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        // Check subscription status
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        if (dealer.subscriptionStatus !== 'active') {
+          throw new Error('Active subscription required to access dealer marketplace');
+        }
+        
+        // Get dealer-only cars
+        return await db.getCars({
+          ...input,
+          marketplace: 'dealer_only',
+        });
+      }),
+
+    moveToMarketplace: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        marketplace: z.enum(['consumer', 'dealer_only']),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        // Verify car belongs to dealer
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer || car.dealerId !== dealer.id) {
+          throw new Error('Unauthorized: You can only move your own vehicles');
+        }
+        
+        // Update marketplace
+        await db.updateDealerCar(ctx.user.id, input.carId, {
+          marketplace: input.marketplace,
+        });
+        
+        return { success: true };
+      }),
   }),
 });
 

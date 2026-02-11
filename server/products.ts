@@ -14,6 +14,17 @@ export const PRODUCTS = {
       refundable: "true",
     },
   },
+  DEALER_SUBSCRIPTION: {
+    name: "Dealer-to-Dealer Marketplace Access",
+    description: "Monthly subscription to buy and sell vehicles on the dealer marketplace",
+    price: 9900, // £99.00 in pence per month
+    currency: "gbp",
+    interval: "month" as const,
+    metadata: {
+      type: "subscription",
+      access: "dealer_marketplace",
+    },
+  },
 } as const;
 
 export type ProductType = keyof typeof PRODUCTS;
