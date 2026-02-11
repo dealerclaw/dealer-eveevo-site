@@ -289,3 +289,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Build admin approval UI page at /admin/applications
 - [x] Add admin route to App.tsx
 - [x] Test approval workflow
+
+## Bug Fixes
+- [x] Fix nested anchor tag error on CarDetail page

@@ -111,8 +111,8 @@ export default function CarDetail() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">Car not found</h2>
             <p className="text-muted-foreground mb-4">The vehicle you're looking for doesn't exist.</p>
-            <Button asChild>
-              <Link href="/browse">Browse Vehicles</Link>
+            <Button onClick={() => navigate('/browse')}>
+              Browse Vehicles
             </Button>
           </div>
         </main>
@@ -130,11 +130,9 @@ export default function CarDetail() {
       <main className="flex-1 py-8">
         <div className="container">
           {/* Back button */}
-          <Button variant="ghost" asChild className="mb-6">
-            <Link href="/browse">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Browse
-            </Link>
+          <Button variant="ghost" className="mb-6" onClick={() => navigate('/browse')}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Browse
           </Button>
 
           <div className="grid lg:grid-cols-3 gap-8">
