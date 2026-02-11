@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { Upload, X, Loader2 } from "lucide-react";
-import DashboardLayout from "@/components/DashboardLayout";
+import DealerLayout from "@/components/DealerLayout";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -158,7 +158,7 @@ export default function AddVehicle() {
   };
 
   return (
-    <DashboardLayout>
+    <DealerLayout>
       <div className="space-y-6 max-w-4xl">
         <div>
           <h1 className="text-3xl font-bold">Add Vehicle</h1>
@@ -517,6 +517,6 @@ export default function AddVehicle() {
           </div>
         </form>
       </div>
-    </DashboardLayout>
+    </DealerLayout>
   );
 }

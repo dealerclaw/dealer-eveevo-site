@@ -1,23 +1,23 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { Car, Eye, MessageSquare, TrendingUp } from "lucide-react";
-import DashboardLayout from "@/components/DashboardLayout";
+import DealerLayout from "@/components/DealerLayout";
 
 export default function DealerDashboard() {
   const { data: stats, isLoading } = trpc.dealer.getStats.useQuery();
 
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <DealerLayout>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </DashboardLayout>
+      </DealerLayout>
     );
   }
 
   return (
-    <DashboardLayout>
+    <DealerLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Dealer Dashboard</h1>
@@ -146,6 +146,6 @@ export default function DealerDashboard() {
           </Card>
         </div>
       </div>
-    </DashboardLayout>
+    </DealerLayout>
   );
 }

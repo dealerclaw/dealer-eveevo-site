@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
-import DashboardLayout from "@/components/DashboardLayout";
+import DealerLayout from "@/components/DealerLayout";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import {
@@ -62,16 +62,16 @@ export default function MyInventory() {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <DealerLayout>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </DashboardLayout>
+      </DealerLayout>
     );
   }
 
   return (
-    <DashboardLayout>
+    <DealerLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -200,6 +200,6 @@ export default function MyInventory() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </DashboardLayout>
+    </DealerLayout>
   );
 }
