@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Car, Heart, Search, User, LogOut, Settings, FileText, Menu, Shield } from "lucide-react";
+import { Car, Heart, Search, User, LogOut, Settings, FileText, Menu, Shield, Store } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Header() {
@@ -144,6 +144,12 @@ export default function Header() {
                           <span>Admin: Applications</span>
                         </DropdownMenuItem>
                       </Link>
+                      <Link href="/admin/dealers">
+                        <DropdownMenuItem>
+                          <Store className="mr-2 h-4 w-4" />
+                          <span>Admin: Dealers</span>
+                        </DropdownMenuItem>
+                      </Link>
                     </>
                   )}
                   <DropdownMenuSeparator />
@@ -200,6 +206,12 @@ export default function Header() {
                           <a className="text-lg font-medium hover:text-primary flex items-center gap-2">
                             <Shield className="w-5 h-5" />
                             Admin: Applications
+                          </a>
+                        </Link>
+                        <Link href="/admin/dealers">
+                          <a className="text-lg font-medium hover:text-primary flex items-center gap-2">
+                            <Store className="w-5 h-5" />
+                            Admin: Dealers
                           </a>
                         </Link>
                       </>

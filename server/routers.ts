@@ -613,6 +613,41 @@ export const appRouter = router({
 
   // Admin router
   admin: router({
+    // Dealer management
+    getAllDealers: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const adminDb = await import('./adminDb');
+        return await adminDb.getAllDealers();
+      }),
+
+    getDealerById: protectedProcedure
+      .input(z.object({
+        dealerId: z.number(),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const adminDb = await import('./adminDb');
+        return await adminDb.getDealerById(input.dealerId);
+      }),
+
+    getDealerCars: protectedProcedure
+      .input(z.object({
+        dealerId: z.number(),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const adminDb = await import('./adminDb');
+        return await adminDb.getDealerCarsAdmin(input.dealerId);
+      }),
+
+    // Dealer applications
     getApplications: protectedProcedure
       .input(z.object({
         status: z.enum(['pending', 'approved', 'rejected']).optional(),

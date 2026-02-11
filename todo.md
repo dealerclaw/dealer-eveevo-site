@@ -364,3 +364,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Hide/minimize finance button for PAID tier dealers (subscriptionStatus === 'active')
 - [x] Test complete finance check flow end-to-end
 - [x] Verify Evolution Funding API integration works correctly
+
+## Admin Dealers Management
+- [x] Create admin dealers page to view all dealers with their information
+- [x] Show dealer car listings with count and details
+- [x] Add ability to view dealer's full inventory
+- [x] Verify test drive button visibility on car detail pages
+- [x] Ensure test drive button shows on browse page car cards
+
+**Note**: Test drive button only appears when car has dealer assigned (car.dealer exists). Most EV Database cars don't have dealerId yet.

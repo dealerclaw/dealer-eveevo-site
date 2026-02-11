@@ -20,6 +20,7 @@ import BulkUpload from "./pages/dealer/BulkUpload";
 import TestDriveCalendar from "./pages/dealer/TestDriveCalendar";
 import DealerAuthGuard from "./components/DealerAuthGuard";
 import AdminApplications from "./pages/AdminApplications";
+import AdminDealers from "./pages/admin/AdminDealers";
 import BecomeADealer from "./pages/BecomeADealer";
 import MyReservations from "./pages/MyReservations";
 import FinanceCheck from "./pages/FinanceCheck";
@@ -32,6 +33,7 @@ function Router() {
       <Route path={"/browse"} component={Browse} />
       <Route path={"/admin/sync"} component={AdminSync} />
       <Route path={'/admin/applications'} component={AdminApplications} />
+      <Route path={'/admin/dealers'} component={AdminDealers} />
       <Route path={'/cars/:id'} component={CarDetail} />
       <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path="/compare" component={Compare} />
