@@ -1,0 +1,1 @@
+ALTER TABLE `dealers` ADD `profileUrl` varchar(500);

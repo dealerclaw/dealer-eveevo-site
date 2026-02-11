@@ -36,6 +36,7 @@ export const dealers = mysqlTable("dealers", {
   whatsappNumber: varchar("whatsappNumber", { length: 20 }),
   website: varchar("website", { length: 500 }),
   logoUrl: varchar("logoUrl", { length: 500 }),
+  profileUrl: varchar("profileUrl", { length: 500 }),
   rating: decimal("rating", { precision: 3, scale: 2 }),
   isVerified: boolean("isVerified").default(false),
   

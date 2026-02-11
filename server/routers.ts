@@ -7,6 +7,7 @@ import * as db from "./db";
 import * as evDb from "./evDatabase";
 import { syncRouter } from "./syncRouter";
 import { importRouter } from "./importCars";
+import { financeRouter } from "./financeRouter";
 import Stripe from "stripe";
 import { PRODUCTS } from "./products";
 
@@ -14,6 +15,7 @@ export const appRouter = router({
   system: systemRouter,
   sync: syncRouter,
   import: importRouter,
+  finance: financeRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -332,42 +334,7 @@ export const appRouter = router({
       }),
   }),
 
-  // Finance router
-  finance: router({
-    createApplication: protectedProcedure
-      .input(z.object({
-        carId: z.number().optional(),
-        loanAmount: z.number().optional(),
-        depositAmount: z.number().optional(),
-        term: z.number().optional(),
-        applicantData: z.record(z.string(), z.any()).optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        return await db.createFinanceApplication({
-          userId: ctx.user.id,
-          ...input,
-        });
-      }),
-
-    myApplications: protectedProcedure
-      .query(async ({ ctx }) => {
-        return await db.getUserFinanceApplications(ctx.user.id);
-      }),
-
-    updateApplication: protectedProcedure
-      .input(z.object({
-        id: z.number(),
-        status: z.enum(['draft', 'submitted', 'approved', 'rejected']).optional(),
-        externalApplicationId: z.string().optional(),
-        responseData: z.record(z.string(), z.any()).optional(),
-        monthlyPayment: z.number().optional(),
-      }))
-      .mutation(async ({ input }) => {
-        const { id, ...data } = input;
-        await db.updateFinanceApplication(id, data);
-        return { success: true };
-      }),
-  }),
+  // Finance router (imported from financeRouter.ts)
 
   // Dealer management router
   dealer: router({

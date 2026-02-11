@@ -320,3 +320,47 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add Google Calendar export button to dealer test drive calendar
 - [x] Generate .ics file for individual bookings
 - [x] Test both features
+
+## Test Drive Button Visibility Fix
+- [ ] Investigate why Book Test Drive button is not showing on car cards
+- [ ] Fix button rendering issue
+- [ ] Test button visibility on browse page
+
+## Dealer Import from Spreadsheet
+- [x] Parse Excel spreadsheet to extract dealer information (582 dealers, 14,905 cars)
+- [ ] Create dealer accounts for all unique dealers
+- [ ] Create user accounts for dealers with email addresses
+- [ ] Assign cars to their respective dealers
+- [ ] Pre-approve all imported dealers
+- [ ] Test dealer assignments and car visibility
+- [ ] Add dealer telephone and email display to dealer dashboard
+- [ ] Add seller profile URL to dealer dashboard
+- [ ] Add car location (from seller address) to consumer car listings
+
+## Freemium Dealer Model with Finance Integration
+- [x] Add Evolution Funding API credentials to environment
+- [ ] Create Evolution Funding API service integration
+- [ ] Build finance application form component
+- [ ] Add finance application backend endpoints
+- [ ] Add prominent "Arrange Finance with EVEEVO" button on free tier dealer cars
+- [ ] Hide/minimize finance button for paid dealers (subscriptionStatus = 'active')
+- [ ] Update dealer-to-dealer marketplace to require active subscription
+- [ ] Restrict bulk CSV upload to paid dealers only
+- [ ] Add upgrade prompts and feature comparison in dealer dashboard
+- [ ] Add featured dealer badge for paid subscribers
+- [ ] Test complete freemium flow
+
+## Finance Check Integration (Evolution Funding API)
+- [x] Create finance check database table to store applications
+- [x] Add finance check router with tRPC procedures
+- [x] Build 5-step finance check form matching Flutter app:
+  - [x] Step 1: Personal Details (title, name, DOB, email, mobile, address with OneAuto lookup)
+  - [x] Step 2: Employment Information (status, employer, income, time at job)
+  - [x] Step 3: Affordability Declaration (confirm can afford payments)
+  - [x] Step 4: Review & Submit (show all details for confirmation)
+  - [x] Step 5: Credit Score Result (display score and pre-approval status)
+- [x] Add "Arrange Finance with EVEEVO" button to car detail pages
+- [x] Show finance button prominently for FREE tier dealers (subscriptionStatus !== 'active')
+- [x] Hide/minimize finance button for PAID tier dealers (subscriptionStatus === 'active')
+- [x] Test complete finance check flow end-to-end
+- [x] Verify Evolution Funding API integration works correctly

@@ -376,10 +376,17 @@ export default function CarDetail() {
                     />
                   )}
 
-                  <Button variant="outline" className="w-full" size="lg">
-                    <DollarSign className="w-4 h-4 mr-2" />
-                    Get Finance Quote
-                  </Button>
+                  {/* Show prominent finance button for FREE tier dealers, hide for PAID dealers */}
+                  {car.dealer?.subscriptionStatus !== 'active' && (
+                    <Button 
+                      className="w-full bg-green-600 hover:bg-green-700 text-white" 
+                      size="lg"
+                      onClick={() => navigate(`/finance-check?carId=${car.id}`)}
+                    >
+                      <DollarSign className="w-4 h-4 mr-2" />
+                      Arrange Finance with EVEEVO
+                    </Button>
+                  )}
 
                   <div className="pt-4 space-y-2 text-sm text-muted-foreground">
                     <p>✓ Free test drive</p>

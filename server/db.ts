@@ -376,6 +376,9 @@ export async function createFinanceApplication(data: {
   depositAmount?: number;
   term?: number;
   applicantData?: Record<string, any>;
+  externalApplicationId?: string;
+  responseData?: Record<string, any>;
+  status?: 'draft' | 'submitted' | 'approved' | 'rejected';
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
