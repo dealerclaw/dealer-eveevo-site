@@ -297,3 +297,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add Admin dropdown menu to Header (visible only to admin users)
 - [x] Include Applications link in admin menu
 - [x] Test admin menu visibility
+
+## Admin Role Update
+- [x] Update anthony.m.perry@gmail.com to admin role
+
+## My Reservations Page
+- [x] Create My Reservations page component
+- [x] Add route for /reservations
+- [x] Display user's vehicle reservations
+- [x] Test reservations page

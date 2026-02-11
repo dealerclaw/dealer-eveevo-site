@@ -256,8 +256,24 @@ export async function getUserReservations(userId: number) {
   if (!db) return [];
 
   return await db
-    .select()
+    .select({
+      id: reservations.id,
+      userId: reservations.userId,
+      carId: reservations.carId,
+      dealerId: reservations.dealerId,
+      status: reservations.status,
+      reservationDate: reservations.reservationDate,
+      viewingDate: reservations.viewingDate,
+      userName: reservations.userName,
+      userEmail: reservations.userEmail,
+      userPhone: reservations.userPhone,
+      notes: reservations.notes,
+      createdAt: reservations.createdAt,
+      updatedAt: reservations.updatedAt,
+      car: cars,
+    })
     .from(reservations)
+    .leftJoin(cars, eq(reservations.carId, cars.id))
     .where(eq(reservations.userId, userId))
     .orderBy(desc(reservations.createdAt));
 }

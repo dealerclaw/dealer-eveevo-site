@@ -20,6 +20,7 @@ import BulkUpload from "./pages/dealer/BulkUpload";
 import DealerAuthGuard from "./components/DealerAuthGuard";
 import AdminApplications from "./pages/AdminApplications";
 import BecomeADealer from "./pages/BecomeADealer";
+import MyReservations from "./pages/MyReservations";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path="/compare" component={Compare} />
       <Route path="/become-a-dealer" component={BecomeADealer} />
+      <Route path="/reservations" component={MyReservations} />
       <Route path="/dealer/dashboard">
         <DealerAuthGuard>
           <DealerDashboard />
