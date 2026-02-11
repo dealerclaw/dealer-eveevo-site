@@ -314,3 +314,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Build dealer calendar view page in dealer portal
 - [x] Add navigation link to dealer calendar
 - [x] Test complete booking flow
+
+## Test Drive Enhancements
+- [x] Add Book Test Drive button to car cards in Browse page
+- [x] Add Google Calendar export button to dealer test drive calendar
+- [x] Generate .ics file for individual bookings
+- [x] Test both features

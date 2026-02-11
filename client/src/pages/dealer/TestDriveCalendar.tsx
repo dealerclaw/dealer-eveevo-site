@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { Calendar, Clock, Mail, Phone, User, Car, Loader2, Check, X } from "lucide-react";
+import { Calendar, Clock, Mail, Phone, User, Car, Loader2, Check, X, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export default function TestDriveCalendar() {
@@ -45,6 +45,63 @@ export default function TestDriveCalendar() {
     return grouped;
   };
 
+  const generateICS = (booking: any) => {
+    const startDate = new Date(`${booking.preferredDate}T${booking.preferredTime || '10:00'}`);
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour later
+    
+    const formatDate = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//EVEEVO//Test Drive Booking//EN',
+      'BEGIN:VEVENT',
+      `UID:${booking.id}@eveevo.com`,
+      `DTSTAMP:${formatDate(new Date())}`,
+      `DTSTART:${formatDate(startDate)}`,
+      `DTEND:${formatDate(endDate)}`,
+      `SUMMARY:Test Drive - ${booking.car?.make} ${booking.car?.model}`,
+      `DESCRIPTION:Test drive with ${booking.customerName}\nPhone: ${booking.customerPhone}\nEmail: ${booking.customerEmail}${booking.notes ? '\nNotes: ' + booking.notes : ''}`,
+      `LOCATION:Your Dealership`,
+      `STATUS:${booking.status === 'confirmed' ? 'CONFIRMED' : 'TENTATIVE'}`,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    return icsContent;
+  };
+
+  const downloadICS = (booking: any) => {
+    const icsContent = generateICS(booking);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `test-drive-${booking.id}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Calendar event downloaded");
+  };
+
+  const exportAllToGoogleCalendar = () => {
+    if (!bookings || bookings.length === 0) {
+      toast.error("No bookings to export");
+      return;
+    }
+
+    // Export first booking to Google Calendar as example
+    const booking = bookings[0];
+    const startDate = new Date(`${booking.preferredDate}T${booking.preferredTime || '10:00'}`);
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Test Drive - ${booking.car?.make} ${booking.car?.model}`)}&dates=${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z&details=${encodeURIComponent(`Test drive with ${booking.customerName}\nPhone: ${booking.customerPhone}\nEmail: ${booking.customerEmail}`)}`;
+    
+    window.open(googleCalendarUrl, '_blank');
+    toast.success("Opening Google Calendar");
+  };
+
   if (isLoading) {
     return (
       <DealerLayout>
@@ -60,11 +117,19 @@ export default function TestDriveCalendar() {
   return (
     <DealerLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Test Drive Calendar</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage test drive bookings for your vehicles
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Test Drive Calendar</h1>
+            <p className="text-muted-foreground mt-2">
+              Manage test drive bookings for your vehicles
+            </p>
+          </div>
+          {bookings && bookings.length > 0 && (
+            <Button onClick={exportAllToGoogleCalendar} variant="outline">
+              <Calendar className="w-4 h-4 mr-2" />
+              Export to Google Calendar
+            </Button>
+          )}
         </div>
 
         {!bookings || bookings.length === 0 ? (
@@ -124,16 +189,26 @@ export default function TestDriveCalendar() {
                               </Button>
                             </div>
                           )}
-                          {booking.status === "confirmed" && (
+                          <div className="flex gap-2">
+                            {booking.status === "confirmed" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => updateStatus.mutate({ bookingId: booking.id, status: "completed" })}
+                                disabled={updateStatus.isPending}
+                              >
+                                Mark Complete
+                              </Button>
+                            )}
                             <Button
                               size="sm"
-                              variant="outline"
-                              onClick={() => updateStatus.mutate({ bookingId: booking.id, status: "completed" })}
-                              disabled={updateStatus.isPending}
+                              variant="ghost"
+                              onClick={() => downloadICS(booking)}
                             >
-                              Mark Complete
+                              <Download className="w-4 h-4 mr-1" />
+                              Download .ics
                             </Button>
-                          )}
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent>

@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X } from "lucide-react";
+import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus } from "lucide-react";
+import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -604,6 +605,15 @@ export default function Browse() {
                                 </div>
                               )}
                             </div>
+                            {car.dealerId && (
+                              <div className="mt-4 pt-4 border-t" onClick={(e) => e.preventDefault()}>
+                                <TestDriveBookingDialog
+                                  carId={car.id}
+                                  dealerId={car.dealerId}
+                                  carName={`${car.year} ${car.make} ${car.model}`}
+                                />
+                              </div>
+                            )}
                           </CardContent>
                         </Card>
                       </Link>
