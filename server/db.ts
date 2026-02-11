@@ -11,6 +11,7 @@ import {
   financeApplications,
   carViews,
   carInquiries,
+  dealerApplications,
   type Car,
   type Dealer,
   type Reservation,
@@ -18,7 +19,9 @@ import {
   type SavedSearch,
   type FinanceApplication,
   type CarView,
-  type CarInquiry
+  type CarInquiry,
+  type DealerApplication,
+  type InsertDealerApplication
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -604,4 +607,183 @@ export async function getDealerInquiries(userId: number) {
     .from(carInquiries)
     .where(eq(carInquiries.dealerId, dealer.id))
     .orderBy(desc(carInquiries.createdAt));
+}
+
+/**
+ * Create dealer application
+ */
+export async function createDealerApplication(
+  userId: number,
+  data: Omit<InsertDealerApplication, 'userId' | 'id' | 'status' | 'createdAt' | 'updatedAt'>
+): Promise<DealerApplication> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(dealerApplications).values({
+    userId,
+    ...data,
+  });
+
+  const applicationId = Number(result[0].insertId);
+  const applications = await db
+    .select()
+    .from(dealerApplications)
+    .where(eq(dealerApplications.id, applicationId))
+    .limit(1);
+
+  if (!applications || applications.length === 0) {
+    throw new Error("Failed to create dealer application");
+  }
+
+  return applications[0];
+}
+
+/**
+ * Get dealer applications (for admin)
+ */
+export async function getDealerApplications(filters?: {
+  status?: 'pending' | 'approved' | 'rejected';
+  limit?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let query = db.select().from(dealerApplications);
+
+  if (filters?.status) {
+    query = query.where(eq(dealerApplications.status, filters.status)) as any;
+  }
+
+  query = query.orderBy(desc(dealerApplications.createdAt)) as any;
+
+  if (filters?.limit) {
+    query = query.limit(filters.limit) as any;
+  }
+
+  return await query;
+}
+
+/**
+ * Get dealer by Stripe customer ID
+ */
+export async function getDealerByStripeCustomerId(stripeCustomerId: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(dealers)
+    .where(eq(dealers.stripeCustomerId, stripeCustomerId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Update dealer subscription information
+ */
+export async function updateDealerSubscription(
+  dealerId: number,
+  data: {
+    subscriptionStatus?: 'none' | 'active' | 'expired';
+    subscriptionExpiresAt?: Date | null;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(dealers).set(data).where(eq(dealers.id, dealerId));
+  return { success: true };
+}
+
+/**
+ * Get dealer analytics
+ */
+export async function getDealerAnalytics(dealerId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get total vehicles
+  const vehiclesResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(cars)
+    .where(eq(cars.dealerId, dealerId));
+  const totalVehicles = vehiclesResult[0]?.count || 0;
+
+  // Get total views
+  const viewsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carViews)
+    .innerJoin(cars, eq(carViews.carId, cars.id))
+    .where(eq(cars.dealerId, dealerId));
+  const totalViews = viewsResult[0]?.count || 0;
+
+  // Get total inquiries
+  const inquiriesResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carInquiries)
+    .where(eq(carInquiries.dealerId, dealerId));
+  const totalInquiries = inquiriesResult[0]?.count || 0;
+
+  // Get WhatsApp contacts (approximate from inquiries with type)
+  const whatsappResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carInquiries)
+    .where(and(
+      eq(carInquiries.dealerId, dealerId),
+      eq(carInquiries.inquiryType, 'general')
+    ));
+  const whatsappContacts = whatsappResult[0]?.count || 0;
+
+  // Get recent activity (last 30 days)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const recentViewsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carViews)
+    .innerJoin(cars, eq(carViews.carId, cars.id))
+    .where(and(
+      eq(cars.dealerId, dealerId),
+      gte(carViews.createdAt, thirtyDaysAgo)
+    ));
+  const recentViews = recentViewsResult[0]?.count || 0;
+
+  const recentInquiriesResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(carInquiries)
+    .where(and(
+      eq(carInquiries.dealerId, dealerId),
+      gte(carInquiries.createdAt, thirtyDaysAgo)
+    ));
+  const recentInquiries = recentInquiriesResult[0]?.count || 0;
+
+  // Get top viewed vehicles
+  const topVehicles = await db
+    .select({
+      carId: cars.id,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      views: sql<number>`count(${carViews.id})`,
+    })
+    .from(cars)
+    .leftJoin(carViews, eq(carViews.carId, cars.id))
+    .where(eq(cars.dealerId, dealerId))
+    .groupBy(cars.id, cars.make, cars.model, cars.year)
+    .orderBy(desc(sql`count(${carViews.id})`))
+    .limit(5);
+
+  return {
+    totalVehicles,
+    totalViews,
+    totalInquiries,
+    whatsappContacts,
+    recentViews,
+    recentInquiries,
+    conversionRate: totalViews > 0 ? ((totalInquiries / totalViews) * 100).toFixed(2) : '0.00',
+    topVehicles,
+  };
 }

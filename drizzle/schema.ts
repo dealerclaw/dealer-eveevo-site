@@ -201,6 +201,31 @@ export const carInquiries = mysqlTable("carInquiries", {
   inquiryType: mysqlEnum("inquiryType", ["test_drive", "price_inquiry", "general", "finance"]).default("general"),
   status: mysqlEnum("status", ["new", "contacted", "closed"]).default("new"),
   
+   createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+/**
+ * Dealer applications table
+ */
+export const dealerApplications = mysqlTable("dealerApplications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id),
+  
+  // Application details
+  businessName: text("businessName").notNull(),
+  contactName: text("contactName").notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 20 }).notNull(),
+  address: text("address").notNull(),
+  description: text("description").notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -218,3 +243,5 @@ export type SavedSearch = typeof savedSearches.$inferSelect;
 export type FinanceApplication = typeof financeApplications.$inferSelect;
 export type CarView = typeof carViews.$inferSelect;
 export type CarInquiry = typeof carInquiries.$inferSelect;
+export type DealerApplication = typeof dealerApplications.$inferSelect;
+export type InsertDealerApplication = typeof dealerApplications.$inferInsert;

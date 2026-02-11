@@ -251,3 +251,33 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Pre-fill WhatsApp message with vehicle details
 - [x] Test login flow for dealer access
 - [x] Test WhatsApp integration
+
+## Dealer Application Email Notifications
+- [x] Create dealerApplications table in database schema
+- [x] Update dealer.submitApplication endpoint to store applications
+- [x] Send email notification to anthony.perry@eveevo.com on new applications
+- [x] Test dealer application form submission
+- [x] Test email delivery
+
+## Stripe Webhook Handler
+- [x] Create /api/stripe/webhook endpoint
+- [x] Handle customer.subscription.created event
+- [x] Handle customer.subscription.updated event
+- [x] Handle customer.subscription.deleted event
+- [x] Update dealer subscription status in database
+- [x] Test webhook with Stripe test events
+
+## Dealer Analytics Dashboard
+- [x] Add analytics queries to db.ts (views, inquiries, conversions)
+- [x] Create analytics endpoint in dealer router
+- [x] Build analytics UI component with charts
+- [x] Add analytics navigation to dealer sidebar
+- [x] Test analytics data display
+
+## Bulk Vehicle Upload
+- [x] Create CSV/Excel parser utility
+- [x] Build upload UI with file picker and validation
+- [x] Add progress indicator for bulk uploads
+- [x] Add bulk upload navigation to dealer sidebar
+- [x] Create downloadable CSV template
+- [x] Test CSV upload with sample data

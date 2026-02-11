@@ -486,18 +486,19 @@ export const appRouter = router({
         description: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Store dealer application
-        // For now, we'll just log it and return success
-        // In production, you'd store this in a dealer_applications table
-        console.log('Dealer application received:', {
-          userId: ctx.user.id,
-          ...input,
+        // Store dealer application in database
+        const application = await db.createDealerApplication(ctx.user.id, input);
+        
+        // Send email notification to admin
+        const { sendDealerApplicationEmail } = await import('./_core/email');
+        await sendDealerApplicationEmail(input);
+        
+        console.log('[Dealer Application] New application submitted:', {
+          id: application.id,
+          businessName: input.businessName,
         });
         
-        // TODO: Store in database and notify admin
-        // await db.createDealerApplication(ctx.user.id, input);
-        
-        return { success: true };
+        return { success: true, applicationId: application.id };
       }),
 
     // Subscription management
@@ -568,6 +569,21 @@ export const appRouter = router({
           status: dealer.subscriptionStatus || 'none',
           expiresAt: dealer.subscriptionExpiresAt,
         };
+      }),
+
+    // Analytics
+    getAnalytics: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        return await db.getDealerAnalytics(dealer.id);
       }),
 
     // Dealer marketplace
