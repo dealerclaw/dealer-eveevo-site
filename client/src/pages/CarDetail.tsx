@@ -19,6 +19,7 @@ import {
   Clock,
   DollarSign,
   Loader2,
+  MessageCircle,
 } from "lucide-react";
 import RebeccaChat from "@/components/RebeccaChat";
 import { useState, useEffect } from "react";
@@ -348,6 +349,24 @@ export default function CarDetail() {
                     ) : (
                       "Reserve for £99"
                     )}
+                  </Button>
+
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    size="lg"
+                    onClick={() => {
+                      if (car.dealer?.whatsappNumber) {
+                        const message = `Hi, I'm interested in your ${car.year} ${car.make} ${car.model} listed on EVEEVO for £${car.price ? parseFloat(car.price.toString()).toLocaleString() : 'N/A'}`;
+                        const whatsappUrl = `https://wa.me/${car.dealer.whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+                        window.open(whatsappUrl, '_blank');
+                      } else {
+                        toast.error('WhatsApp contact not available for this dealer');
+                      }
+                    }}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Contact Dealer via WhatsApp
                   </Button>
 
                   <Button variant="outline" className="w-full" size="lg">

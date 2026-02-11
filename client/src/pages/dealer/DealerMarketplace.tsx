@@ -1,8 +1,9 @@
 import { trpc } from "@/lib/trpc";
+import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ShoppingCart, Lock, CreditCard } from "lucide-react";
+import { Loader2, ShoppingCart, Lock, CreditCard, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
@@ -37,15 +38,43 @@ export default function DealerMarketplace() {
     createSubscription.mutate();
   };
 
-  if (!user || user.role !== 'dealer') {
+  if (!user) {
     return (
       <DealerLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
           <Card className="max-w-md">
             <CardHeader>
-              <CardTitle>Access Denied</CardTitle>
-              <CardDescription>You must be a dealer to access this page.</CardDescription>
+              <CardTitle>Login Required</CardTitle>
+              <CardDescription>Please log in to access the dealer marketplace.</CardDescription>
             </CardHeader>
+            <CardContent>
+              <Button className="w-full" onClick={() => window.location.href = getLoginUrl()}>
+                Log In
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </DealerLayout>
+    );
+  }
+
+  if (user.role !== 'dealer') {
+    return (
+      <DealerLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Card className="max-w-md">
+            <CardHeader>
+              <CardTitle>Dealer Access Required</CardTitle>
+              <CardDescription>This page is only accessible to verified dealers.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                If you're a dealer, please apply for dealer access.
+              </p>
+              <Button className="w-full" onClick={() => navigate('/become-a-dealer')}>
+                Become a Dealer
+              </Button>
+            </CardContent>
           </Card>
         </div>
       </DealerLayout>
@@ -227,9 +256,19 @@ export default function DealerMarketplace() {
                       </div>
                     )}
                   </div>
-                  <Button className="w-full mt-4" onClick={() => navigate(`/car/${car.id}`)}>
-                    View Details
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                    <Button variant="outline" className="flex-1" onClick={() => {
+                      const message = `Hi, I'm interested in your ${car.year} ${car.make} ${car.model} listed on EVEEVO Dealer Marketplace for £${car.price ? parseFloat(car.price.toString()).toLocaleString() : 'N/A'}`;
+                      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                      window.open(whatsappUrl, '_blank');
+                    }}>
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      WhatsApp
+                    </Button>
+                    <Button className="flex-1" onClick={() => navigate(`/car/${car.id}`)}>
+                      View Details
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}

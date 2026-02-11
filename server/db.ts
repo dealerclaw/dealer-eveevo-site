@@ -189,8 +189,22 @@ export async function getCarById(id: number) {
   const db = await getDb();
   if (!db) return null;
 
-  const result = await db.select().from(cars).where(eq(cars.id, id)).limit(1);
-  return result.length > 0 ? result[0] : null;
+  const result = await db
+    .select({
+      car: cars,
+      dealer: dealers,
+    })
+    .from(cars)
+    .leftJoin(dealers, eq(cars.dealerId, dealers.id))
+    .where(eq(cars.id, id))
+    .limit(1);
+  
+  if (result.length === 0) return null;
+  
+  return {
+    ...result[0].car,
+    dealer: result[0].dealer,
+  };
 }
 
 export async function getCarsByIds(ids: number[]) {

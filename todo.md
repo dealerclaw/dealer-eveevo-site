@@ -243,3 +243,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Test subscription payment flow
 - [x] Test moving cars between marketplaces
 - [x] Test dealer marketplace visibility (only subscribed dealers can see)
+
+## Dealer Marketplace Login & WhatsApp Integration
+- [x] Add login button to dealer marketplace access denied page
+- [x] Add WhatsApp contact buttons to dealer marketplace vehicle cards
+- [x] Add WhatsApp contact buttons to consumer vehicle detail pages
+- [x] Pre-fill WhatsApp message with vehicle details
+- [x] Test login flow for dealer access
+- [x] Test WhatsApp integration
