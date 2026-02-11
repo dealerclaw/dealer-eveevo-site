@@ -65,14 +65,16 @@ export default function CarDetail() {
     }
   }, [car, id]);
 
-  // Reservation mutation
-  const createReservation = trpc.reservations.create.useMutation({
-    onSuccess: () => {
-      toast.success("Reservation created successfully!");
-      navigate("/dashboard/reservations");
+  // Stripe checkout mutation
+  const createCheckout = trpc.reservations.createCheckout.useMutation({
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        toast.info("Redirecting to secure payment...");
+        window.open(data.checkoutUrl, '_blank');
+      }
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to create reservation");
+      toast.error(error.message || "Failed to create checkout session");
     },
   });
 
@@ -84,9 +86,8 @@ export default function CarDetail() {
 
     if (!car) return;
 
-    createReservation.mutate({
+    createCheckout.mutate({
       carId: car.id,
-      reservationDate: new Date(),
     });
   };
 
@@ -335,17 +336,17 @@ export default function CarDetail() {
                     className="w-full"
                     size="lg"
                     onClick={handleReserve}
-                    disabled={!car.isAvailable || createReservation.isPending}
+                    disabled={!car.isAvailable || createCheckout.isPending}
                   >
-                    {createReservation.isPending ? (
+                    {createCheckout.isPending ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Reserving...
+                        Processing...
                       </>
                     ) : !car.isAvailable ? (
                       "Not Available"
                     ) : (
-                      "Reserve Now"
+                      "Reserve for £99"
                     )}
                   </Button>
 

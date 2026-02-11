@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO dealers (name, email, phone, address, city, postcode, isVerified, createdAt, updatedAt)\nVALUES (\n  'Anthony Perry Motors',\n  'anthony.m.perry@gmail.com',\n  '555-0123',\n  '123 Main Street',\n  'Los Angeles',\n  '90001',\n  true,\n  NOW(),\n  NOW()\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute INSERT INTO dealers (name, email, phone, address, city, postcode, isVerified, createdAt, updatedAt)\nVALUES (\n  'Anthony Perry Motors',\n  'anthony.m.perry@gmail.com',\n  '555-0123',\n  '123 Main Street',\n  'Los Angeles',\n  '90001',\n  true,\n  NOW(),\n  NOW()\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 394
+}

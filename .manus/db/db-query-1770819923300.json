@@ -1,0 +1,30 @@
+{
+  "query": "SELECT u.id, u.openId, u.name, u.email, u.role, d.id as dealerId, d.name as dealerName, d.isVerified\nFROM users u\nLEFT JOIN dealers d ON u.id = d.userId\nWHERE u.email = 'anthony.m.perry@gmail.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT u.id, u.openId, u.name, u.email, u.role, d.id as dealerId, d.name as dealerName, d.isVerified\nFROM users u\nLEFT JOIN dealers d ON u.id = d.userId\nWHERE u.email = 'anthony.m.perry@gmail.com';",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "QzpBnhhytn6jJTKW5uUPFd",
+      "name": "Anthony Perry",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "dealerId": "1",
+      "dealerName": "Anthony Perry Motors",
+      "isVerified": "1"
+    },
+    {
+      "id": "420012",
+      "openId": "anthony.m.perry@gmail.com",
+      "name": "Anthony Perry",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "dealer",
+      "dealerId": "NULL",
+      "dealerName": "NULL",
+      "isVerified": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\tdealerId\tdealerName\tisVerified\n1\tQzpBnhhytn6jJTKW5uUPFd\tAnthony Perry\tanthony.m.perry@gmail.com\tadmin\t1\tAnthony Perry Motors\t1\n420012\tanthony.m.perry@gmail.com\tAnthony Perry\tanthony.m.perry@gmail.com\tdealer\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 370
+}

@@ -7,6 +7,8 @@ import * as db from "./db";
 import * as evDb from "./evDatabase";
 import { syncRouter } from "./syncRouter";
 import { importRouter } from "./importCars";
+import Stripe from "stripe";
+import { PRODUCTS } from "./products";
 
 export const appRouter = router({
   system: systemRouter,
@@ -96,6 +98,57 @@ export const appRouter = router({
         return await db.getUserReservations(ctx.user.id);
       }),
 
+    createCheckout: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        
+        // Get car details
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+
+        const product = PRODUCTS.VEHICLE_RESERVATION;
+        
+        // Create Stripe checkout session
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: [
+            {
+              price_data: {
+                currency: product.currency,
+                product_data: {
+                  name: product.name,
+                  description: `${product.description} - ${car.make} ${car.model}`,
+                  metadata: product.metadata,
+                },
+                unit_amount: product.price,
+              },
+              quantity: 1,
+            },
+          ],
+          mode: 'payment',
+          success_url: `${ctx.req.headers.origin}/reservation/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${ctx.req.headers.origin}/car/${input.carId}`,
+          customer_email: ctx.user.email || undefined,
+          client_reference_id: ctx.user.id.toString(),
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            customer_email: ctx.user.email || '',
+            customer_name: ctx.user.name || '',
+            car_id: input.carId.toString(),
+            car_make: car.make,
+            car_model: car.model,
+          },
+          allow_promotion_codes: true,
+        });
+
+        return { checkoutUrl: session.url };
+      }),
+
     create: protectedProcedure
       .input(z.object({
         carId: z.number(),
@@ -106,6 +159,7 @@ export const appRouter = router({
         userEmail: z.string().email().optional(),
         userPhone: z.string().optional(),
         notes: z.string().optional(),
+        stripeSessionId: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         return await db.createReservation({

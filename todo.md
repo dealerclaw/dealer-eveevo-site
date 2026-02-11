@@ -220,3 +220,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add navigation links for Dashboard, My Inventory, Add Vehicle
 - [x] Update all dealer pages to use DealerLayout wrapper
 - [x] Test dealer navigation works correctly
+
+## Test Dealer Account
+- [x] Add test dealer account for anthony.m.perry@gmail.com
+- [x] Verify dealer can access dealer portal
+
+## Stripe Reservation Payment
+- [x] Add Stripe feature to project
+- [x] Configure Stripe for £99 reservation payments
+- [x] Update Reserve button to create Stripe checkout session
+- [x] Test reservation payment flow
