@@ -375,6 +375,8 @@ export async function createFinanceApplication(data: {
   loanAmount?: number;
   depositAmount?: number;
   term?: number;
+  preApprovedAmount?: number;
+  creditScore?: number;
   applicantData?: Record<string, any>;
   externalApplicationId?: string;
   responseData?: Record<string, any>;
@@ -389,6 +391,9 @@ export async function createFinanceApplication(data: {
   }
   if (data.depositAmount !== undefined) {
     insertData.depositAmount = data.depositAmount.toString();
+  }
+  if (data.preApprovedAmount !== undefined) {
+    insertData.preApprovedAmount = data.preApprovedAmount.toString();
   }
 
   const result = await db.insert(financeApplications).values(insertData);

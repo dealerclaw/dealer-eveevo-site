@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import RebeccaChat from "@/components/RebeccaChat";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
+import FinanceCalculator from "@/components/FinanceCalculator";
 import CarImageGallery from "@/components/CarImageGallery";
 import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
@@ -274,8 +275,8 @@ export default function CarDetail() {
               )}
             </div>
 
-            {/* Right column - Reservation card */}
-            <div className="lg:col-span-1">
+            {/* Right column - Reservation card and Finance Calculator */}
+            <div className="lg:col-span-1 space-y-6">
               <Card className="sticky top-8">
                 <CardHeader>
                   <CardTitle>Reserve This Vehicle</CardTitle>
@@ -372,6 +373,14 @@ export default function CarDetail() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Finance Calculator */}
+              {car.price && (
+                <FinanceCalculator 
+                  vehiclePrice={parseInt(car.price)} 
+                  carId={car.id}
+                />
+              )}
             </div>
           </div>
         </div>

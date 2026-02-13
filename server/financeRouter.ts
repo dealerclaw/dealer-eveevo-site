@@ -95,6 +95,8 @@ export const financeRouter = router({
         loanAmount: input.vehiclePrice ? input.vehiclePrice - (input.deposit || 0) : undefined,
         depositAmount: input.deposit,
         term: input.term,
+        preApprovedAmount: result.preApprovedAmount || result.maxLoanAmount,
+        creditScore: result.creditScore,
         applicantData: {
           title: input.title,
           firstName: input.firstName,

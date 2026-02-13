@@ -159,6 +159,8 @@ export const financeApplications = mysqlTable("financeApplications", {
   depositAmount: decimal("depositAmount", { precision: 10, scale: 2 }),
   term: int("term"), // in months
   monthlyPayment: decimal("monthlyPayment", { precision: 10, scale: 2 }),
+  preApprovedAmount: decimal("preApprovedAmount", { precision: 10, scale: 2 }), // Max amount user can borrow
+  creditScore: int("creditScore"), // Credit score from Evolution Funding
   
   // Applicant info
   applicantData: json("applicantData").$type<Record<string, any>>(),

@@ -29,6 +29,8 @@ interface FinanceCheckResponse {
   success: boolean;
   creditScore?: number;
   preApproved?: boolean;
+  preApprovedAmount?: number;
+  maxLoanAmount?: number;
   validUntil?: string;
   message?: string;
   applicationReference?: string;

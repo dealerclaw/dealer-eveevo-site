@@ -439,3 +439,24 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - ✅ Added finance options comparison (PCP, HP, Personal Loan)
 - ✅ Included benefits grid and FAQ section
 - ✅ Finance tab in header now works correctly
+
+## Finance Calculator Widget
+- [x] Create FinanceCalculator component with deposit and term inputs
+- [x] Calculate monthly payments based on car price, deposit, term, and APR
+- [x] Add finance calculator to CarDetail page sidebar
+- [x] Show estimated monthly payment prominently
+- [x] Include disclaimer about rates and final approval
+
+## Finance Approved Badges
+- [x] Store user's pre-approved amount after credit check (preApprovedAmount + creditScore in DB)
+- [x] Create "Finance Approved" badge component
+- [ ] Show badge on Browse page for cars within budget (pending: need to fetch user's pre-approval)
+- [ ] Show badge on CarDetail page for affordable cars (pending: need to fetch user's pre-approval)
+- [ ] Add filter option to show only finance-approved cars (pending)
+
+## Dealer Lead Notifications
+- [ ] Create notification system for finance check completions
+- [ ] Send real-time notification to dealer when customer checks finance on their car
+- [ ] Include customer contact info and pre-approval details in notification
+- [ ] Add notification preferences to dealer dashboard
+- [ ] Track notification delivery and read status
