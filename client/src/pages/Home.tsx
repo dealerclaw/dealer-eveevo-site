@@ -204,7 +204,7 @@ export default function Home() {
               <h2 className="text-3xl font-bold">Featured Electric Vehicles</h2>
               <Button asChild variant="outline">
                 <Link href="/browse">
-                  <a>View All</a>
+                  View All
                 </Link>
               </Button>
             </div>
@@ -358,13 +358,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" variant="secondary">
                 <Link href="/browse">
-                  <a>Browse All EVs</a>
+                  Browse All EVs
                 </Link>
               </Button>
               {!isAuthenticated && (
                 <Button asChild size="lg" variant="outline" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
                   <Link href="/browse">
-                    <a>Create Account</a>
+                    Create Account
                   </Link>
                 </Button>
               )}
@@ -386,16 +386,16 @@ export default function Home() {
             <div>
               <h3 className="font-semibold mb-4">Browse</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/browse"><a className="text-muted-foreground hover:text-foreground">All EVs</a></Link></li>
-                <li><Link href="/dealer/dashboard"><a className="text-muted-foreground hover:text-foreground">Dealers</a></Link></li>
-                <li><Link href="/compare"><a className="text-muted-foreground hover:text-foreground">Compare</a></Link></li>
+                <li><Link href="/browse" className="text-muted-foreground hover:text-foreground">All EVs</Link></li>
+                <li><Link href="/dealer/dashboard" className="text-muted-foreground hover:text-foreground">Dealers</Link></li>
+                <li><Link href="/compare" className="text-muted-foreground hover:text-foreground">Compare</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/finance"><a className="text-muted-foreground hover:text-foreground">Finance</a></Link></li>
-                <li><Link href="/lifestyle-search"><a className="text-muted-foreground hover:text-foreground">Lifestyle Search</a></Link></li>
+                <li><Link href="/finance" className="text-muted-foreground hover:text-foreground">Finance</Link></li>
+                <li><Link href="/lifestyle-search" className="text-muted-foreground hover:text-foreground">Lifestyle Search</Link></li>
               </ul>
             </div>
             <div>

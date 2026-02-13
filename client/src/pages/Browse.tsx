@@ -540,7 +540,7 @@ export default function Browse() {
                                 variant="secondary"
                                 className="rounded-full"
                                 onClick={(e) => {
-                                  e.preventDefault();
+                                  e.stopPropagation();
                                   // TODO: Add to favorites
                                 }}
                               >
@@ -613,7 +613,7 @@ export default function Browse() {
                               )}
                             </div>
                             {car.dealerId && (
-                              <div className="mt-4 pt-4 border-t" onClick={(e) => e.preventDefault()}>
+                              <div className="mt-4 pt-4 border-t" onClick={(e) => e.stopPropagation()}>
                                 <TestDriveBookingDialog
                                   carId={car.id}
                                   dealerId={car.dealerId}
