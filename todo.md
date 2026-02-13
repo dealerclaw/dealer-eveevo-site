@@ -684,3 +684,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update LiveAuction component to make images smaller (changed from aspect-video to h-64)
 - [x] Ensure price and details are clearly visible
 - [x] Test layout looks balanced
+
+## Add Subscription Payment Requirement for Bidding
+- [x] Check dealer subscription status before allowing bids
+- [x] Redirect to subscription payment page if not subscribed
+- [x] Backend already validates active subscription before accepting bids
+- [x] Test bid placement requires active subscription

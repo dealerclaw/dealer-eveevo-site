@@ -17,6 +17,9 @@ export default function LiveAuction() {
   const [timeLeft, setTimeLeft] = useState(60); // 60 seconds per vehicle
 
   const { data: vehicles, isLoading, refetch } = trpc.auction.getActiveVehicles.useQuery();
+  const { data: subscriptionStatus } = trpc.dealer.getSubscriptionStatus.useQuery(undefined, {
+    enabled: !!user,
+  });
   const placeBidMutation = trpc.auction.placeBid.useMutation({
     onSuccess: () => {
       toast.success("Bid placed successfully!");
@@ -72,6 +75,13 @@ export default function LiveAuction() {
     if (!user) {
       toast.error("Please log in to place bids");
       window.location.href = getLoginUrl();
+      return;
+    }
+
+    // Check if dealer has active subscription
+    if (!subscriptionStatus || subscriptionStatus.status !== 'active') {
+      toast.error("Active subscription required to place bids");
+      window.location.href = "/dealer/subscription";
       return;
     }
 
