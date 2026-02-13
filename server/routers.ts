@@ -734,11 +734,24 @@ export const appRouter = router({
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        const bookingDate = new Date(input.preferredDate);
+        
+        // Check if time slot is available
+        const isAvailable = await db.checkTestDriveAvailability(
+          input.dealerId,
+          bookingDate,
+          input.preferredTime
+        );
+        
+        if (!isAvailable) {
+          throw new Error('This time slot is already booked. Please select a different time.');
+        }
+        
         await db.createTestDriveBooking({
           userId: ctx.user.id,
           carId: input.carId,
           dealerId: input.dealerId,
-          preferredDate: new Date(input.preferredDate),
+          preferredDate: bookingDate,
           preferredTime: input.preferredTime,
           customerName: input.customerName,
           customerEmail: input.customerEmail,
@@ -776,6 +789,15 @@ export const appRouter = router({
         await db.updateTestDriveBookingStatus(input.bookingId, input.status);
         
         return { success: true };
+      }),
+
+    getBookedSlots: publicProcedure
+      .input(z.object({
+        dealerId: z.number(),
+        date: z.string(), // Format: YYYY-MM-DD
+      }))
+      .query(async ({ input }) => {
+        return await db.getBookedTimeSlots(input.dealerId, new Date(input.date));
       }),
   }),
 });

@@ -615,3 +615,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix all remaining nested anchor issues (Header.tsx, Home.tsx, Browse.tsx)
 - [x] Verify no more React DOM nesting errors in console
 - [x] Test drive booking dialog now works correctly on Browse page
+
+## Prevent Test Drive Double-Booking
+- [x] Add backend validation to check for existing bookings at same dealer/date/time
+- [x] Return error if time slot is already booked
+- [x] Update frontend calendar to fetch and display booked time slots
+- [x] Disable already-booked time slots in the UI
+- [x] Show visual indicator for unavailable times
+- [x] Test that double-booking is prevented

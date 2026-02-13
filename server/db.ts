@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, like, inArray, desc, sql } from "drizzle-orm";
+import { eq, and, gte, lte, like, inArray, desc, sql, ne } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -884,6 +884,48 @@ export async function createDealer(
 }
 
 // Test Drive Booking queries
+export async function checkTestDriveAvailability(dealerId: number, preferredDate: Date, preferredTime: string) {
+  const db = await getDb();
+  if (!db) return true; // If DB not available, allow booking
+
+  // Check for existing bookings at the same dealer, date, and time
+  const existing = await db
+    .select()
+    .from(testDriveBookings)
+    .where(
+      and(
+        eq(testDriveBookings.dealerId, dealerId),
+        eq(testDriveBookings.preferredDate, preferredDate),
+        eq(testDriveBookings.preferredTime, preferredTime),
+        // Only count bookings that aren't cancelled
+        ne(testDriveBookings.status, 'cancelled')
+      )
+    )
+    .limit(1);
+
+  return existing.length === 0; // Available if no existing bookings
+}
+
+export async function getBookedTimeSlots(dealerId: number, date: Date) {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Get all bookings for this dealer on this date (excluding cancelled)
+  const bookings = await db
+    .select({ preferredTime: testDriveBookings.preferredTime })
+    .from(testDriveBookings)
+    .where(
+      and(
+        eq(testDriveBookings.dealerId, dealerId),
+        eq(testDriveBookings.preferredDate, date),
+        ne(testDriveBookings.status, 'cancelled')
+      )
+    );
+
+  // Return array of booked time strings
+  return bookings.map(b => b.preferredTime);
+}
+
 export async function createTestDriveBooking(data: InsertTestDriveBooking) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

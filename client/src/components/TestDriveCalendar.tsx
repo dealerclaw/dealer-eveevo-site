@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { format, addDays, isSameDay, startOfDay } from "date-fns";
+import { trpc } from "@/lib/trpc";
 
 interface TimeSlot {
   time: string;
@@ -12,12 +13,23 @@ interface TimeSlot {
 
 interface TestDriveCalendarProps {
   onSelectSlot: (date: Date, time: string) => void;
-  dealerId?: number;
+  dealerId: number;
 }
 
 export default function TestDriveCalendar({ onSelectSlot, dealerId }: TestDriveCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>("");
+
+  // Fetch booked slots for the selected dealer and date
+  const { data: bookedSlots } = trpc.testDrive.getBookedSlots.useQuery(
+    {
+      dealerId,
+      date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
+    },
+    {
+      enabled: !!selectedDate, // Only fetch when date is selected
+    }
+  );
 
   // Generate time slots from 9 AM to 5 PM (every hour)
   const generateTimeSlots = (date: Date | undefined): TimeSlot[] => {
@@ -28,9 +40,9 @@ export default function TestDriveCalendar({ onSelectSlot, dealerId }: TestDriveC
     
     hours.forEach(hour => {
       const time = `${hour.toString().padStart(2, '0')}:00`;
-      // Mock availability - in real app, check against dealer's bookings
-      const available = Math.random() > 0.3; // 70% of slots available
-      slots.push({ time, available });
+      // Check if this time slot is already booked
+      const isBooked = bookedSlots?.includes(time) || false;
+      slots.push({ time, available: !isBooked });
     });
     
     return slots;
@@ -43,6 +55,11 @@ export default function TestDriveCalendar({ onSelectSlot, dealerId }: TestDriveC
       onSelectSlot(selectedDate, selectedTime);
     }
   };
+
+  // Reset selected time when date changes
+  useEffect(() => {
+    setSelectedTime("");
+  }, [selectedDate]);
 
   // Disable past dates
   const disabledDays = {
@@ -88,6 +105,9 @@ export default function TestDriveCalendar({ onSelectSlot, dealerId }: TestDriveC
                     className="w-full"
                   >
                     {slot.time}
+                    {!slot.available && (
+                      <span className="ml-1 text-xs opacity-60">(Booked)</span>
+                    )}
                   </Button>
                 ))}
               </div>
