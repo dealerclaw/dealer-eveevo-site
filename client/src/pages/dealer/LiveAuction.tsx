@@ -182,7 +182,7 @@ export default function LiveAuction() {
           {/* Main Vehicle Display */}
           <div className="lg:col-span-2 space-y-6">
             <Card className="bg-black/40 border-white/10 backdrop-blur-sm overflow-hidden">
-              <div className="relative aspect-video bg-black">
+              <div className="relative h-64 bg-black">
                 {currentVehicle.mainImage ? (
                   <img
                     src={currentVehicle.mainImage}

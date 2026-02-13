@@ -679,3 +679,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Add Images to Auction Vehicles
 - [x] Update auction vehicles with image URLs
 - [x] Test carousel displays images correctly
+
+## Reduce Auction Image Size
+- [x] Update LiveAuction component to make images smaller (changed from aspect-video to h-64)
+- [x] Ensure price and details are clearly visible
+- [x] Test layout looks balanced
