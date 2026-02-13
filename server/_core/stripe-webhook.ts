@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import Stripe from "stripe";
 import * as db from "../db";
+import { notifyOwner } from "./notification";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -105,6 +106,15 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     status: subscriptionStatus,
     expiresAt,
   });
+
+  // Send confirmation notification to owner on first activation
+  if (subscriptionStatus === 'active' && status === 'active') {
+    await notifyOwner({
+      title: `New Dealer Subscription: ${dealer.name}`,
+      content: `Dealer ${dealer.name} (${dealer.email || 'No email'}) has subscribed to the marketplace.\n\nSubscription ID: ${subscriptionId}\nExpires: ${expiresAt?.toLocaleDateString() || 'N/A'}\nDealer ID: ${dealer.id}`,
+    });
+    console.log('[Webhook] Sent subscription confirmation notification');
+  }
 }
 
 /**

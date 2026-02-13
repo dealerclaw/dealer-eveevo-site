@@ -715,3 +715,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add auto-redirect to auction page after subscription success (5 second countdown)
 - [x] Show countdown timer on success page
 - [x] Test redirect works after subscribing
+
+## Subscription Enhancements
+- [x] Add "Skip Wait" button to success page for immediate navigation
+- [x] Send subscription confirmation email after successful payment (notification sent to owner)
+- [x] Create subscription management page at /dealer/subscription/manage
+- [x] Show payment history placeholder (coming soon)
+- [x] Add update payment method UI (functionality coming soon)
+- [x] Add cancel subscription UI (contact support for now)
+- [x] Test all subscription features

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 export default function SubscriptionSuccess() {
   const [, setLocation] = useLocation();
   const [countdown, setCountdown] = useState(5);
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -21,8 +22,15 @@ export default function SubscriptionSuccess() {
       });
     }, 1000);
 
+    setTimerId(timer);
+
     return () => clearInterval(timer);
   }, [setLocation]);
+
+  const handleSkip = () => {
+    if (timerId) clearInterval(timerId);
+    setLocation('/dealer/live-auction');
+  };
 
   return (
     <DealerLayout>
@@ -36,6 +44,9 @@ export default function SubscriptionSuccess() {
             <CardDescription className="text-base">
               Your subscription is now active. Redirecting to Live Auction in {countdown} seconds...
             </CardDescription>
+            <Button onClick={handleSkip} variant="outline" size="sm" className="mt-2">
+              Skip Wait →
+            </Button>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="bg-background rounded-lg p-6 space-y-4">
