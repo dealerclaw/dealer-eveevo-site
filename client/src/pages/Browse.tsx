@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus } from "lucide-react";
+import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus, Images } from "lucide-react";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { Link, useLocation } from "wouter";
@@ -560,6 +560,14 @@ export default function Browse() {
                               <div className="absolute top-2 left-2">
                                 <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
                                   {car.condition === 'new' ? 'New' : 'Used'}
+                                </span>
+                              </div>
+                            )}
+                            {car.images && car.images.length > 1 && (
+                              <div className="absolute bottom-2 left-2">
+                                <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded-full flex items-center gap-1">
+                                  <Images className="w-3 h-3" />
+                                  {car.images.length}
                                 </span>
                               </div>
                             )}

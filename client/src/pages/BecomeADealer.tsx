@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import { Building2, CheckCircle2, Mail, Phone, MapPin } from "lucide-react";
+import { Building2, CheckCircle2, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 
 export default function BecomeADealer() {
   const [, setLocation] = useLocation();
@@ -96,8 +96,27 @@ export default function BecomeADealer() {
             </Card>
           </div>
 
-          {/* Application Form */}
-          <Card>
+          {/* CTA Section */}
+          <Card className="text-center p-8">
+            <CardHeader>
+              <CardTitle className="text-2xl">Ready to Get Started?</CardTitle>
+              <CardDescription>
+                Complete our simple 4-step application process and start selling on EVEEVO
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button size="lg" onClick={() => setLocation("/dealer/onboarding")}>
+                Start Your Application
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                Takes only 5-10 minutes to complete
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Old Quick Contact Form */}
+          <Card className="mt-8">
             <CardHeader>
               <CardTitle>Dealer Application</CardTitle>
               <CardDescription>

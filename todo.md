@@ -390,3 +390,35 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - ✅ Test drive buttons now visible on all car listings
 - ✅ Top dealers: Arnold Clark (1,302 cars), Sytner Group (1,266 cars), Marshall Motor Group (797 cars)
 
+
+## Fix Car Images Display Issue
+- [x] Investigate why images aren't showing on car adverts
+- [x] Check image URL format in database
+- [x] Fix image parsing from photoURLs array
+- [x] Verify images display correctly on Browse and Detail pages
+
+**Fix Applied:** Created script to update all 14,905 cars with mainImage and images array from Excel photoURLs data
+
+## Dealer Profile Pages
+- [x] Create dealer profile page route (/dealers/:id)
+- [x] Display dealer information (name, contact, location, ratings)
+- [x] Show dealer's full car inventory on profile page
+- [x] Add location map integration
+- [x] Add dealer ratings and reviews section
+
+## Car Image Galleries
+- [x] Parse multiple images from photoURLs array
+- [x] Implement image carousel/gallery component
+- [x] Add thumbnail navigation
+- [x] Add fullscreen image viewer
+- [x] Update Browse page to show image count indicator
+- [x] Update Detail page with full gallery
+
+## Automated Dealer Onboarding
+- [x] Create dealer registration page
+- [x] Add business verification form
+- [x] Implement 4-step onboarding wizard with progress tracking
+- [x] Add document upload for business proof
+- [x] Create admin approval workflow (via existing dealer applications system)
+- [ ] Send welcome email after approval (future enhancement)
+- [ ] Add onboarding tutorial for new dealers (future enhancement)

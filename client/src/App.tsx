@@ -24,6 +24,8 @@ import AdminDealers from "./pages/admin/AdminDealers";
 import BecomeADealer from "./pages/BecomeADealer";
 import MyReservations from "./pages/MyReservations";
 import FinanceCheck from "./pages/FinanceCheck";
+import DealerProfile from "./pages/DealerProfile";
+import DealerOnboarding from "./pages/DealerOnboarding";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -38,8 +40,10 @@ function Router() {
       <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path="/compare" component={Compare} />
       <Route path="/become-a-dealer" component={BecomeADealer} />
+      <Route path="/dealer/onboarding" component={DealerOnboarding} />
       <Route path="/reservations" component={MyReservations} />
       <Route path="/finance-check" component={FinanceCheck} />
+      <Route path="/dealers/:id" component={DealerProfile} />
       <Route path="/dealer/dashboard">
         <DealerAuthGuard>
           <DealerDashboard />

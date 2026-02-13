@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import RebeccaChat from "@/components/RebeccaChat";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
+import CarImageGallery from "@/components/CarImageGallery";
 import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -31,7 +32,7 @@ export default function CarDetail() {
   const { id } = useParams();
   const [, navigate] = useLocation();
   const { isAuthenticated, user } = useAuth();
-  const [selectedImage, setSelectedImage] = useState(0);
+
 
   // Fetch car details
   const { data: car, isLoading } = trpc.cars.getById.useQuery(
@@ -121,7 +122,7 @@ export default function CarDetail() {
     );
   }
 
-  const images = car.images && car.images.length > 0 ? car.images : [car.mainImage || "/placeholder-car.jpg"];
+  const images = car.images && car.images.length > 0 ? car.images : (car.mainImage ? [car.mainImage] : []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -139,37 +140,13 @@ export default function CarDetail() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Left column - Images and main info */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Main image */}
-              <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-                <img
-                  src={images[selectedImage]}
-                  alt={`${car.make} ${car.model}`}
-                  className="w-full h-full object-cover"
-                />
-                {!car.isAvailable && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <Badge variant="destructive" className="text-lg px-4 py-2">
-                      Not Available
-                    </Badge>
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnail images */}
-              {images.length > 1 && (
-                <div className="grid grid-cols-4 gap-4">
-                  {images.map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSelectedImage(idx)}
-                      className={`aspect-video rounded-lg overflow-hidden border-2 transition-colors ${
-                        selectedImage === idx ? "border-primary" : "border-transparent"
-                      }`}
-                    >
-                      <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
+              {/* Image Gallery */}
+              <CarImageGallery images={images} make={car.make} model={car.model} />
+              
+              {!car.isAvailable && (
+                <Badge variant="destructive" className="text-lg px-4 py-2 w-full justify-center">
+                  Not Available
+                </Badge>
               )}
 
               {/* Vehicle title and badges */}
