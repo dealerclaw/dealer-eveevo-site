@@ -530,3 +530,20 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - ✅ Updated mutation to use ctx.user?.id || null for userId
 - ✅ Pushed database schema changes successfully
 - ✅ Test drive bookings now work for both authenticated and guest users
+
+## Revert Test Drive to Require Authentication & Fix Button
+- [x] Revert testDrive.create back to protectedProcedure
+- [x] Revert userId to be required (notNull) in testDriveBookings schema
+- [x] Push database schema changes
+- [x] Debug why button doesn't work for authenticated users
+- [x] Check if dialog is opening properly
+- [x] Verify form submission and API call
+- [x] Test complete flow with logged-in user
+
+**Changes Applied:**
+- ✅ Reverted testDrive.create to protectedProcedure (requires authentication)
+- ✅ Reverted userId to notNull in testDriveBookings schema
+- ✅ Pushed database migration (0010_mixed_reaper.sql)
+- ✅ Test drive bookings now require user login (prevents spam/random bookings)
+- ✅ Button and dialog work correctly for authenticated users
+- ✅ Two-step booking flow: 1) Select date/time from calendar, 2) Enter details

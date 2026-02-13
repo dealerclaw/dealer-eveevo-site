@@ -722,7 +722,7 @@ export const appRouter = router({
 
   // Test Drive Bookings router
   testDrive: router({
-    create: publicProcedure
+    create: protectedProcedure
       .input(z.object({
         carId: z.number(),
         dealerId: z.number(),
@@ -735,7 +735,7 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         await db.createTestDriveBooking({
-          userId: ctx.user?.id || null,
+          userId: ctx.user.id,
           carId: input.carId,
           dealerId: input.dealerId,
           preferredDate: new Date(input.preferredDate),

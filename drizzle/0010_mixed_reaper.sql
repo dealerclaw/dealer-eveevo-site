@@ -1,0 +1,1 @@
+ALTER TABLE `testDriveBookings` MODIFY COLUMN `userId` int NOT NULL;

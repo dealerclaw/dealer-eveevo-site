@@ -238,7 +238,7 @@ export const dealerApplications = mysqlTable("dealerApplications", {
  */
 export const testDriveBookings = mysqlTable("testDriveBookings", {
   id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").references(() => users.id),
+  userId: int("userId").references(() => users.id).notNull(),
   carId: int("carId").references(() => cars.id).notNull(),
   dealerId: int("dealerId").references(() => dealers.id).notNull(),
   
