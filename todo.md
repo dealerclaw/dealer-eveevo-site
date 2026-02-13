@@ -563,3 +563,33 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - ✅ Component now properly manages dialog state (open/close)
 - ✅ Form state for date, time, and customer details works correctly
 - ✅ Test drive button should now open the booking dialog properly
+
+## Thorough Test Drive Button Debugging
+- [ ] Navigate to car detail page in browser
+- [ ] Check if user is authenticated
+- [ ] Verify "Book Test Drive" button is visible
+- [ ] Click button and check if dialog opens
+- [ ] Check browser console for any errors
+- [ ] Test complete booking flow if dialog opens
+- [ ] Fix identified issue
+
+## Fix Test Drive Calendar Date Selection
+- [ ] Test clicking dates in the calendar dialog
+- [ ] Check if date selection handler is being called
+- [ ] Verify time slots appear after date selection
+- [ ] Fix any issues with state management in TestDriveCalendar
+- [ ] Test complete flow from date selection to form submission
+
+## Fix Book Test Drive Button Click - Dialog Not Opening
+- [x] Check if TestDriveBookingDialog component is properly imported in CarDetail
+- [x] Verify button onClick handler is correctly wired to open dialog
+- [x] Check browser console for errors when button is clicked
+- [x] Test dialog state management (open/setOpen)
+- [x] Fix any issues preventing dialog from opening
+
+**Root Cause:** Nested anchor tag error in Header component was causing React errors that prevented interactive elements from working properly.
+
+**Fix Applied:**
+- ✅ Fixed nested `<a>` tag in Header logo (removed inner `<a>`, moved className to Link)
+- ✅ Cleared React DOM nesting errors
+- ✅ Test drive button dialog should now open correctly

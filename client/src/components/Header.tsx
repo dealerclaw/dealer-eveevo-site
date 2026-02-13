@@ -33,13 +33,11 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link href="/">
-          <a className="flex items-center space-x-2">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary">
-              <Car className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-primary">EVEEVO</span>
-          </a>
+        <Link href="/" className="flex items-center space-x-2">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary">
+            <Car className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold text-primary">EVEEVO</span>
         </Link>
 
         {/* Desktop Navigation */}
