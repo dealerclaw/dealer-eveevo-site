@@ -422,3 +422,20 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Create admin approval workflow (via existing dealer applications system)
 - [ ] Send welcome email after approval (future enhancement)
 - [ ] Add onboarding tutorial for new dealers (future enhancement)
+
+## Fix Finance Tab Navigation
+- [x] Investigate why Finance tab is not working
+- [x] Fix Finance tab routing in Header navigation
+- [x] Create Finance landing page at /finance route
+- [x] Add "Get Your Free Credit Score" feature without sign-in requirement
+- [x] Update finance check flow to work for non-authenticated users
+- [x] Test Finance tab navigation and credit score check
+
+**Implementation:**
+- ✅ Created comprehensive Finance landing page at /finance
+- ✅ Added "Get Your Free Credit Score" hero section with prominent CTA
+- ✅ No sign-in required - users can start credit check immediately
+- ✅ Explained 3-step process: Enter Details → Instant Check → Get Score
+- ✅ Added finance options comparison (PCP, HP, Personal Loan)
+- ✅ Included benefits grid and FAQ section
+- ✅ Finance tab in header now works correctly

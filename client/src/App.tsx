@@ -26,6 +26,7 @@ import MyReservations from "./pages/MyReservations";
 import FinanceCheck from "./pages/FinanceCheck";
 import DealerProfile from "./pages/DealerProfile";
 import DealerOnboarding from "./pages/DealerOnboarding";
+import Finance from "./pages/Finance";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -42,6 +43,7 @@ function Router() {
       <Route path="/become-a-dealer" component={BecomeADealer} />
       <Route path="/dealer/onboarding" component={DealerOnboarding} />
       <Route path="/reservations" component={MyReservations} />
+      <Route path="/finance" component={Finance} />
       <Route path="/finance-check" component={FinanceCheck} />
       <Route path="/dealers/:id" component={DealerProfile} />
       <Route path="/dealer/dashboard">
