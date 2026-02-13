@@ -1355,3 +1355,212 @@ export async function getDealerReferralStats(dealerId: number) {
     referredDealers,
   };
 }
+
+/**
+ * Purchase management functions
+ */
+export async function getPurchaseDetails(userId: number, purchaseId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const dealer = await getDealerByUserId(userId);
+  if (!dealer) return null;
+
+  // Get the purchase (bid) with car and seller details
+  const purchase = await db
+    .select({
+      id: dealerBids.id,
+      carId: dealerBids.carId,
+      bidAmount: dealerBids.bidAmount,
+      status: dealerBids.status,
+      createdAt: dealerBids.createdAt,
+      // Vehicle details
+      vehicleMake: cars.make,
+      vehicleModel: cars.model,
+      vehicleYear: cars.year,
+      vehicleCondition: cars.condition,
+      vehicleMileage: cars.mileage,
+      vehicleRealRange: cars.realRange,
+      vehicleBatteryCapacity: cars.batteryCapacity,
+      vehicleTransmission: cars.transmission,
+      vehicleColor: cars.color,
+      vehicleVin: cars.vin,
+      vehicleMainImage: cars.mainImage,
+      // Seller details
+      sellerId: dealers.id,
+      sellerName: dealers.name,
+      sellerEmail: dealers.email,
+      sellerPhone: dealers.phone,
+      sellerAddress: dealers.address,
+    })
+    .from(dealerBids)
+    .innerJoin(cars, eq(dealerBids.carId, cars.id))
+    .innerJoin(dealers, eq(cars.dealerId, dealers.id))
+    .where(and(
+      eq(dealerBids.id, purchaseId),
+      eq(dealerBids.dealerId, dealer.id)
+    ))
+    .limit(1);
+
+  if (purchase.length === 0) return null;
+
+  const p = purchase[0];
+  
+  return {
+    id: p.id,
+    purchaseDate: p.createdAt,
+    purchasePrice: p.bidAmount,
+    purchaseMethod: 'auction',
+    status: p.status,
+    vehicle: {
+      id: p.carId,
+      make: p.vehicleMake,
+      model: p.vehicleModel,
+      year: p.vehicleYear,
+      condition: p.vehicleCondition,
+      mileage: p.vehicleMileage,
+      realRange: p.vehicleRealRange,
+      batteryCapacity: p.vehicleBatteryCapacity,
+      transmission: p.vehicleTransmission,
+      color: p.vehicleColor,
+      vin: p.vehicleVin,
+      mainImage: p.vehicleMainImage,
+    },
+    seller: {
+      id: p.sellerId,
+      name: p.sellerName,
+      email: p.sellerEmail,
+      phone: p.sellerPhone,
+      address: p.sellerAddress,
+    },
+  };
+}
+
+export async function generatePurchaseReceipt(userId: number, purchaseId: number) {
+  const purchase = await getPurchaseDetails(userId, purchaseId);
+  if (!purchase) throw new Error('Purchase not found');
+
+  // Generate simple text receipt (could be enhanced with PDF library)
+  const receipt = `
+EVEEVO PURCHASE RECEIPT
+========================
+
+Order #: ${purchase.id}
+Date: ${new Date(purchase.purchaseDate).toLocaleDateString()}
+
+VEHICLE DETAILS
+---------------
+${purchase.vehicle.make} ${purchase.vehicle.model} ${purchase.vehicle.year}
+Condition: ${purchase.vehicle.condition}
+Mileage: ${purchase.vehicle.mileage?.toLocaleString()} miles
+VIN: ${purchase.vehicle.vin || 'N/A'}
+
+PURCHASE DETAILS
+----------------
+Purchase Price: £${parseFloat(purchase.purchasePrice.toString()).toLocaleString()}
+Payment Method: ${purchase.purchaseMethod}
+Status: ${purchase.status}
+
+SELLER INFORMATION
+------------------
+${purchase.seller.name}
+${purchase.seller.email || ''}
+${purchase.seller.phone || ''}
+${purchase.seller.address || ''}
+
+========================
+Thank you for your purchase!
+  `.trim();
+
+  return receipt;
+}
+
+export async function exportPurchaseHistoryCSV(dealerId: number) {
+  const db = await getDb();
+  if (!db) return '';
+
+  const purchases = await db
+    .select({
+      id: dealerBids.id,
+      date: dealerBids.createdAt,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: dealerBids.bidAmount,
+      status: dealerBids.status,
+      seller: dealers.name,
+    })
+    .from(dealerBids)
+    .innerJoin(cars, eq(dealerBids.carId, cars.id))
+    .innerJoin(dealers, eq(cars.dealerId, dealers.id))
+    .where(and(
+      eq(dealerBids.dealerId, dealerId),
+      eq(dealerBids.status, 'won')
+    ))
+    .orderBy(desc(dealerBids.createdAt));
+
+  // Generate CSV
+  const headers = ['Order ID', 'Date', 'Make', 'Model', 'Year', 'Price', 'Status', 'Seller'];
+  const rows = purchases.map(p => [
+    p.id,
+    new Date(p.date).toLocaleDateString(),
+    p.make,
+    p.model,
+    p.year,
+    `£${parseFloat(p.price.toString()).toLocaleString()}`,
+    p.status,
+    p.seller,
+  ]);
+
+  const csv = [
+    headers.join(','),
+    ...rows.map(row => row.join(',')),
+  ].join('\n');
+
+  return csv;
+}
+
+export async function exportPurchaseHistoryPDF(dealerId: number) {
+  const db = await getDb();
+  if (!db) return '';
+
+  const purchases = await db
+    .select({
+      id: dealerBids.id,
+      date: dealerBids.createdAt,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: dealerBids.bidAmount,
+      status: dealerBids.status,
+      seller: dealers.name,
+    })
+    .from(dealerBids)
+    .innerJoin(cars, eq(dealerBids.carId, cars.id))
+    .innerJoin(dealers, eq(cars.dealerId, dealers.id))
+    .where(and(
+      eq(dealerBids.dealerId, dealerId),
+      eq(dealerBids.status, 'won')
+    ))
+    .orderBy(desc(dealerBids.createdAt));
+
+  // Generate simple text-based PDF content (could be enhanced with PDF library)
+  const content = `
+EVEEVO PURCHASE HISTORY
+========================
+
+${purchases.map(p => `
+Order #${p.id}
+Date: ${new Date(p.date).toLocaleDateString()}
+Vehicle: ${p.make} ${p.model} ${p.year}
+Price: £${parseFloat(p.price.toString()).toLocaleString()}
+Seller: ${p.seller}
+Status: ${p.status}
+------------------------
+`).join('\n')}
+
+Total Purchases: ${purchases.length}
+  `.trim();
+
+  return content;
+}

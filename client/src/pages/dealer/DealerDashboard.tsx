@@ -1,7 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { Car, Eye, MessageSquare, TrendingUp, Gavel, ShoppingCart } from "lucide-react";
+import { Car, Eye, MessageSquare, TrendingUp, Gavel, ShoppingCart, ExternalLink } from "lucide-react";
+import { Link } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
+import PurchaseHistoryExport from "@/components/PurchaseHistoryExport";
 
 export default function DealerDashboard() {
   const { data: stats, isLoading } = trpc.dealer.getStats.useQuery();
@@ -87,16 +89,22 @@ export default function DealerDashboard() {
         {stats?.auctionPurchases && stats.auctionPurchases.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5" />
-                Auction Purchases
-              </CardTitle>
-              <CardDescription>Vehicles won from dealer auctions</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <ShoppingCart className="h-5 w-5" />
+                    Auction Purchases
+                  </CardTitle>
+                  <CardDescription>Vehicles won from dealer auctions</CardDescription>
+                </div>
+                <PurchaseHistoryExport />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {stats.auctionPurchases.map((purchase: any) => (
-                  <div key={purchase.id} className="flex items-start space-x-4">
+                  <Link href={`/dealer/purchases/${purchase.id}`} key={purchase.id}>
+                  <div className="flex items-start space-x-4 hover:bg-muted/50 rounded-lg p-2 -m-2 transition-colors cursor-pointer">
                     {purchase.mainImage && (
                       <img
                         src={purchase.mainImage}
@@ -117,6 +125,7 @@ export default function DealerDashboard() {
                     </div>
                     <Gavel className="h-5 w-5 text-green-600" />
                   </div>
+                  </Link>
                 ))}
               </div>
             </CardContent>

@@ -10,6 +10,7 @@ import { importRouter } from "./importCars";
 import { financeRouter } from "./financeRouter";
 import Stripe from "stripe";
 import { PRODUCTS } from "./products";
+import { notifyOwner } from "./_core/notification";
 
 export const appRouter = router({
   system: systemRouter,
@@ -702,6 +703,49 @@ export const appRouter = router({
         
         return { success: true };
        }),
+
+    // Purchase management
+    getPurchaseDetails: protectedProcedure
+      .input(z.object({ purchaseId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        return await db.getPurchaseDetails(ctx.user.id, input.purchaseId);
+      }),
+
+    downloadPurchaseReceipt: protectedProcedure
+      .input(z.object({ purchaseId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const receipt = await db.generatePurchaseReceipt(ctx.user.id, input.purchaseId);
+        return { content: receipt };
+      }),
+
+    exportPurchaseHistory: protectedProcedure
+      .input(z.object({ format: z.enum(['csv', 'pdf']) }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        if (input.format === 'csv') {
+          const csv = await db.exportPurchaseHistoryCSV(dealer.id);
+          return { content: csv, filename: `purchase-history-${Date.now()}.csv` };
+        } else {
+          const pdf = await db.exportPurchaseHistoryPDF(dealer.id);
+          return { content: pdf, filename: `purchase-history-${Date.now()}.pdf` };
+        }
+      }),
   }),
 
   // Admin router
@@ -1039,6 +1083,23 @@ export const appRouter = router({
         // Process instant purchase
         const buyNowPrice = parseFloat(car.buyNowPrice.toString());
         await db.buyNowAuction(input.carId, dealer.id, ctx.user.id, buyNowPrice);
+
+        // Get seller information
+        const seller = await db.getDealerById(car.dealerId!);
+        
+        // Send notification to buyer
+        await notifyOwner({
+          title: `Purchase Confirmed: ${car.make} ${car.model}`,
+          content: `Congratulations! You have successfully purchased ${car.make} ${car.model} ${car.year} for £${buyNowPrice.toLocaleString()} via Buy Now.\n\nSeller: ${seller?.name || 'Unknown'}\nContact: ${seller?.email || 'N/A'}\n\nPlease contact the seller to arrange delivery or pickup.`,
+        });
+        
+        // Send notification to seller
+        if (seller) {
+          await notifyOwner({
+            title: `Vehicle Sold: ${car.make} ${car.model}`,
+            content: `Your vehicle ${car.make} ${car.model} ${car.year} has been sold via Buy Now for £${buyNowPrice.toLocaleString()}.\n\nBuyer: ${dealer.name}\nContact: ${dealer.email || 'N/A'}\n\nPlease arrange delivery or pickup with the buyer.`,
+          });
+        }
 
         return { success: true, price: buyNowPrice };
       }),

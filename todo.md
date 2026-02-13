@@ -774,3 +774,16 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Display purchases with vehicle image, make/model, winning bid amount, and date
 - [x] Add Dashboard button to Live Auction header
 - [x] Test Buy Now tracking in dashboard
+
+## Purchase Management Features
+- [x] Create purchase details page showing full vehicle information
+- [x] Display seller contact information on purchase details page
+- [x] Add payment receipt information to purchase details
+- [x] Add download receipt button on purchase details page
+- [x] Send email notification to buyer on Buy Now purchase
+- [x] Send email notification to seller when their vehicle is purchased
+- [x] Add export purchase history as CSV
+- [x] Add export purchase history as PDF
+- [x] Add export dropdown to dealer dashboard
+- [x] Link purchases from dashboard to details page
+- [x] Test all purchase features end-to-end
