@@ -30,7 +30,7 @@ import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
 export default function Browse() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const { isAuthenticated, user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMake, setSelectedMake] = useState<string>("");
@@ -521,8 +521,7 @@ export default function Browse() {
                   </div>
                   <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {paginatedCars.map((car) => (
-                      <Link key={car.id} href={`/cars/${car.id}`}>
-                        <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                      <Card key={car.id} className="hover:shadow-lg transition-shadow cursor-pointer h-full" onClick={() => navigate(`/cars/${car.id}`)}>
                           <div className="relative h-48 overflow-hidden rounded-t-lg">
                             {car.mainImage ? (
                               <img
@@ -624,7 +623,6 @@ export default function Browse() {
                             )}
                           </CardContent>
                         </Card>
-                      </Link>
                     ))}
                   </div>
                   

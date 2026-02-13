@@ -593,3 +593,18 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - ✅ Fixed nested `<a>` tag in Header logo (removed inner `<a>`, moved className to Link)
 - ✅ Cleared React DOM nesting errors
 - ✅ Test drive button dialog should now open correctly
+
+## Fix Nested Anchor Tags in Browse Page
+- [x] Find all Link components with nested <a> tags in Browse.tsx
+- [x] Remove inner <a> tags and move attributes to Link component
+- [x] Verify no more React DOM nesting errors
+- [x] Test that all interactive elements work correctly
+
+**Root Cause:** Car cards in Browse page were wrapped in `<Link>` tags, with `TestDriveBookingDialog` button inside creating nested anchor tags.
+
+**Fix Applied:**
+- ✅ Removed Link wrapper from car cards
+- ✅ Changed Card to use onClick handler with navigate() instead
+- ✅ Added navigate from useLocation hook
+- ✅ Cleared React DOM nesting errors
+- ✅ Test drive button should now work correctly on Browse page
