@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle, XCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import CreditScoreGauge from "@/components/CreditScoreGauge";
 import { toast } from "sonner";
 
 interface FinanceFormData {
@@ -597,15 +598,16 @@ export default function FinanceCheck() {
             <CardDescription>Your application has been processed</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex flex-col items-center justify-center py-8">
+            <div className="flex flex-col items-center justify-center py-8 space-y-6">
               {creditResult.success ? (
                 <>
-                  <CheckCircle className="w-20 h-20 text-green-500 mb-4" />
-                  <h2 className="text-3xl font-bold mb-2">Credit Check Complete</h2>
+                  <CheckCircle className="w-16 h-16 text-green-500" />
+                  <h2 className="text-3xl font-bold text-center">Credit Check Complete!</h2>
+                  
+                  {/* Credit Score Gauge */}
                   {creditResult.creditScore && (
-                    <div className="text-center mb-4">
-                      <p className="text-muted-foreground">Your Credit Score</p>
-                      <p className="text-5xl font-bold text-primary">{creditResult.creditScore}</p>
+                    <div className="w-full max-w-2xl">
+                      <CreditScoreGauge score={creditResult.creditScore} />
                     </div>
                   )}
                   {creditResult.preApproved && (
