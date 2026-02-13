@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, like, inArray, desc, sql, ne } from "drizzle-orm";
+import { eq, and, gte, lte, gt, like, inArray, desc, sql, ne } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -996,7 +996,7 @@ export async function getActiveAuctionVehicles() {
         eq(cars.marketplace, 'dealer_only'),
         eq(cars.isAuction, true),
         lte(cars.auctionStartDate, now),
-        gte(cars.auctionEndDate, now)
+        gt(cars.auctionEndDate, now) // Auction hasn't ended yet
       )
     )
     .orderBy(cars.auctionEndDate); // Ending soonest first

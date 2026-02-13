@@ -1,0 +1,25 @@
+{
+  "query": "SELECT id FROM dealers LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id FROM dealers LIMIT 5;",
+  "rows": [
+    {
+      "id": "60001"
+    },
+    {
+      "id": "60002"
+    },
+    {
+      "id": "60003"
+    },
+    {
+      "id": "60004"
+    },
+    {
+      "id": "60005"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\n60001\n60002\n60003\n60004\n60005\n",
+  "stderr": "",
+  "execution_time_ms": 353
+}

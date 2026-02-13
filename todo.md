@@ -649,3 +649,18 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add "Buy Now" button to live auction page
 - [x] End auction immediately when Buy Now is used
 - [x] Test Buy Now functionality
+
+## Fix DealerLayout Nested Anchor Tags
+- [ ] Fix nested anchor tags in DealerLayout.tsx sidebar navigation
+- [ ] Test auction page loads without errors
+
+## Show Auction Vehicles on Browse Page
+- [ ] Check Browse page backend query to include auction vehicles
+- [ ] Update Browse page to show auction badge on auction vehicles
+- [ ] Test that auction vehicles appear on Browse page
+
+## Debug Live Auction Page Not Showing Vehicles
+- [x] Verify auction vehicles exist in database
+- [x] Check auction.getActiveVehicles API query
+- [x] Fix query to return auction vehicles correctly (changed gte to gt)
+- [ ] Test live auction page shows 10 vehicles
