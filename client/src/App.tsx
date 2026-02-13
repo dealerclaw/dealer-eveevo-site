@@ -29,6 +29,7 @@ import DealerOnboarding from "./pages/DealerOnboarding";
 import Finance from "./pages/Finance";
 import LiveAuction from "./pages/dealer/LiveAuction";
 import Subscription from "./pages/dealer/Subscription";
+import SubscriptionSuccess from "./pages/dealer/SubscriptionSuccess";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -91,6 +92,11 @@ function Router() {
       <Route path="/dealer/subscription">
         <DealerAuthGuard>
           <Subscription />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/subscription/success">
+        <DealerAuthGuard>
+          <SubscriptionSuccess />
         </DealerAuthGuard>
       </Route>
       <Route path={"/404"} component={NotFound} />

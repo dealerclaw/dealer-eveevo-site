@@ -696,3 +696,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add Stripe checkout integration for £99/month subscription
 - [x] Add route to App.tsx at /dealer/subscription
 - [x] Test subscription flow works
+
+## Subscription Improvements
+- [x] Fix redirect to go to /dealer/subscription instead of home page when bidding without subscription
+- [x] Add "Subscribe" link to dealer sidebar navigation
+- [x] Create subscription success page at /dealer/subscription/success
+- [x] Add 7-day free trial option to subscription page
+- [x] Test complete subscription flow

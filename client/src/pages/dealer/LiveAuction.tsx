@@ -9,9 +9,11 @@ import { Loader2, ChevronLeft, ChevronRight, Gavel, Clock, TrendingUp } from "lu
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import { useLocation } from "wouter";
 
 export default function LiveAuction() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [bidAmount, setBidAmount] = useState("");
   const [timeLeft, setTimeLeft] = useState(60); // 60 seconds per vehicle
@@ -81,7 +83,7 @@ export default function LiveAuction() {
     // Check if dealer has active subscription
     if (!subscriptionStatus || subscriptionStatus.status !== 'active') {
       toast.error("Active subscription required to place bids");
-      window.location.href = "/dealer/subscription";
+      setLocation("/dealer/subscription");
       return;
     }
 

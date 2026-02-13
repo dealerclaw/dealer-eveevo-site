@@ -89,9 +89,12 @@ export default function Subscription() {
         ) : (
           <Card>
             <CardHeader className="text-center">
+              <Badge className="mb-4" variant="default">
+                7-Day Free Trial
+              </Badge>
               <CardTitle className="text-3xl">£99/month</CardTitle>
               <CardDescription>
-                Cancel anytime • No long-term commitment
+                Try free for 7 days • Cancel anytime • No long-term commitment
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -108,6 +111,14 @@ export default function Subscription() {
               </div>
 
               <div className="pt-6 border-t">
+                <div className="bg-primary/10 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-center">
+                    🎉 Start your 7-day free trial today
+                  </p>
+                  <p className="text-xs text-center text-muted-foreground mt-1">
+                    No charge for 7 days. Cancel anytime during trial period.
+                  </p>
+                </div>
                 <Button
                   onClick={handleSubscribe}
                   disabled={isLoading}
@@ -120,7 +131,7 @@ export default function Subscription() {
                       Processing...
                     </>
                   ) : (
-                    "Subscribe Now"
+                    "Start Free Trial"
                   )}
                 </Button>
                 <p className="text-xs text-center text-muted-foreground mt-4">
