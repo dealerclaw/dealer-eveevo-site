@@ -94,6 +94,14 @@ export const cars = mysqlTable("cars", {
   // Marketplace type
   marketplace: mysqlEnum("marketplace", ["consumer", "dealer_only"]).default("consumer"),
   
+  // Auction fields for dealer marketplace
+  isAuction: boolean("isAuction").default(false),
+  auctionStartDate: timestamp("auctionStartDate"),
+  auctionEndDate: timestamp("auctionEndDate"),
+  startingBid: decimal("startingBid", { precision: 10, scale: 2 }),
+  reservePrice: decimal("reservePrice", { precision: 10, scale: 2 }), // Minimum acceptable price
+  currentHighestBid: decimal("currentHighestBid", { precision: 10, scale: 2 }),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -276,3 +284,53 @@ export type DealerApplication = typeof dealerApplications.$inferSelect;
 export type InsertDealerApplication = typeof dealerApplications.$inferInsert;
 export type TestDriveBooking = typeof testDriveBookings.$inferSelect;
 export type InsertTestDriveBooking = typeof testDriveBookings.$inferInsert;
+
+/**
+ * Dealer Bids table - for auction-style bidding on dealer marketplace vehicles
+ */
+export const dealerBids = mysqlTable("dealerBids", {
+  id: int("id").autoincrement().primaryKey(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(), // Dealer placing the bid
+  userId: int("userId").references(() => users.id).notNull(), // User account of the dealer
+  
+  // Bid details
+  bidAmount: decimal("bidAmount", { precision: 10, scale: 2 }).notNull(),
+  message: text("message"), // Optional message with the bid
+  status: mysqlEnum("status", ["active", "outbid", "winning", "won", "lost"]).default("active").notNull(),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DealerBid = typeof dealerBids.$inferSelect;
+export type InsertDealerBid = typeof dealerBids.$inferInsert;
+
+/**
+ * Dealer Offers table - for dealer-to-dealer vehicle bidding
+ */
+export const dealerOffers = mysqlTable("dealerOffers", {
+  id: int("id").autoincrement().primaryKey(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  fromDealerId: int("fromDealerId").references(() => dealers.id).notNull(), // Dealer making the offer
+  toDealerId: int("toDealerId").references(() => dealers.id).notNull(), // Dealer receiving the offer
+  
+  // Offer details
+  offerAmount: decimal("offerAmount", { precision: 10, scale: 2 }).notNull(),
+  message: text("message"), // Optional message with the offer
+  status: mysqlEnum("status", ["pending", "accepted", "rejected", "countered", "withdrawn"]).default("pending").notNull(),
+  
+  // Counter offer
+  counterAmount: decimal("counterAmount", { precision: 10, scale: 2 }),
+  counterMessage: text("counterMessage"),
+  
+  // Timestamps
+  expiresAt: timestamp("expiresAt"), // Optional expiry for time-limited offers
+  respondedAt: timestamp("respondedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DealerOffer = typeof dealerOffers.$inferSelect;
+export type InsertDealerOffer = typeof dealerOffers.$inferInsert;

@@ -623,3 +623,29 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Disable already-booked time slots in the UI
 - [x] Show visual indicator for unavailable times
 - [x] Test that double-booking is prevented
+
+## Add Live Dealer Auction Carousel (60-Second Rotation)
+- [x] Add auction fields to cars table (isAuction, auctionStartDate, auctionEndDate, startingBid, reservePrice, currentHighestBid)
+- [x] Create dealerBids table for auction bids
+- [x] Run database migration (pnpm db:push)
+- [x] Add backend API to get active auction vehicles
+- [x] Add backend API to place bids with validation
+- [x] Add backend API to get bid history for a vehicle
+- [x] Add backend API to start auction on vehicle
+- [x] Create /dealer/live-auction page with full-screen carousel
+- [x] Auto-rotate to next vehicle every 60 seconds
+- [x] Show large vehicle image with details overlay
+- [x] Display countdown timer (time remaining in auction)
+- [x] Show current highest bid and number of bids
+- [x] Add real-time bid placement form
+- [x] Show "Next Up" preview of upcoming vehicle
+- [x] Add manual navigation (prev/next buttons)
+- [ ] Test live auction experience with real auction data
+
+## Add Buy Now Feature to Auction
+- [ ] Add buyNowPrice field to cars table
+- [ ] Run database migration
+- [ ] Add backend API to handle instant purchase
+- [ ] Add "Buy Now" button to live auction page
+- [ ] End auction immediately when Buy Now is used
+- [ ] Test Buy Now functionality

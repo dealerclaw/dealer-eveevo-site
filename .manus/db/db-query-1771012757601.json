@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE users SET role = 'dealer' WHERE email = 'anthony.m.perry@gmail.com' LIMIT 1;\n\nINSERT INTO dealers (userId, name, description, address, city, postcode, phone, email, whatsappNumber, isVerified, subscriptionStatus, subscriptionExpiresAt, createdAt, updatedAt)\nSELECT id, 'EVEEVO Admin Dealer', 'Admin dealer account for testing', '123 Admin Street', 'London', 'SW1A 1AA', '07700900001', 'anthony.m.perry@gmail.com', '447700900001', 1, 'active', DATE_ADD(NOW(), INTERVAL 1 YEAR), NOW(), NOW()\nFROM users WHERE email = 'anthony.m.perry@gmail.com'\nLIMIT 1\nON DUPLICATE KEY UPDATE subscriptionStatus = 'active', subscriptionExpiresAt = DATE_ADD(NOW(), INTERVAL 1 YEAR), isVerified = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute UPDATE users SET role = 'dealer' WHERE email = 'anthony.m.perry@gmail.com' LIMIT 1;\n\nINSERT INTO dealers (userId, name, description, address, city, postcode, phone, email, whatsappNumber, isVerified, subscriptionStatus, subscriptionExpiresAt, createdAt, updatedAt)\nSELECT id, 'EVEEVO Admin Dealer', 'Admin dealer account for testing', '123 Admin Street', 'London', 'SW1A 1AA', '07700900001', 'anthony.m.perry@gmail.com', '447700900001', 1, 'active', DATE_ADD(NOW(), INTERVAL 1 YEAR), NOW(), NOW()\nFROM users WHERE email = 'anthony.m.perry@gmail.com'\nLIMIT 1\nON DUPLICATE KEY UPDATE subscriptionStatus = 'active', subscriptionExpiresAt = DATE_ADD(NOW(), INTERVAL 1 YEAR), isVerified = 1;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 434
+}

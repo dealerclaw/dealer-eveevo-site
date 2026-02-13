@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, openId, name, email, role FROM users WHERE openId = 'test-dealer-001';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, openId, name, email, role FROM users WHERE openId = 'test-dealer-001';",
+  "rows": [
+    {
+      "id": "840127",
+      "openId": "test-dealer-001",
+      "name": "Test Dealer",
+      "email": "testdealer@eveevo.com",
+      "role": "dealer"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\n840127\ttest-dealer-001\tTest Dealer\ttestdealer@eveevo.com\tdealer\n",
+  "stderr": "",
+  "execution_time_ms": 350
+}

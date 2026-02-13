@@ -1,0 +1,9 @@
+{
+  "query": "SELECT u.id, u.email, u.name, u.role, d.id as dealer_id, d.name as dealer_name, d.subscriptionStatus, d.subscriptionExpiresAt\nFROM users u\nLEFT JOIN dealers d ON u.id = d.userId\nWHERE u.role = 'dealer'\nLIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT u.id, u.email, u.name, u.role, d.id as dealer_id, d.name as dealer_name, d.subscriptionStatus, d.subscriptionExpiresAt\nFROM users u\nLEFT JOIN dealers d ON u.id = d.userId\nWHERE u.role = 'dealer'\nLIMIT 5;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 364
+}

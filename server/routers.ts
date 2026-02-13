@@ -800,5 +800,112 @@ export const appRouter = router({
         return await db.getBookedTimeSlots(input.dealerId, new Date(input.date));
       }),
   }),
+
+  // Dealer Auction router
+  auction: router({
+    getActiveVehicles: publicProcedure
+      .query(async () => {
+        return await db.getActiveAuctionVehicles();
+      }),
+
+    placeBid: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        bidAmount: z.number(),
+        message: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Get dealer ID for current user
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Only dealers can place bids');
+        }
+
+        // Check if dealer has active subscription
+        if (dealer.subscriptionStatus !== 'active') {
+          throw new Error('Active subscription required to place bids');
+        }
+
+        // Get the car to validate bid
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Vehicle not found');
+        }
+
+        if (!car.isAuction) {
+          throw new Error('This vehicle is not in auction');
+        }
+
+        // Check if auction is still active
+        const now = new Date();
+        if (car.auctionEndDate && new Date(car.auctionEndDate) < now) {
+          throw new Error('Auction has ended');
+        }
+
+        // Validate bid amount
+        const currentBid = car.currentHighestBid ? parseFloat(car.currentHighestBid.toString()) : parseFloat(car.startingBid?.toString() || '0');
+        if (input.bidAmount <= currentBid) {
+          throw new Error(`Bid must be higher than current bid of £${currentBid.toLocaleString()}`);
+        }
+
+        // Place the bid
+        await db.placeBid({
+          carId: input.carId,
+          dealerId: dealer.id,
+          userId: ctx.user.id,
+          bidAmount: input.bidAmount.toString(),
+          message: input.message || null,
+          status: 'winning',
+        });
+
+        return { success: true };
+      }),
+
+    getBidHistory: publicProcedure
+      .input(z.object({
+        carId: z.number(),
+      }))
+      .query(async ({ input }) => {
+        return await db.getVehicleBidHistory(input.carId);
+      }),
+
+    getMyBids: protectedProcedure
+      .query(async ({ ctx }) => {
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          return [];
+        }
+        return await db.getDealerBids(dealer.id);
+      }),
+
+    startAuction: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        startingBid: z.number(),
+        reservePrice: z.number(),
+        durationDays: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Verify user owns this vehicle
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Only dealers can start auctions');
+        }
+
+        const car = await db.getCarById(input.carId);
+        if (!car || car.dealerId !== dealer.id) {
+          throw new Error('Vehicle not found or not owned by you');
+        }
+
+        await db.startAuction(
+          input.carId,
+          input.startingBid,
+          input.reservePrice,
+          input.durationDays || 7
+        );
+
+        return { success: true };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

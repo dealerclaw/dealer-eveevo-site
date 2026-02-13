@@ -27,6 +27,7 @@ import FinanceCheck from "./pages/FinanceCheck";
 import DealerProfile from "./pages/DealerProfile";
 import DealerOnboarding from "./pages/DealerOnboarding";
 import Finance from "./pages/Finance";
+import LiveAuction from "./pages/dealer/LiveAuction";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -79,6 +80,11 @@ function Router() {
       <Route path="/dealer/test-drives">
         <DealerAuthGuard>
           <DealerCalendar />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/live-auction">
+        <DealerAuthGuard>
+          <LiveAuction />
         </DealerAuthGuard>
       </Route>
       <Route path={"/404"} component={NotFound} />

@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO dealers (userId, name, description, address, city, postcode, phone, email, whatsappNumber, isVerified, subscriptionStatus, subscriptionExpiresAt, createdAt, updatedAt)\nSELECT id, 'Test Motors Ltd', 'Test dealer for marketplace testing', '123 Test Street', 'London', 'SW1A 1AA', '07700900000', 'testdealer@eveevo.com', '447700900000', 1, 'active', DATE_ADD(NOW(), INTERVAL 1 YEAR), NOW(), NOW()\nFROM users WHERE openId = 'test-dealer-001'\nON DUPLICATE KEY UPDATE subscriptionStatus = 'active', subscriptionExpiresAt = DATE_ADD(NOW(), INTERVAL 1 YEAR);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute INSERT INTO dealers (userId, name, description, address, city, postcode, phone, email, whatsappNumber, isVerified, subscriptionStatus, subscriptionExpiresAt, createdAt, updatedAt)\nSELECT id, 'Test Motors Ltd', 'Test dealer for marketplace testing', '123 Test Street', 'London', 'SW1A 1AA', '07700900000', 'testdealer@eveevo.com', '447700900000', 1, 'active', DATE_ADD(NOW(), INTERVAL 1 YEAR), NOW(), NOW()\nFROM users WHERE openId = 'test-dealer-001'\nON DUPLICATE KEY UPDATE subscriptionStatus = 'active', subscriptionExpiresAt = DATE_ADD(NOW(), INTERVAL 1 YEAR);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 385
+}

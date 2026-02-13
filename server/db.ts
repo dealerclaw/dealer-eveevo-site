@@ -13,6 +13,7 @@ import {
   carInquiries,
   dealerApplications,
   testDriveBookings,
+  dealerBids,
   type Car,
   type Dealer,
   type Reservation,
@@ -24,7 +25,9 @@ import {
   type DealerApplication,
   type InsertDealerApplication,
   type TestDriveBooking,
-  type InsertTestDriveBooking
+  type InsertTestDriveBooking,
+  type DealerBid,
+  type InsertDealerBid
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -969,4 +972,123 @@ export async function updateTestDriveBookingStatus(id: number, status: "pending"
     .update(testDriveBookings)
     .set({ status, updatedAt: new Date() })
     .where(eq(testDriveBookings.id, id));
+}
+
+
+// ============================================================================
+// Dealer Auction Functions
+// ============================================================================
+
+/**
+ * Get all active auction vehicles in the dealer marketplace
+ */
+export async function getActiveAuctionVehicles() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const now = new Date();
+  
+  return await db
+    .select()
+    .from(cars)
+    .where(
+      and(
+        eq(cars.marketplace, 'dealer_only'),
+        eq(cars.isAuction, true),
+        lte(cars.auctionStartDate, now),
+        gte(cars.auctionEndDate, now)
+      )
+    )
+    .orderBy(cars.auctionEndDate); // Ending soonest first
+}
+
+/**
+ * Place a bid on an auction vehicle
+ */
+export async function placeBid(data: InsertDealerBid) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Insert the new bid
+  await db.insert(dealerBids).values(data);
+
+  // Update the current highest bid on the car
+  await db
+    .update(cars)
+    .set({ currentHighestBid: data.bidAmount })
+    .where(eq(cars.id, data.carId));
+
+  // Mark all previous bids as outbid
+  await db
+    .update(dealerBids)
+    .set({ status: 'outbid' })
+    .where(
+      and(
+        eq(dealerBids.carId, data.carId),
+        ne(dealerBids.dealerId, data.dealerId)
+      )
+    );
+}
+
+/**
+ * Get bid history for a specific vehicle
+ */
+export async function getVehicleBidHistory(carId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      id: dealerBids.id,
+      bidAmount: dealerBids.bidAmount,
+      dealerName: dealers.name,
+      createdAt: dealerBids.createdAt,
+      status: dealerBids.status,
+    })
+    .from(dealerBids)
+    .leftJoin(dealers, eq(dealerBids.dealerId, dealers.id))
+    .where(eq(dealerBids.carId, carId))
+    .orderBy(desc(dealerBids.bidAmount));
+}
+
+/**
+ * Get dealer's bids
+ */
+export async function getDealerBids(dealerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      bid: dealerBids,
+      car: cars,
+    })
+    .from(dealerBids)
+    .leftJoin(cars, eq(dealerBids.carId, cars.id))
+    .where(eq(dealerBids.dealerId, dealerId))
+    .orderBy(desc(dealerBids.createdAt));
+}
+
+/**
+ * Start an auction on a vehicle
+ */
+export async function startAuction(carId: number, startingBid: number, reservePrice: number, durationDays: number = 7) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const now = new Date();
+  const endDate = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
+
+  await db
+    .update(cars)
+    .set({
+      isAuction: true,
+      auctionStartDate: now,
+      auctionEndDate: endDate,
+      startingBid: startingBid.toString(),
+      reservePrice: reservePrice.toString(),
+      currentHighestBid: startingBid.toString(),
+      marketplace: 'dealer_only',
+    })
+    .where(eq(cars.id, carId));
 }
