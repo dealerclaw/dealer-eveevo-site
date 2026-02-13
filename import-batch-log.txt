@@ -1,0 +1,149 @@
+Starting BATCH Excel data import...
+
+Loaded 14907 rows from Excel
+
+============================================================
+STEP 1: Batch Importing Dealers
+============================================================
+Found 584 unique dealers
+584 dealers already exist
+Total dealers in map: 584
+
+============================================================
+STEP 2: Batch Importing Cars
+============================================================
+2932 cars already exist
+
+Prepared 11973 cars for import
+Skipped 2932 existing cars
+Errors: 2
+
+Inserting 11973 cars in batches...
+  Inserted 100/11973 cars
+  Inserted 200/11973 cars
+  Inserted 300/11973 cars
+  Inserted 400/11973 cars
+  Inserted 500/11973 cars
+  Inserted 600/11973 cars
+  Inserted 700/11973 cars
+  Inserted 800/11973 cars
+  Inserted 900/11973 cars
+  Inserted 1000/11973 cars
+  Inserted 1100/11973 cars
+  Inserted 1200/11973 cars
+  Inserted 1300/11973 cars
+  Inserted 1400/11973 cars
+  Inserted 1500/11973 cars
+  Inserted 1600/11973 cars
+  Inserted 1700/11973 cars
+  Inserted 1800/11973 cars
+  Inserted 1900/11973 cars
+  Inserted 2000/11973 cars
+  Inserted 2100/11973 cars
+  Inserted 2200/11973 cars
+  Inserted 2300/11973 cars
+  Inserted 2400/11973 cars
+  Inserted 2500/11973 cars
+  Inserted 2600/11973 cars
+  Inserted 2700/11973 cars
+  Inserted 2800/11973 cars
+  Inserted 2900/11973 cars
+  Inserted 3000/11973 cars
+  Inserted 3100/11973 cars
+  Inserted 3200/11973 cars
+  Inserted 3300/11973 cars
+  Inserted 3400/11973 cars
+  Inserted 3500/11973 cars
+  Inserted 3600/11973 cars
+  Inserted 3700/11973 cars
+  Inserted 3800/11973 cars
+  Inserted 3900/11973 cars
+  Inserted 4000/11973 cars
+  Inserted 4100/11973 cars
+  Inserted 4200/11973 cars
+  Inserted 4300/11973 cars
+  Inserted 4400/11973 cars
+  Inserted 4500/11973 cars
+  Inserted 4600/11973 cars
+  Inserted 4700/11973 cars
+  Inserted 4800/11973 cars
+  Inserted 4900/11973 cars
+  Inserted 5000/11973 cars
+  Inserted 5100/11973 cars
+  Inserted 5200/11973 cars
+  Inserted 5300/11973 cars
+  Inserted 5400/11973 cars
+  Inserted 5500/11973 cars
+  Inserted 5600/11973 cars
+  Inserted 5700/11973 cars
+  Inserted 5800/11973 cars
+  Inserted 5900/11973 cars
+  Inserted 6000/11973 cars
+  Inserted 6100/11973 cars
+  Inserted 6200/11973 cars
+  Inserted 6300/11973 cars
+  Inserted 6400/11973 cars
+  Inserted 6500/11973 cars
+  Inserted 6600/11973 cars
+  Inserted 6700/11973 cars
+  Inserted 6800/11973 cars
+  Inserted 6900/11973 cars
+  Inserted 7000/11973 cars
+  Inserted 7100/11973 cars
+  Inserted 7200/11973 cars
+  Inserted 7300/11973 cars
+  Inserted 7400/11973 cars
+  Inserted 7500/11973 cars
+  Inserted 7600/11973 cars
+  Inserted 7700/11973 cars
+  Inserted 7800/11973 cars
+  Inserted 7900/11973 cars
+  Inserted 8000/11973 cars
+  Inserted 8100/11973 cars
+  Inserted 8200/11973 cars
+  Inserted 8300/11973 cars
+  Inserted 8400/11973 cars
+  Inserted 8500/11973 cars
+  Inserted 8600/11973 cars
+  Inserted 8700/11973 cars
+  Inserted 8800/11973 cars
+  Inserted 8900/11973 cars
+  Inserted 9000/11973 cars
+  Inserted 9100/11973 cars
+  Inserted 9200/11973 cars
+  Inserted 9300/11973 cars
+  Inserted 9400/11973 cars
+  Inserted 9500/11973 cars
+  Inserted 9600/11973 cars
+  Inserted 9700/11973 cars
+  Inserted 9800/11973 cars
+  Inserted 9900/11973 cars
+  Inserted 10000/11973 cars
+  Inserted 10100/11973 cars
+  Inserted 10200/11973 cars
+  Inserted 10300/11973 cars
+  Inserted 10400/11973 cars
+  Inserted 10500/11973 cars
+  Inserted 10600/11973 cars
+  Inserted 10700/11973 cars
+  Inserted 10800/11973 cars
+  Inserted 10900/11973 cars
+  Inserted 11000/11973 cars
+  Inserted 11100/11973 cars
+  Inserted 11200/11973 cars
+  Inserted 11300/11973 cars
+  Inserted 11400/11973 cars
+  Inserted 11500/11973 cars
+  Inserted 11600/11973 cars
+  Inserted 11700/11973 cars
+  Inserted 11800/11973 cars
+  Inserted 11900/11973 cars
+  Inserted 11973/11973 cars
+
+============================================================
+IMPORT COMPLETE
+============================================================
+Total dealers: 584
+Total cars imported: 11973
+Total cars skipped: 2932
+Total errors: 2

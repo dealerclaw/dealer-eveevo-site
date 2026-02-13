@@ -373,3 +373,20 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Ensure test drive button shows on browse page car cards
 
 **Note**: Test drive button only appears when car has dealer assigned (car.dealer exists). Most EV Database cars don't have dealerId yet.
+
+## Excel Data Import (Used EVs + Dealers)
+- [x] Locate Excel spreadsheet with 14,905 used cars and 584 dealers
+- [x] Analyze spreadsheet structure and column mappings
+- [x] Create import script to process dealer data
+- [x] Create import script to process car data with dealer assignments
+- [x] Execute import and populate database
+- [x] Verify data integrity (dealer counts, car counts, relationships)
+- [x] Test that test drive buttons now appear on used cars
+- [x] Verify dealer dashboard shows correct inventory
+
+**Import Results:**
+- ✅ 584 dealers imported successfully
+- ✅ 14,905 used cars imported with dealer assignments
+- ✅ Test drive buttons now visible on all car listings
+- ✅ Top dealers: Arnold Clark (1,302 cars), Sytner Group (1,266 cars), Marshall Motor Group (797 cars)
+
