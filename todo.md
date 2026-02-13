@@ -690,3 +690,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Redirect to subscription payment page if not subscribed
 - [x] Backend already validates active subscription before accepting bids
 - [x] Test bid placement requires active subscription
+
+## Create Dealer Subscription Page
+- [x] Create Subscription.tsx page component
+- [x] Add Stripe checkout integration for £99/month subscription
+- [x] Add route to App.tsx at /dealer/subscription
+- [x] Test subscription flow works
