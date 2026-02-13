@@ -757,3 +757,20 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Show list of referred dealers with subscription status
 - [x] Send owner notification when referral is successful
 - [ ] Apply referral credits to subscription renewals (requires Stripe discount/coupon integration)
+
+## Fix Stripe Payment Loop Issue
+- [x] Check webhook endpoint configuration in Stripe dashboard (webhooks working)
+- [x] Review webhook logs to see if events are being received (events received)
+- [x] Check subscription status update logic in webhook handler (found bug: 'trialing' not recognized)
+- [x] Fix webhook to recognize 'trialing' status as active (trial period = active subscription)
+- [x] Update notification logic to trigger on trialing status
+- [ ] Test complete payment flow from checkout to success page
+
+## Dealer Dashboard Improvements
+- [x] Show Buy Now purchases in dealer dashboard
+- [x] Add navigation link from Live Auction page to Dealer Dashboard
+- [x] Display purchased vehicles with purchase date and price
+- [x] Query auction purchases (won bids) from database
+- [x] Display purchases with vehicle image, make/model, winning bid amount, and date
+- [x] Add Dashboard button to Live Auction header
+- [x] Test Buy Now tracking in dashboard

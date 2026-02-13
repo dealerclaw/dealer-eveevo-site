@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { Car, Eye, MessageSquare, TrendingUp } from "lucide-react";
+import { Car, Eye, MessageSquare, TrendingUp, Gavel, ShoppingCart } from "lucide-react";
 import DealerLayout from "@/components/DealerLayout";
 
 export default function DealerDashboard() {
@@ -82,6 +82,46 @@ export default function DealerDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Auction Purchases */}
+        {stats?.auctionPurchases && stats.auctionPurchases.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ShoppingCart className="h-5 w-5" />
+                Auction Purchases
+              </CardTitle>
+              <CardDescription>Vehicles won from dealer auctions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {stats.auctionPurchases.map((purchase: any) => (
+                  <div key={purchase.id} className="flex items-start space-x-4">
+                    {purchase.mainImage && (
+                      <img
+                        src={purchase.mainImage}
+                        alt={`${purchase.make} ${purchase.model}`}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    )}
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium">
+                        {purchase.make} {purchase.model} {purchase.year}
+                      </p>
+                      <p className="text-sm text-green-600 font-semibold">
+                        Won: £{parseFloat(purchase.bidAmount).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(purchase.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <Gavel className="h-5 w-5 text-green-600" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recent Activity */}
         <div className="grid gap-4 md:grid-cols-2">

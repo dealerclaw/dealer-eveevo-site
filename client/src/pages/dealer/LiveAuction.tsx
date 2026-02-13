@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, ChevronLeft, ChevronRight, Gavel, Clock, TrendingUp } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Gavel, Clock, TrendingUp, Home } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -174,7 +174,17 @@ export default function LiveAuction() {
       {/* Header */}
       <div className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <div className="container py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation('/dealer/dashboard')}
+              className="text-white hover:bg-white/10"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Dashboard
+            </Button>
+            <div className="h-8 w-px bg-white/20" />
             <Gavel className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-2xl font-bold">EVEEVO Live Auction</h1>

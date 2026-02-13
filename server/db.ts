@@ -516,6 +516,28 @@ export async function getDealerStats(userId: number) {
     .orderBy(desc(sql<number>`count(${carViews.id})`))
     .limit(5);
 
+  // Get auction purchases (won bids)
+  const auctionPurchases = await db
+    .select({
+      id: dealerBids.id,
+      carId: dealerBids.carId,
+      bidAmount: dealerBids.bidAmount,
+      status: dealerBids.status,
+      createdAt: dealerBids.createdAt,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      mainImage: cars.mainImage,
+    })
+    .from(dealerBids)
+    .innerJoin(cars, eq(dealerBids.carId, cars.id))
+    .where(and(
+      eq(dealerBids.dealerId, dealer.id),
+      eq(dealerBids.status, 'won')
+    ))
+    .orderBy(desc(dealerBids.createdAt))
+    .limit(10);
+
   return {
     totalListings,
     availableListings,
@@ -524,6 +546,7 @@ export async function getDealerStats(userId: number) {
     newInquiries,
     recentInquiries,
     topListings,
+    auctionPurchases,
   };
 }
 

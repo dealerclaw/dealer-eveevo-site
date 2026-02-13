@@ -87,7 +87,8 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   }
 
   // Update dealer subscription status
-  const subscriptionStatus = status === 'active' ? 'active' : 
+  // Note: 'trialing' status means the subscription is active during trial period
+  const subscriptionStatus = status === 'active' || status === 'trialing' ? 'active' : 
                              status === 'past_due' ? 'active' : 
                              'expired';
   
@@ -107,8 +108,8 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     expiresAt,
   });
 
-  // Send confirmation notification to owner on first activation
-  if (subscriptionStatus === 'active' && status === 'active') {
+  // Send confirmation notification to owner on first activation (including trial)
+  if (subscriptionStatus === 'active' && (status === 'active' || status === 'trialing')) {
     await notifyOwner({
       title: `New Dealer Subscription: ${dealer.name}`,
       content: `Dealer ${dealer.name} (${dealer.email || 'No email'}) has subscribed to the marketplace.\n\nSubscription ID: ${subscriptionId}\nExpires: ${expiresAt?.toLocaleDateString() || 'N/A'}\nDealer ID: ${dealer.id}`,
