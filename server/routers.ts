@@ -470,7 +470,10 @@ export const appRouter = router({
 
     // Subscription management
     createSubscription: protectedProcedure
-      .mutation(async ({ ctx }) => {
+      .input(z.object({
+        referralCode: z.string().optional(),
+      }).optional())
+      .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');
         }
@@ -517,6 +520,7 @@ export const appRouter = router({
             dealer_id: dealer.id.toString(),
             customer_email: ctx.user.email || '',
             customer_name: ctx.user.name || '',
+            referralCode: input?.referralCode || '',
           },
           subscription_data: {
             trial_period_days: 7,
@@ -542,6 +546,89 @@ export const appRouter = router({
           status: dealer.subscriptionStatus || 'none',
           expiresAt: dealer.subscriptionExpiresAt,
         };
+      }),
+
+    createCustomerPortalSession: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        if (!dealer.stripeCustomerId) {
+          throw new Error('No Stripe customer ID found. Please subscribe first.');
+        }
+        
+        // Create Stripe Customer Portal session
+        const session = await stripe.billingPortal.sessions.create({
+          customer: dealer.stripeCustomerId,
+          return_url: `${ctx.req.headers.origin}/dealer/subscription/manage`,
+        });
+        
+        return { portalUrl: session.url };
+      }),
+
+    getSubscriptionAnalytics: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        return await db.getSubscriptionAnalytics(dealer.id);
+      }),
+
+    // Referral program
+    getReferralCode: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        // Generate referral code if doesn't exist
+        if (!dealer.referralCode) {
+          const code = await db.generateReferralCode(dealer.id);
+          return { referralCode: code };
+        }
+        
+        return { referralCode: dealer.referralCode };
+      }),
+
+    getReferralStats: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        return await db.getDealerReferralStats(dealer.id);
+      }),
+
+    validateReferralCode: publicProcedure
+      .input(z.object({
+        code: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const dealer = await db.getDealerByReferralCode(input.code);
+        return { valid: !!dealer, dealerName: dealer?.name };
       }),
 
     // Analytics

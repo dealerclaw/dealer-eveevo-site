@@ -1133,3 +1133,202 @@ export async function buyNowAuction(carId: number, dealerId: number, userId: num
       )
     );
 }
+
+/**
+ * Get subscription analytics for a dealer
+ */
+export async function getSubscriptionAnalytics(dealerId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const dealer = await db.select().from(dealers).where(eq(dealers.id, dealerId)).limit(1);
+  if (!dealer.length) return null;
+
+  const createdAt = dealer[0].createdAt;
+  const now = new Date();
+  const subscriptionDays = createdAt 
+    ? Math.floor((now.getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+
+  // Count bids placed by this dealer
+  const bids = await db.select().from(dealerBids).where(eq(dealerBids.dealerId, dealerId));
+  const bidsPlaced = bids.length;
+
+  // Count auctions won (where dealer's bid is the highest and auction ended)
+  const wonBids = await db
+    .select({
+      carId: dealerBids.carId,
+      bidAmount: dealerBids.bidAmount,
+    })
+    .from(dealerBids)
+    .where(eq(dealerBids.dealerId, dealerId));
+
+  let auctionsWon = 0;
+  let totalSpent = 0;
+  let estimatedRetailValue = 0;
+
+  for (const bid of wonBids) {
+    const car = await db.select().from(cars).where(eq(cars.id, bid.carId)).limit(1);
+    if (car.length && car[0].auctionEndDate && new Date(car[0].auctionEndDate) < now) {
+      // Check if this bid is the highest
+      const allBids = await db
+        .select()
+        .from(dealerBids)
+        .where(eq(dealerBids.carId, bid.carId))
+        .orderBy(desc(dealerBids.bidAmount));
+      
+      if (allBids.length && allBids[0].dealerId === dealerId) {
+        auctionsWon++;
+        const bidAmountNum = typeof bid.bidAmount === 'string' ? parseFloat(bid.bidAmount) : bid.bidAmount;
+        totalSpent += bidAmountNum;
+        const carPrice = typeof car[0].price === 'string' ? parseFloat(car[0].price) : car[0].price;
+        estimatedRetailValue += carPrice || bidAmountNum * 1.2; // Assume 20% markup if no retail price
+      }
+    }
+  }
+
+  const savingsAmount = estimatedRetailValue - totalSpent;
+  const savingsPercentage = estimatedRetailValue > 0 
+    ? ((savingsAmount / estimatedRetailValue) * 100)
+    : 0;
+
+  // Count vehicles viewed (for now, return 0 - would need view tracking)
+  const vehiclesViewed = 0;
+
+  return {
+    vehiclesViewed,
+    bidsPlaced,
+    auctionsWon,
+    totalSpent,
+    estimatedRetailValue,
+    savingsAmount,
+    savingsPercentage,
+    subscriptionDays,
+  };
+}
+
+/**
+ * Generate unique referral code for dealer
+ */
+export async function generateReferralCode(dealerId: number): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Generate code: first 3 letters of dealer name + random 5 chars
+  const dealer = await db
+    .select()
+    .from(dealers)
+    .where(eq(dealers.id, dealerId))
+    .limit(1);
+
+  if (!dealer || dealer.length === 0) {
+    throw new Error("Dealer not found");
+  }
+
+  const prefix = dealer[0].name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
+  const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+  const code = `${prefix}${randomPart}`;
+
+  // Update dealer with referral code
+  await db.update(dealers).set({ referralCode: code }).where(eq(dealers.id, dealerId));
+
+  return code;
+}
+
+/**
+ * Get dealer by referral code
+ */
+export async function getDealerByReferralCode(referralCode: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(dealers)
+    .where(eq(dealers.referralCode, referralCode))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Track referral when new dealer subscribes
+ */
+export async function trackReferral(referredDealerId: number, referrerDealerId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Update referred dealer's referredBy field
+  await db
+    .update(dealers)
+    .set({ referredBy: referrerDealerId })
+    .where(eq(dealers.id, referredDealerId));
+
+  // Add £20 credit to referrer
+  const referrer = await db
+    .select()
+    .from(dealers)
+    .where(eq(dealers.id, referrerDealerId))
+    .limit(1);
+
+  if (referrer && referrer.length > 0) {
+    const currentCredits = parseFloat(referrer[0].referralCredits || '0');
+    const newCredits = currentCredits + 20;
+
+    await db
+      .update(dealers)
+      .set({ referralCredits: newCredits.toString() })
+      .where(eq(dealers.id, referrerDealerId));
+  }
+
+  return { success: true };
+}
+
+/**
+ * Get referral stats for dealer
+ */
+export async function getDealerReferralStats(dealerId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get dealer's referral code and credits
+  const dealer = await db
+    .select()
+    .from(dealers)
+    .where(eq(dealers.id, dealerId))
+    .limit(1);
+
+  if (!dealer || dealer.length === 0) {
+    return null;
+  }
+
+  // Count successful referrals (dealers they referred who have active subscriptions)
+  const referralsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(dealers)
+    .where(and(
+      eq(dealers.referredBy, dealerId),
+      eq(dealers.subscriptionStatus, 'active')
+    ));
+
+  const successfulReferrals = referralsResult[0]?.count || 0;
+
+  // Get list of referred dealers
+  const referredDealers = await db
+    .select({
+      id: dealers.id,
+      name: dealers.name,
+      subscriptionStatus: dealers.subscriptionStatus,
+      createdAt: dealers.createdAt,
+    })
+    .from(dealers)
+    .where(eq(dealers.referredBy, dealerId))
+    .orderBy(desc(dealers.createdAt));
+
+  return {
+    referralCode: dealer[0].referralCode,
+    referralCredits: parseFloat(dealer[0].referralCredits || '0'),
+    successfulReferrals,
+    referredDealers,
+  };
+}

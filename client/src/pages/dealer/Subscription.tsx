@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Loader2, Crown, TrendingUp, Users, Shield } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Check, Loader2, Crown, TrendingUp, Users, Shield, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -12,10 +14,31 @@ import DealerLayout from "@/components/DealerLayout";
 export default function Subscription() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+  const [referralValidation, setReferralValidation] = useState<{ valid: boolean; dealerName?: string } | null>(null);
 
   const { data: subscriptionStatus } = trpc.dealer.getSubscriptionStatus.useQuery(undefined, {
     enabled: !!user,
   });
+
+  const validateReferralQuery = trpc.dealer.validateReferralCode.useQuery(
+    { code: referralCode },
+    { 
+      enabled: false,
+    }
+  );
+
+  // Handle validation result
+  useEffect(() => {
+    if (validateReferralQuery.data) {
+      setReferralValidation(validateReferralQuery.data);
+      if (validateReferralQuery.data.valid) {
+        toast.success(`Referral code valid! Referred by ${validateReferralQuery.data.dealerName}`);
+      } else {
+        toast.error("Invalid referral code");
+      }
+    }
+  }, [validateReferralQuery.data]);
 
   const createCheckoutMutation = trpc.dealer.createSubscription.useMutation({
     onSuccess: (data) => {
@@ -37,7 +60,9 @@ export default function Subscription() {
     }
 
     setIsLoading(true);
-    createCheckoutMutation.mutate();
+    createCheckoutMutation.mutate({
+      referralCode: referralValidation?.valid ? referralCode : undefined,
+    });
   };
 
   const features = [
@@ -119,6 +144,48 @@ export default function Subscription() {
                     No charge for 7 days. Cancel anytime during trial period.
                   </p>
                 </div>
+
+                {/* Referral Code Input */}
+                <div className="space-y-2 mb-4">
+                  <Label htmlFor="referralCode" className="flex items-center gap-2">
+                    <Gift className="h-4 w-4" />
+                    Have a referral code? (Optional)
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="referralCode"
+                      placeholder="Enter referral code"
+                      value={referralCode}
+                      onChange={(e) => {
+                        setReferralCode(e.target.value.toUpperCase());
+                        setReferralValidation(null);
+                      }}
+                      className={referralValidation?.valid ? "border-green-500" : ""}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => validateReferralQuery.refetch()}
+                      disabled={!referralCode || validateReferralQuery.isFetching}
+                    >
+                      {validateReferralQuery.isFetching ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Verify"
+                      )}
+                    </Button>
+                  </div>
+                  {referralValidation?.valid && (
+                    <p className="text-xs text-green-600">
+                      ✓ Valid code from {referralValidation.dealerName}
+                    </p>
+                  )}
+                  {referralValidation && !referralValidation.valid && (
+                    <p className="text-xs text-red-600">
+                      Invalid referral code
+                    </p>
+                  )}
+                </div>
                 <Button
                   onClick={handleSubscribe}
                   disabled={isLoading}
@@ -142,13 +209,33 @@ export default function Subscription() {
           </Card>
         )}
 
-        <div className="mt-12 text-center text-sm text-muted-foreground">
-          <p>
-            Questions? Contact us at{" "}
-            <a href="mailto:support@eveevo.com" className="text-primary hover:underline">
-              support@eveevo.com
-            </a>
-          </p>
+        <div className="mt-12 space-y-4">
+          <Card className="bg-muted/50">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Gift className="h-5 w-5" />
+                Refer a Dealer, Earn £20
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Already subscribed? Share your unique referral code with other dealers.
+                When they subscribe, you'll receive £20 credit towards your next renewal!
+              </p>
+              <Button asChild variant="outline" className="mt-4">
+                <a href="/dealer/subscription/manage">View My Referral Code</a>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <div className="text-center text-sm text-muted-foreground">
+            <p>
+              Questions? Contact us at{" "}
+              <a href="mailto:support@eveevo.com" className="text-primary hover:underline">
+                support@eveevo.com
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </DealerLayout>

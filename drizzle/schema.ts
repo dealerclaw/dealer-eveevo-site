@@ -46,6 +46,11 @@ export const dealers = mysqlTable("dealers", {
   stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
   stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
   
+  // Referral program
+  referralCode: varchar("referralCode", { length: 20 }).unique(),
+  referredBy: int("referredBy"),
+  referralCredits: decimal("referralCredits", { precision: 10, scale: 2 }).default("0"),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

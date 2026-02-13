@@ -724,3 +724,36 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add update payment method UI (functionality coming soon)
 - [x] Add cancel subscription UI (contact support for now)
 - [x] Test all subscription features
+
+## Stripe Customer Portal Integration
+- [x] Create backend endpoint to generate Stripe Customer Portal session
+- [x] Replace manual cancel/update buttons with portal redirect
+- [x] Portal allows payment method updates
+- [x] Portal allows subscription cancellation
+- [x] Portal shows invoice history
+
+## Subscription Analytics Dashboard
+- [x] Create analytics page at /dealer/subscription/analytics
+- [x] Show total vehicles viewed in dealer marketplace (placeholder for now)
+- [x] Show total bids placed
+- [x] Show auctions won count
+- [x] Calculate and display estimated savings vs retail
+- [x] Show subscription ROI percentage
+- [x] Show subscription days active
+- [x] Show financial breakdown with net savings
+
+## Referral Program
+- [x] Add referralCode, referredBy, and referralCredits fields to dealers table
+- [x] Generate unique referral codes for each dealer (auto-generated on first query)
+- [x] Create referral tracking system using referredBy field
+- [x] Add referral code input to subscription payment page
+- [x] Add referral code validation endpoint
+- [x] Track referrals in Stripe webhook when new dealer subscribes
+- [x] Award £20 credit automatically when referred dealer subscribes
+- [x] Add referral program section to /dealer/subscription/manage page
+- [x] Display referral code with copy button
+- [x] Display referral link with copy button
+- [x] Show referral stats (successful referrals, credits earned)
+- [x] Show list of referred dealers with subscription status
+- [x] Send owner notification when referral is successful
+- [ ] Apply referral credits to subscription renewals (requires Stripe discount/coupon integration)

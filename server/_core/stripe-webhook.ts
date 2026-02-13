@@ -168,6 +168,26 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         dealerId: dealer.id,
         customerId,
       });
+
+      // Check for referral code in metadata
+      const referralCode = session.metadata?.referralCode;
+      if (referralCode) {
+        const referrer = await db.getDealerByReferralCode(referralCode);
+        if (referrer && referrer.id !== dealer.id) {
+          await db.trackReferral(dealer.id, referrer.id);
+          console.log('[Webhook] Tracked referral:', {
+            referredDealerId: dealer.id,
+            referrerDealerId: referrer.id,
+            referralCode,
+          });
+
+          // Notify owner about referral
+          await notifyOwner({
+            title: `Referral Success: ${referrer.name} referred ${dealer.name}`,
+            content: `${dealer.name} subscribed using referral code ${referralCode} from ${referrer.name}.\n\n£20 credit added to ${referrer.name}'s account.\n\nReferrer ID: ${referrer.id}\nNew Dealer ID: ${dealer.id}`,
+          });
+        }
+      }
     }
   }
 
