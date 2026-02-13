@@ -514,3 +514,19 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - ✅ Booking cards show customer contact info, vehicle details, and notes
 - ✅ Dealers can confirm or decline pending bookings with one click
 - ✅ Status badges (Pending/Confirmed/Cancelled/Completed) with color coding
+
+## Fix Test Drive Button Not Working
+- [x] Check browser console for JavaScript errors
+- [x] Verify TestDriveBookingDialog component is rendering correctly
+- [x] Check if tRPC mutation is being called when form is submitted
+- [x] Verify database schema and API endpoints are working
+- [x] Test complete booking flow from button click to confirmation
+
+**Root Cause:** The testDrive.create endpoint required authentication (protectedProcedure), preventing non-logged-in users from booking test drives.
+
+**Fix Applied:**
+- ✅ Changed testDrive.create from protectedProcedure to publicProcedure
+- ✅ Made userId nullable in testDriveBookings schema (allows guest bookings)
+- ✅ Updated mutation to use ctx.user?.id || null for userId
+- ✅ Pushed database schema changes successfully
+- ✅ Test drive bookings now work for both authenticated and guest users
