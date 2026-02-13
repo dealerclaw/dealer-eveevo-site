@@ -1,0 +1,50 @@
+{
+  "query": "SELECT u.id, u.email, u.role, d.id as dealer_id, d.name as dealer_name, d.subscriptionStatus \nFROM users u \nLEFT JOIN dealers d ON u.id = d.userId \nWHERE u.email = 'anthony.m.perry@gmail.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT u.id, u.email, u.role, d.id as dealer_id, d.name as dealer_name, d.subscriptionStatus \nFROM users u \nLEFT JOIN dealers d ON u.id = d.userId \nWHERE u.email = 'anthony.m.perry@gmail.com';",
+  "rows": [
+    {
+      "id": "1",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "dealer_id": "1",
+      "dealer_name": "Anthony Perry Motors",
+      "subscriptionStatus": "none"
+    },
+    {
+      "id": "1",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "dealer_id": "30001",
+      "dealer_name": "TEsla",
+      "subscriptionStatus": "none"
+    },
+    {
+      "id": "1",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "dealer_id": "30002",
+      "dealer_name": "TEsla",
+      "subscriptionStatus": "none"
+    },
+    {
+      "id": "1",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "dealer_id": "90002",
+      "dealer_name": "EVEEVO Admin Dealer",
+      "subscriptionStatus": "active"
+    },
+    {
+      "id": "420012",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "dealer_id": "NULL",
+      "dealer_name": "NULL",
+      "subscriptionStatus": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\trole\tdealer_id\tdealer_name\tsubscriptionStatus\n1\tanthony.m.perry@gmail.com\tadmin\t1\tAnthony Perry Motors\tnone\n1\tanthony.m.perry@gmail.com\tadmin\t30001\tTEsla\tnone\n1\tanthony.m.perry@gmail.com\tadmin\t30002\tTEsla\tnone\n1\tanthony.m.perry@gmail.com\tadmin\t90002\tEVEEVO Admin Dealer\tactive\n420012\tanthony.m.perry@gmail.com\tadmin\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 349
+}

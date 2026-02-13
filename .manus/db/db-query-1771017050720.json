@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, email, role, openId FROM users WHERE email = 'anthony.m.perry@gmail.com' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, email, role, openId FROM users WHERE email = 'anthony.m.perry@gmail.com' ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "openId": "QzpBnhhytn6jJTKW5uUPFd"
+    },
+    {
+      "id": "420012",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin",
+      "openId": "anthony.m.perry@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\trole\topenId\n1\tanthony.m.perry@gmail.com\tadmin\tQzpBnhhytn6jJTKW5uUPFd\n420012\tanthony.m.perry@gmail.com\tadmin\tanthony.m.perry@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 371
+}
