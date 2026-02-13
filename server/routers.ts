@@ -505,15 +505,21 @@ export const appRouter = router({
             },
           ],
           mode: 'subscription',
-          success_url: `${ctx.req.headers.origin}/dealer/marketplace?subscribed=true`,
-          cancel_url: `${ctx.req.headers.origin}/dealer/dashboard`,
+          success_url: `${ctx.req.headers.origin}/dealer/subscription/success`,
+          cancel_url: `${ctx.req.headers.origin}/dealer/subscription`,
           customer_email: ctx.user.email || undefined,
+          phone_number_collection: {
+            enabled: false,
+          },
           client_reference_id: ctx.user.id.toString(),
           metadata: {
             user_id: ctx.user.id.toString(),
             dealer_id: dealer.id.toString(),
             customer_email: ctx.user.email || '',
             customer_name: ctx.user.name || '',
+          },
+          subscription_data: {
+            trial_period_days: 7,
           },
           allow_promotion_codes: true,
         });
