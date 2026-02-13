@@ -492,3 +492,25 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - ✅ Mock scores used as fallback until Evolution Funding API returns real credit scores
 - ✅ Also generates preApprovedAmount and maxLoanAmount based on credit score
 - ✅ Credit score now displays correctly in animated gauge after finance check
+
+## Interactive Calendar for Test Drive Bookings
+- [x] Create calendar component with date picker and month/year navigation
+- [x] Add time slot selection UI showing available appointment times
+- [x] Implement dealer availability management (working hours, blocked dates)
+- [x] Create booking confirmation flow with customer details
+- [x] Add dealer calendar dashboard to view all bookings
+- [x] Show booking details (customer info, car, date/time) in dealer view
+- [x] Add ability for dealers to accept/reject/reschedule bookings
+- [x] Implement calendar sync and real-time availability updates
+- [ ] Add email notifications for booking confirmations and changes (future enhancement)
+
+**Implementation:**
+- ✅ Created TestDriveCalendar component with visual date picker
+- ✅ Time slot grid showing 9 AM - 5 PM hourly slots with availability status
+- ✅ Two-step booking flow: 1) Select date/time from calendar, 2) Enter customer details
+- ✅ Dealer calendar dashboard at /dealer/test-drives with full month view
+- ✅ Calendar highlights dates with bookings (underlined)
+- ✅ Click any date to see all appointments for that day
+- ✅ Booking cards show customer contact info, vehicle details, and notes
+- ✅ Dealers can confirm or decline pending bookings with one click
+- ✅ Status badges (Pending/Confirmed/Cancelled/Completed) with color coding

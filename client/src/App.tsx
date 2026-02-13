@@ -17,7 +17,7 @@ import AddVehicle from "./pages/dealer/AddVehicle";
 import DealerMarketplace from "./pages/dealer/DealerMarketplace";
 import DealerAnalytics from "./pages/dealer/Analytics";
 import BulkUpload from "./pages/dealer/BulkUpload";
-import TestDriveCalendar from "./pages/dealer/TestDriveCalendar";
+import DealerCalendar from "./pages/dealer/DealerCalendar";
 import DealerAuthGuard from "./components/DealerAuthGuard";
 import AdminApplications from "./pages/AdminApplications";
 import AdminDealers from "./pages/admin/AdminDealers";
@@ -78,7 +78,7 @@ function Router() {
       </Route>
       <Route path="/dealer/test-drives">
         <DealerAuthGuard>
-          <TestDriveCalendar />
+          <DealerCalendar />
         </DealerAuthGuard>
       </Route>
       <Route path={"/404"} component={NotFound} />

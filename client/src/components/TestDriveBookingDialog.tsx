@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CalendarPlus } from "lucide-react";
+import TestDriveCalendar from "@/components/TestDriveCalendar";
+import { format } from "date-fns";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -24,22 +26,30 @@ interface TestDriveBookingDialogProps {
 
 export default function TestDriveBookingDialog({ carId, dealerId, carName }: TestDriveBookingDialogProps) {
   const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<'calendar' | 'details'>('calendar');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string>("");
   const [formData, setFormData] = useState({
-    preferredDate: "",
-    preferredTime: "",
     customerName: "",
     customerEmail: "",
     customerPhone: "",
     notes: "",
   });
 
+  const handleSlotSelect = (date: Date, time: string) => {
+    setSelectedDate(date);
+    setSelectedTime(time);
+    setStep('details');
+  };
+
   const createBooking = trpc.testDrive.create.useMutation({
     onSuccess: () => {
       toast.success("Test drive booking requested successfully!");
       setOpen(false);
+      setStep('calendar');
+      setSelectedDate(null);
+      setSelectedTime("");
       setFormData({
-        preferredDate: "",
-        preferredTime: "",
         customerName: "",
         customerEmail: "",
         customerPhone: "",
@@ -54,7 +64,7 @@ export default function TestDriveBookingDialog({ carId, dealerId, carName }: Tes
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.preferredDate || !formData.preferredTime || !formData.customerName || !formData.customerEmail || !formData.customerPhone) {
+    if (!selectedDate || !selectedTime || !formData.customerName || !formData.customerEmail || !formData.customerPhone) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -62,6 +72,8 @@ export default function TestDriveBookingDialog({ carId, dealerId, carName }: Tes
     createBooking.mutate({
       carId,
       dealerId,
+      preferredDate: format(selectedDate, "yyyy-MM-dd"),
+      preferredTime: selectedTime,
       ...formData,
     });
   };
@@ -82,28 +94,30 @@ export default function TestDriveBookingDialog({ carId, dealerId, carName }: Tes
               Request a test drive for {carName}. The dealer will confirm your appointment.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="preferredDate">Preferred Date *</Label>
-              <Input
-                id="preferredDate"
-                type="date"
-                value={formData.preferredDate}
-                onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                min={new Date().toISOString().split('T')[0]}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="preferredTime">Preferred Time *</Label>
-              <Input
-                id="preferredTime"
-                type="time"
-                value={formData.preferredTime}
-                onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
-                required
-              />
-            </div>
+          <div className="py-4">
+            {step === 'calendar' ? (
+              <TestDriveCalendar onSelectSlot={handleSlotSelect} dealerId={dealerId} />
+            ) : (
+              <div className="space-y-4">
+                {/* Show selected date/time */}
+                <div className="bg-muted p-4 rounded-lg">
+                  <p className="text-sm font-medium mb-1">Selected Appointment:</p>
+                  <p className="text-lg font-semibold">
+                    {selectedDate && format(selectedDate, "EEEE, MMMM d, yyyy")} at {selectedTime}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    onClick={() => setStep('calendar')}
+                    className="px-0 h-auto"
+                  >
+                    Change date/time
+                  </Button>
+                </div>
+
+                {/* Customer details form */}
+                <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="customerName">Your Name *</Label>
               <Input
@@ -146,15 +160,20 @@ export default function TestDriveBookingDialog({ carId, dealerId, carName }: Tes
                 rows={3}
               />
             </div>
+                </div>
+              </div>
+            )}
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={createBooking.isPending}>
-              {createBooking.isPending ? "Submitting..." : "Request Test Drive"}
-            </Button>
-          </DialogFooter>
+          {step === 'details' && (
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={createBooking.isPending}>
+                {createBooking.isPending ? "Submitting..." : "Request Test Drive"}
+              </Button>
+            </DialogFooter>
+          )}
         </form>
       </DialogContent>
     </Dialog>
