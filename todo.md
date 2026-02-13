@@ -643,9 +643,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [ ] Test live auction experience with real auction data
 
 ## Add Buy Now Feature to Auction
-- [ ] Add buyNowPrice field to cars table
-- [ ] Run database migration
-- [ ] Add backend API to handle instant purchase
-- [ ] Add "Buy Now" button to live auction page
-- [ ] End auction immediately when Buy Now is used
-- [ ] Test Buy Now functionality
+- [x] Add buyNowPrice field to cars table
+- [x] Run database migration
+- [x] Add backend API to handle instant purchase
+- [x] Add "Buy Now" button to live auction page
+- [x] End auction immediately when Buy Now is used
+- [x] Test Buy Now functionality

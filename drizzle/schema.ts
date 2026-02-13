@@ -101,6 +101,7 @@ export const cars = mysqlTable("cars", {
   startingBid: decimal("startingBid", { precision: 10, scale: 2 }),
   reservePrice: decimal("reservePrice", { precision: 10, scale: 2 }), // Minimum acceptable price
   currentHighestBid: decimal("currentHighestBid", { precision: 10, scale: 2 }),
+  buyNowPrice: decimal("buyNowPrice", { precision: 10, scale: 2 }), // Instant purchase price
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

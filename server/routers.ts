@@ -906,6 +906,49 @@ export const appRouter = router({
 
         return { success: true };
       }),
+
+    buyNow: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Get dealer ID for current user
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Only dealers can purchase vehicles');
+        }
+
+        // Check if dealer has active subscription
+        if (dealer.subscriptionStatus !== 'active') {
+          throw new Error('Active subscription required to purchase');
+        }
+
+        // Get the car to validate purchase
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Vehicle not found');
+        }
+
+        if (!car.isAuction) {
+          throw new Error('This vehicle is not in auction');
+        }
+
+        if (!car.buyNowPrice) {
+          throw new Error('Buy Now is not available for this vehicle');
+        }
+
+        // Check if auction is still active
+        const now = new Date();
+        if (car.auctionEndDate && new Date(car.auctionEndDate) < now) {
+          throw new Error('Auction has ended');
+        }
+
+        // Process instant purchase
+        const buyNowPrice = parseFloat(car.buyNowPrice.toString());
+        await db.buyNowAuction(input.carId, dealer.id, ctx.user.id, buyNowPrice);
+
+        return { success: true, price: buyNowPrice };
+      }),
   }),
 });
 export type AppRouter = typeof appRouter;

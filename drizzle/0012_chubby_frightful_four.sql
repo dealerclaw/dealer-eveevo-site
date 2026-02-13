@@ -1,0 +1,1 @@
+ALTER TABLE `cars` ADD `buyNowPrice` decimal(10,2);

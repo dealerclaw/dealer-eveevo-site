@@ -28,6 +28,16 @@ export default function LiveAuction() {
     },
   });
 
+  const buyNowMutation = trpc.auction.buyNow.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Vehicle purchased for £${data.price.toLocaleString()}!`);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to purchase vehicle");
+    },
+  });
+
   // Auto-rotate carousel every 60 seconds
   useEffect(() => {
     if (!vehicles || vehicles.length === 0) return;
@@ -78,6 +88,27 @@ export default function LiveAuction() {
       carId: currentVehicle.id,
       bidAmount: amount,
     });
+  };
+
+  const handleBuyNow = () => {
+    if (!user) {
+      toast.error("Please log in to purchase");
+      window.location.href = getLoginUrl();
+      return;
+    }
+
+    const currentVehicle = vehicles?.[currentIndex];
+    if (!currentVehicle) return;
+
+    if (!currentVehicle.buyNowPrice) {
+      toast.error("Buy Now is not available for this vehicle");
+      return;
+    }
+
+    const buyNowPrice = parseFloat(currentVehicle.buyNowPrice.toString());
+    if (window.confirm(`Purchase this vehicle now for £${buyNowPrice.toLocaleString()}?`)) {
+      buyNowMutation.mutate({ carId: currentVehicle.id });
+    }
   };
 
   const formatTimeRemaining = (endDate: Date) => {
@@ -309,6 +340,39 @@ export default function LiveAuction() {
                       </>
                     )}
                   </Button>
+
+                  {currentVehicle.buyNowPrice && (
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-white/20" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-black/40 px-2 text-white/60">or</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentVehicle.buyNowPrice && (
+                    <Button
+                      size="lg"
+                      variant="secondary"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white border-0"
+                      onClick={handleBuyNow}
+                      disabled={buyNowMutation.isPending}
+                    >
+                      {buyNowMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <Gavel className="w-4 h-4 mr-2" />
+                          Buy Now - £{parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}
+                        </>
+                      )}
+                    </Button>
+                  )}
 
                   {!user && (
                     <p className="text-xs text-center text-white/60">

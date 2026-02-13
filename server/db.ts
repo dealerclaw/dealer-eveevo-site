@@ -1092,3 +1092,44 @@ export async function startAuction(carId: number, startingBid: number, reservePr
     })
     .where(eq(cars.id, carId));
 }
+
+
+/**
+ * Buy Now - Instant purchase of auction vehicle
+ */
+export async function buyNowAuction(carId: number, dealerId: number, userId: number, purchasePrice: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // End the auction immediately
+  const now = new Date();
+  await db
+    .update(cars)
+    .set({
+      isAuction: false,
+      auctionEndDate: now,
+      isAvailable: false, // Mark as sold
+    })
+    .where(eq(cars.id, carId));
+
+  // Create a winning bid record
+  await db.insert(dealerBids).values({
+    carId,
+    dealerId,
+    userId,
+    bidAmount: purchasePrice.toString(),
+    message: "Buy Now - Instant Purchase",
+    status: 'won',
+  });
+
+  // Mark all other bids as lost
+  await db
+    .update(dealerBids)
+    .set({ status: 'lost' })
+    .where(
+      and(
+        eq(dealerBids.carId, carId),
+        ne(dealerBids.dealerId, dealerId)
+      )
+    );
+}
