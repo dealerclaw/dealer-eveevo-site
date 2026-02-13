@@ -710,3 +710,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Prefill customer email and disable phone collection in Stripe checkout
 - [x] Update success URL to redirect to /dealer/subscription/success
 - [x] Test subscription flow updates status correctly
+
+## Fix Subscription Success Redirect
+- [x] Add auto-redirect to auction page after subscription success (5 second countdown)
+- [x] Show countdown timer on success page
+- [x] Test redirect works after subscribing

@@ -2,9 +2,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Gavel, TrendingUp, Users } from "lucide-react";
 import DealerLayout from "@/components/DealerLayout";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { useEffect, useState } from "react";
 
 export default function SubscriptionSuccess() {
+  const [, setLocation] = useLocation();
+  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setLocation('/dealer/live-auction');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [setLocation]);
+
   return (
     <DealerLayout>
       <div className="container max-w-3xl py-12">
@@ -15,7 +34,7 @@ export default function SubscriptionSuccess() {
             </div>
             <CardTitle className="text-3xl">Welcome to the Dealer Marketplace!</CardTitle>
             <CardDescription className="text-base">
-              Your subscription is now active. Start trading wholesale vehicles today.
+              Your subscription is now active. Redirecting to Live Auction in {countdown} seconds...
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
