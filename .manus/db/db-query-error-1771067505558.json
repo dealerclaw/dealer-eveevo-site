@@ -1,0 +1,8 @@
+{
+  "query": "SELECT d.id, d.businessName, d.firebaseId, d.userId, u.openId, u.name \nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT d.id, d.businessName, d.firebaseId, d.userId, u.openId, u.name \nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nLIMIT 10;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'd.businessname' in 'field list'"
+  ]
+}

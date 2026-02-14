@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, firebaseId, userId FROM dealers LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, name, firebaseId, userId FROM dealers LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Anthony Perry Motors",
+      "firebaseId": "QzpBnhhytn6jJTKW5uUPFd",
+      "userId": "1"
+    },
+    {
+      "id": "30001",
+      "name": "TEsla",
+      "firebaseId": "QzpBnhhytn6jJTKW5uUPFd",
+      "userId": "1"
+    },
+    {
+      "id": "30002",
+      "name": "TEsla",
+      "firebaseId": "QzpBnhhytn6jJTKW5uUPFd",
+      "userId": "1"
+    },
+    {
+      "id": "60001",
+      "name": "Autobarn 100",
+      "firebaseId": "11027084",
+      "userId": "NULL"
+    },
+    {
+      "id": "60002",
+      "name": "Nottingham",
+      "firebaseId": "10026610",
+      "userId": "NULL"
+    },
+    {
+      "id": "60003",
+      "name": "Eclipse Car Sales",
+      "firebaseId": "10023707",
+      "userId": "NULL"
+    },
+    {
+      "id": "60004",
+      "name": "GC Motors",
+      "firebaseId": "10038576",
+      "userId": "NULL"
+    },
+    {
+      "id": "60005",
+      "name": "Halliwell Jones",
+      "firebaseId": "10038159",
+      "userId": "NULL"
+    },
+    {
+      "id": "60006",
+      "name": "Arnold Clark",
+      "firebaseId": "10038395",
+      "userId": "NULL"
+    },
+    {
+      "id": "60007",
+      "name": "Ashridge Vehicles Ltd",
+      "firebaseId": "10023492",
+      "userId": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tfirebaseId\tuserId\n1\tAnthony Perry Motors\tQzpBnhhytn6jJTKW5uUPFd\t1\n30001\tTEsla\tQzpBnhhytn6jJTKW5uUPFd\t1\n30002\tTEsla\tQzpBnhhytn6jJTKW5uUPFd\t1\n60001\tAutobarn 100\t11027084\tNULL\n60002\tNottingham\t10026610\tNULL\n60003\tEclipse Car Sales\t10023707\tNULL\n60004\tGC Motors\t10038576\tNULL\n60005\tHalliwell Jones\t10038159\tNULL\n60006\tArnold Clark\t10038395\tNULL\n60007\tAshridge Vehicles Ltd\t10023492\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 368
+}

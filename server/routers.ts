@@ -979,13 +979,13 @@ export const appRouter = router({
 
         // Ensure dealer has a firebaseId (openId)
         if (!dealer.firebaseId) {
-          throw new Error('Dealer does not have a linked user account');
+          throw new Error(`Dealer "${dealer.name}" does not have a linked user account (firebaseId is missing)`);
         }
 
         // Get dealer's user info
         const dealerUser = await db.getUserByOpenId(dealer.firebaseId);
         if (!dealerUser) {
-          throw new Error('Dealer user not found');
+          throw new Error(`User account not found for dealer "${dealer.name}" (firebaseId: ${dealer.firebaseId}). The user may have been deleted.`);
         }
 
         // Create session token using SDK (compatible with auth verification)

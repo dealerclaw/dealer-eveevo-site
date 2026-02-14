@@ -916,3 +916,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix button scope to individual dealer (added pending check to prevent double-clicks)
 - [x] Add loading spinner during impersonation
 - [x] Test impersonation with multiple dealers (added pending check to prevent race conditions)
+
+## Fix Persistent Impersonate Issues
+- [x] Query database to check which dealers have NULL firebaseId (dealers table exists)
+- [x] Check actual firebaseId values in dealers table (found mismatches)
+- [x] Fix firebaseId sync with SQL UPDATE query
+- [x] Fix impersonate endpoint with better error messages
+- [x] Fix button color changing for all dealers (mutation state shared across buttons)
+- [x] Use dealer-specific loading state instead of global mutation state
+- [x] Test impersonation with multiple dealers (dealer-specific loading state working)

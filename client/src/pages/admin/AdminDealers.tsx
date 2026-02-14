@@ -25,6 +25,7 @@ import {
 export default function AdminDealers() {
   const [selectedDealerId, setSelectedDealerId] = useState<number | null>(null);
   const [showCarsDialog, setShowCarsDialog] = useState(false);
+  const [impersonatingDealerId, setImpersonatingDealerId] = useState<number | null>(null);
   
   const impersonateMutation = trpc.admin.impersonate.useMutation({
     onSuccess: (data) => {
@@ -34,6 +35,7 @@ export default function AdminDealers() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to impersonate dealer");
+      setImpersonatingDealerId(null);
     },
   });
   
@@ -178,13 +180,14 @@ export default function AdminDealers() {
                               variant="default"
                               size="sm"
                               onClick={() => {
-                                if (!impersonateMutation.isPending) {
+                                if (impersonatingDealerId === null) {
+                                  setImpersonatingDealerId(dealer.id);
                                   impersonateMutation.mutate({ dealerId: dealer.id });
                                 }
                               }}
-                              disabled={impersonateMutation.isPending}
+                              disabled={impersonatingDealerId === dealer.id}
                             >
-                              {impersonateMutation.isPending ? (
+                              {impersonatingDealerId === dealer.id ? (
                                 <>
                                   <Loader2 className="w-4 h-4 mr-1 animate-spin" />
                                   Switching...
