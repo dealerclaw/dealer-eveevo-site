@@ -28,14 +28,20 @@ export default function AdminDealers() {
   const [impersonatingDealerId, setImpersonatingDealerId] = useState<number | null>(null);
   
   const impersonateMutation = trpc.admin.impersonate.useMutation({
+    onMutate: (variables) => {
+      console.log('[Impersonate Client] Starting impersonation for dealer:', variables.dealerId);
+    },
     onSuccess: (data) => {
+      console.log('[Impersonate Client] Success, dealer name:', data.dealerName);
       toast.success(`Switched to dealer: ${data.dealerName}`);
       // Wait a moment for cookie to be set, then redirect
       setTimeout(() => {
+        console.log('[Impersonate Client] Redirecting to dealer dashboard');
         window.location.href = "/dealer/dashboard";
       }, 1000);
     },
     onError: (error) => {
+      console.log('[Impersonate Client] Error:', error.message);
       toast.error(error.message || "Failed to impersonate dealer");
       setImpersonatingDealerId(null);
     },

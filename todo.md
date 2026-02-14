@@ -978,3 +978,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add quick edit button from details dialog
 - [ ] Add pagination or infinite scroll for large inventories (if needed)
 - [ ] Test with Arnold Clark's 1302 cars
+
+## Fix Impersonation Still Redirecting to Login
+- [x] Check server logs for impersonate and auth context entries (found Arnold Clark auth!)
+- [x] Added client-side logging to track mutation flow
+- [x] Test with user - green toast appears, session works
+- [x] Verify session cookie is being set correctly (confirmed in logs)
+- [x] Check if cookie is being sent with subsequent requests (yes, authenticated as Arnold Clark)
+- [x] Identify why DealerAuthGuard redirects to login (redirects before auth query completes)
+- [x] Fix root cause - added loading check to wait for auth before redirecting
+- [ ] Test complete impersonation flow works end-to-end
