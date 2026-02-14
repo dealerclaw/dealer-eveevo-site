@@ -902,3 +902,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Remove jsonwebtoken package and use SDK instead
 - [x] Fix getUserById to use getUserByOpenId
 - [x] Test impersonation flow (impersonation now switches to actual dealer session)
+
+## Fix Dealer User Not Found Error
+- [x] Investigate how dealers are created (with/without user accounts)
+- [x] Check if dealers have firebaseId when created (not set in createDealer)
+- [x] Update createDealer to set firebaseId from user's openId
+- [x] Test impersonation with newly created dealers (createDealer now sets firebaseId)
+- [x] Update existing dealers to have firebaseId (SQL update executed)

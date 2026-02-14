@@ -946,8 +946,15 @@ export async function createDealer(
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
+  // Get user's firebaseId (openId)
+  const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user || user.length === 0) {
+    throw new Error("User not found");
+  }
+
   const result = await db.insert(dealers).values({
     userId,
+    firebaseId: user[0].openId, // Link dealer to user account
     name: data.businessName,
     email: data.email,
     phone: data.phone,
