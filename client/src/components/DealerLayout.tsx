@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import Header from "./Header";
+import ImpersonationBanner from "./ImpersonationBanner";
 import { LayoutDashboard, Package, Plus, Store, BarChart3, Upload, Calendar, Gavel, Crown, ShoppingCart, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -70,6 +71,7 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <ImpersonationBanner />
       <Header />
       
       <div className="flex">

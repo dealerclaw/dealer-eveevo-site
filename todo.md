@@ -883,3 +883,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add route for edit vehicle page
 - [x] Populate form with existing vehicle data
 - [x] Test inventory edit functionality (EditVehicle page created and route added)
+
+## Admin Dealer Impersonation
+- [x] Create dealer list page for admin with impersonate button
+- [x] Add impersonate endpoint that switches session to dealer
+- [x] Store original admin user ID to allow switching back
+- [x] Add "Exit Impersonation" banner when impersonating
+- [x] Update auth to handle impersonation state (stored in JWT)
+- [x] Test impersonation flow (switch to dealer, view inventory, switch back)

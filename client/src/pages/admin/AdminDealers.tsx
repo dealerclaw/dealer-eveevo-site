@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Store, Car, Phone, Mail, Globe, MessageSquare, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, Store, Car, Phone, Mail, Globe, MessageSquare, CheckCircle, XCircle, UserCog } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -24,6 +25,16 @@ import {
 export default function AdminDealers() {
   const [selectedDealerId, setSelectedDealerId] = useState<number | null>(null);
   const [showCarsDialog, setShowCarsDialog] = useState(false);
+
+  const impersonateMutation = trpc.admin.impersonate.useMutation({
+    onSuccess: () => {
+      toast.success("Now viewing as dealer");
+      window.location.href = "/dealer/dashboard";
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to impersonate dealer");
+    },
+  });
 
   const { data: dealers, isLoading } = trpc.admin.getAllDealers.useQuery();
   const { data: dealerCars, isLoading: loadingCars } = trpc.admin.getDealerCars.useQuery(
@@ -154,13 +165,24 @@ export default function AdminDealers() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewCars(dealer.id)}
-                          >
-                            View Cars
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewCars(dealer.id)}
+                            >
+                              View Cars
+                            </Button>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => impersonateMutation.mutate({ dealerId: dealer.id })}
+                              disabled={impersonateMutation.isPending}
+                            >
+                              <UserCog className="w-4 h-4 mr-1" />
+                              {impersonateMutation.isPending ? "Switching..." : "Impersonate"}
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))

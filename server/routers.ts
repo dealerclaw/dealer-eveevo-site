@@ -2,6 +2,10 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import jwt from "jsonwebtoken";
+import { ENV } from "./_core/env";
+
+const JWT_SECRET = ENV.cookieSecret;
 import { z } from "zod";
 import * as db from "./db";
 import * as evDb from "./evDatabase";
@@ -958,6 +962,63 @@ export const appRouter = router({
         }
         const adminDb = await import('./adminDb');
         return await adminDb.getDealerCarsAdmin(input.dealerId);
+      }),
+
+    impersonate: protectedProcedure
+      .input(z.object({
+        dealerId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        
+        // Get dealer info
+        const dealer = await db.getDealerById(input.dealerId);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+
+        // Store original admin user in session
+        const payload = {
+          id: dealer.id,
+          openId: dealer.firebaseId || `dealer-${dealer.id}`,
+          name: dealer.name,
+          role: 'dealer' as const,
+          originalAdminId: ctx.user.id,
+          originalAdminOpenId: ctx.user.openId,
+          originalAdminName: ctx.user.name,
+          isImpersonating: true,
+        };
+
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, token, cookieOptions);
+
+        return { success: true, dealer: payload };
+      }),
+
+    exitImpersonation: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        // Check if currently impersonating
+        const user = ctx.user as any;
+        if (!user.isImpersonating || !user.originalAdminId) {
+          throw new Error('Not currently impersonating');
+        }
+
+        // Restore original admin session
+        const payload = {
+          id: user.originalAdminId,
+          openId: user.originalAdminOpenId,
+          name: user.originalAdminName,
+          role: 'admin' as const,
+        };
+
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, token, cookieOptions);
+
+        return { success: true };
       }),
 
     // Dealer applications
