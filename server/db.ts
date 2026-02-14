@@ -14,6 +14,7 @@ import {
   dealerApplications,
   testDriveBookings,
   dealerBids,
+  dealerReviews,
   type Car,
   type Dealer,
   type Reservation,
@@ -27,7 +28,9 @@ import {
   type TestDriveBooking,
   type InsertTestDriveBooking,
   type DealerBid,
-  type InsertDealerBid
+  type InsertDealerBid,
+  type DealerReview,
+  type InsertDealerReview
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1609,4 +1612,108 @@ Total Purchases: ${purchases.length}
   `.trim();
 
   return content;
+}
+
+/**
+ * Dealer Reviews functions
+ */
+export async function submitDealerReview(data: InsertDealerReview) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Check if user already reviewed this dealer
+  const existing = await db
+    .select()
+    .from(dealerReviews)
+    .where(and(
+      eq(dealerReviews.dealerId, data.dealerId),
+      eq(dealerReviews.userId, data.userId)
+    ))
+    .limit(1);
+
+  if (existing.length > 0) {
+    throw new Error("You have already reviewed this dealer");
+  }
+
+  // Insert review
+  await db.insert(dealerReviews).values(data);
+
+  // Update dealer's average rating and review count
+  await updateDealerRating(data.dealerId);
+}
+
+export async function getDealerReviews(dealerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const reviews = await db
+    .select({
+      id: dealerReviews.id,
+      rating: dealerReviews.rating,
+      reviewText: dealerReviews.reviewText,
+      isVerified: dealerReviews.isVerified,
+      createdAt: dealerReviews.createdAt,
+      userName: users.name,
+    })
+    .from(dealerReviews)
+    .innerJoin(users, eq(dealerReviews.userId, users.id))
+    .where(and(
+      eq(dealerReviews.dealerId, dealerId),
+      eq(dealerReviews.isVisible, true)
+    ))
+    .orderBy(desc(dealerReviews.createdAt));
+
+  return reviews;
+}
+
+export async function updateDealerRating(dealerId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  // Calculate average rating
+  const result = await db
+    .select({
+      avgRating: sql<number>`AVG(${dealerReviews.rating})`,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(dealerReviews)
+    .where(and(
+      eq(dealerReviews.dealerId, dealerId),
+      eq(dealerReviews.isVisible, true)
+    ));
+
+  const avgRating = result[0]?.avgRating || 0;
+  const reviewCount = result[0]?.count || 0;
+
+  // Update dealer record
+  await db
+    .update(dealers)
+    .set({
+      rating: Number(avgRating).toFixed(2),
+      reviewCount: Number(reviewCount),
+    })
+    .where(eq(dealers.id, dealerId));
+}
+
+export async function getAllDealersForFilter() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select({
+      id: dealers.id,
+      name: dealers.name,
+      vehicleCount: sql<number>`COUNT(${cars.id})`,
+    })
+    .from(dealers)
+    .leftJoin(cars, and(
+      eq(dealers.id, cars.dealerId),
+      eq(cars.isAvailable, true),
+      eq(cars.marketplace, 'consumer')
+    ))
+    .groupBy(dealers.id, dealers.name)
+    .having(sql`COUNT(${cars.id}) > 0`)
+    .orderBy(dealers.name);
+
+  return result;
 }

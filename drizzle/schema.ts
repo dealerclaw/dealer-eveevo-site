@@ -38,6 +38,8 @@ export const dealers = mysqlTable("dealers", {
   logoUrl: varchar("logoUrl", { length: 500 }),
   profileUrl: varchar("profileUrl", { length: 500 }),
   rating: decimal("rating", { precision: 3, scale: 2 }),
+  reviewCount: int("reviewCount").default(0),
+  businessHours: text("businessHours"), // JSON string: {"monday": "9:00-17:00", ...}
   isVerified: boolean("isVerified").default(false),
   
   // Dealer-to-Dealer subscription
@@ -340,3 +342,30 @@ export const dealerOffers = mysqlTable("dealerOffers", {
 
 export type DealerOffer = typeof dealerOffers.$inferSelect;
 export type InsertDealerOffer = typeof dealerOffers.$inferInsert;
+
+/**
+ * Dealer Reviews table - customer ratings and reviews for dealers
+ */
+export const dealerReviews = mysqlTable("dealerReviews", {
+  id: int("id").autoincrement().primaryKey(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  userId: int("userId").references(() => users.id).notNull(),
+  
+  // Review content
+  rating: int("rating").notNull(), // 1-5 stars
+  reviewText: text("reviewText"),
+  
+  // Purchase verification
+  purchaseId: int("purchaseId"), // Optional: link to dealerBids if review is from verified purchase
+  
+  // Moderation
+  isVerified: boolean("isVerified").default(false), // Verified purchase
+  isVisible: boolean("isVisible").default(true),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DealerReview = typeof dealerReviews.$inferSelect;
+export type InsertDealerReview = typeof dealerReviews.$inferInsert;

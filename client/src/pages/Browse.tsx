@@ -36,6 +36,7 @@ export default function Browse() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedDealer, setSelectedDealer] = useState<string>("");
   const [priceRange, setPriceRange] = useState([0, 100000]);
   const [rangeFilter, setRangeFilter] = useState([0, 400]);
   const [mileageFilter, setMileageFilter] = useState([0, 100000]);
@@ -135,10 +136,14 @@ export default function Browse() {
   });
   const utils = trpc.useUtils();
 
+  // Fetch dealers for filter
+  const { data: dealersList } = trpc.dealers.listForFilter.useQuery();
+
   // Fetch cars with filters
   const { data: cars, isLoading } = trpc.cars.list.useQuery({
     make: selectedMake && selectedMake !== 'all_makes' ? selectedMake : undefined,
     model: selectedModel || undefined,
+    dealerId: selectedDealer && selectedDealer !== 'all_dealers' ? parseInt(selectedDealer) : undefined,
     minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
     maxPrice: priceRange[1] < 100000 ? priceRange[1] : undefined,
     minRange: rangeFilter[0] > 0 ? rangeFilter[0] : undefined,
@@ -337,6 +342,24 @@ export default function Browse() {
                         {makes.map((make) => (
                           <SelectItem key={make} value={make}>
                             {make}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Dealer */}
+                  <div>
+                    <Label>Dealer</Label>
+                    <Select value={selectedDealer} onValueChange={setSelectedDealer}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All dealers" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all_dealers">All dealers</SelectItem>
+                        {dealersList?.map((dealer: any) => (
+                          <SelectItem key={dealer.id} value={dealer.id.toString()}>
+                            {dealer.name} ({dealer.vehicleCount})
                           </SelectItem>
                         ))}
                       </SelectContent>

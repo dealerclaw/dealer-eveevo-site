@@ -795,3 +795,30 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Show dealer info in search results (via Browse page)
 - [x] Add dealer info to featured cars section on Home page
 - [x] Test dealer display across all listing views
+
+## Dealer Profile Pages
+- [x] Create dealer profile page at /dealers/:id (already exists)
+- [x] Display dealer information (name, contact, address, hours)
+- [x] Show dealer's vehicle inventory on profile
+- [x] Add location map placeholder to dealer profile
+- [x] Display dealer ratings and reviews on profile
+- [x] Route already exists in App.tsx for dealer profiles
+
+## Dealer Filter on Browse Page
+- [x] Add dealer dropdown filter to Browse page
+- [x] Fetch list of all dealers for filter
+- [x] Apply dealer filter to car search
+- [x] Show active dealer filter in UI
+
+## Dealer Ratings & Reviews System
+- [x] Create dealerReviews table in database schema
+- [x] Add rating (1-5 stars) and review text fields
+- [x] Create endpoint to submit dealer review
+- [x] Create endpoint to get dealer reviews
+- [x] Calculate average dealer rating automatically
+- [x] Display rating stars on car listings (already implemented)
+- [x] Display rating stars on dealer profile
+- [x] Add review submission form on dealer profile
+- [x] Show list of reviews on dealer profile
+- [x] Prevent duplicate reviews from same user
+- [x] Test ratings and reviews end-to-end

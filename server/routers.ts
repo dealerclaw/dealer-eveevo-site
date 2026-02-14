@@ -92,6 +92,45 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await db.getCars({ dealerId: input.dealerId });
       }),
+
+    listForFilter: publicProcedure
+      .query(async () => {
+        return await db.getAllDealersForFilter();
+      }),
+
+    getProfile: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getDealerById(input.id);
+      }),
+
+    getInventory: publicProcedure
+      .input(z.object({ dealerId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getCars({ dealerId: input.dealerId, marketplace: 'consumer' });
+      }),
+
+    getReviews: publicProcedure
+      .input(z.object({ dealerId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getDealerReviews(input.dealerId);
+      }),
+
+    submitReview: protectedProcedure
+      .input(z.object({
+        dealerId: z.number(),
+        rating: z.number().min(1).max(5),
+        reviewText: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await db.submitDealerReview({
+          dealerId: input.dealerId,
+          userId: ctx.user.id,
+          rating: input.rating,
+          reviewText: input.reviewText,
+        });
+        return { success: true };
+      }),
   }),
 
   // Reservations router

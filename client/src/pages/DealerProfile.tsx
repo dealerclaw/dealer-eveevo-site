@@ -1,5 +1,9 @@
+import { useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "../lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { toast } from "sonner";
+import { Textarea } from "../components/ui/textarea";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -12,11 +16,42 @@ import {
 export default function DealerProfile() {
   const { id } = useParams();
   const [, navigate] = useLocation();
+  const { isAuthenticated, user } = useAuth();
   
   const dealerId = parseInt(id || "0");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState("");
   
   const { data: dealer, isLoading: dealerLoading } = trpc.dealers.getById.useQuery({ id: dealerId });
   const { data: cars, isLoading: carsLoading } = trpc.dealers.getCars.useQuery({ dealerId });
+  const { data: reviews } = trpc.dealers.getReviews.useQuery({ dealerId });
+
+  const submitReviewMutation = trpc.dealers.submitReview.useMutation({
+    onSuccess: () => {
+      toast.success("Review submitted successfully");
+      setReviewText("");
+      setReviewRating(5);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to submit review");
+    },
+  });
+
+  const handleSubmitReview = () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in to leave a review");
+      return;
+    }
+    if (!reviewText.trim()) {
+      toast.error("Please write a review");
+      return;
+    }
+    submitReviewMutation.mutate({
+      dealerId,
+      rating: reviewRating,
+      reviewText: reviewText.trim(),
+    });
+  };
 
   if (dealerLoading) {
     return (
@@ -265,6 +300,105 @@ export default function DealerProfile() {
             <h3 className="text-lg font-semibold mb-2">No Vehicles Available</h3>
             <p className="text-muted-foreground">
               This dealer doesn't have any vehicles listed at the moment.
+            </p>
+          </Card>
+        )}
+      </div>
+
+      {/* Reviews Section */}
+      <div className="container py-8 border-t">
+        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+
+        {/* Submit Review Form */}
+        {isAuthenticated && (
+          <Card className="mb-8">
+            <div className="p-6 space-y-4">
+              <h3 className="font-semibold text-lg">Write a Review</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">Rating:</span>
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-6 h-6 cursor-pointer transition-colors ${
+                        star <= reviewRating
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-300 hover:text-yellow-200"
+                      }`}
+                      onClick={() => setReviewRating(star)}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground ml-2">
+                  {reviewRating} star{reviewRating !== 1 ? 's' : ''}
+                </span>
+              </div>
+              <Textarea
+                placeholder="Share your experience with this dealer..."
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                rows={4}
+                className="resize-none"
+              />
+              <Button
+                onClick={handleSubmitReview}
+                disabled={submitReviewMutation.isPending || !reviewText.trim()}
+              >
+                {submitReviewMutation.isPending ? "Submitting..." : "Submit Review"}
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {/* Reviews List */}
+        {reviews && reviews.length > 0 ? (
+          <div className="space-y-4">
+            {reviews.map((review: any) => (
+              <Card key={review.id}>
+                <div className="p-6 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="font-semibold">{review.userName || "Anonymous"}</div>
+                      {review.isVerified && (
+                        <Badge variant="secondary" className="text-xs">
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Verified Purchase
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${
+                            star <= review.rating
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(review.createdAt).toLocaleDateString('en-GB', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                  <p className="text-sm leading-relaxed">{review.reviewText}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card className="p-12 text-center">
+            <Star className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">No Reviews Yet</h3>
+            <p className="text-muted-foreground">
+              {isAuthenticated
+                ? "Be the first to review this dealer!"
+                : "Sign in to leave a review"}
             </p>
           </Card>
         )}
