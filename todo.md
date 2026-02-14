@@ -925,3 +925,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix button color changing for all dealers (mutation state shared across buttons)
 - [x] Use dealer-specific loading state instead of global mutation state
 - [x] Test impersonation with multiple dealers (dealer-specific loading state working)
+
+## Fix Dealer FirebaseId Mismatch
+- [x] Check Carsupermarket dealer's userId and user account (found 20+ mismatches)
+- [x] Verify if user exists for this dealer (user exists, firebaseId was wrong)
+- [x] Update firebaseId to match user's openId (SQL UPDATE executed)
+- [x] Check all dealers for similar firebaseId mismatches (found 20+ dealers)
+- [x] Test impersonation with Carsupermarket dealer (firebaseId now correctly synced)

@@ -1,0 +1,150 @@
+{
+  "query": "SELECT d.id, d.name, d.firebaseId, d.userId, u.openId\nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nWHERE d.firebaseId IS NOT NULL AND (u.openId IS NULL OR d.firebaseId != u.openId)\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT d.id, d.name, d.firebaseId, d.userId, u.openId\nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nWHERE d.firebaseId IS NOT NULL AND (u.openId IS NULL OR d.firebaseId != u.openId)\nLIMIT 20;",
+  "rows": [
+    {
+      "id": "60001",
+      "name": "Autobarn 100",
+      "firebaseId": "11027084",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60002",
+      "name": "Nottingham",
+      "firebaseId": "10026610",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60003",
+      "name": "Eclipse Car Sales",
+      "firebaseId": "10023707",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60004",
+      "name": "GC Motors",
+      "firebaseId": "10038576",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60005",
+      "name": "Halliwell Jones",
+      "firebaseId": "10038159",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60006",
+      "name": "Arnold Clark",
+      "firebaseId": "10038395",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60007",
+      "name": "Ashridge Vehicles Ltd",
+      "firebaseId": "10023492",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60008",
+      "name": "Steven Eagell Group",
+      "firebaseId": "10039505",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60009",
+      "name": "Vindis Group",
+      "firebaseId": "10041871",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60010",
+      "name": "Cartime",
+      "firebaseId": "10044276",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60011",
+      "name": "Sinclair Group",
+      "firebaseId": "10037251",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60012",
+      "name": "EMG Motor Group",
+      "firebaseId": "10026964",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60013",
+      "name": "Islington Motor Group",
+      "firebaseId": "10030182",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60014",
+      "name": "Motorvogue",
+      "firebaseId": "10027135",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60015",
+      "name": "Marshall Motor Group",
+      "firebaseId": "10030188",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60016",
+      "name": "Stirling Cars",
+      "firebaseId": "10043049",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60017",
+      "name": "Carsa Limited",
+      "firebaseId": "10044151",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60018",
+      "name": "Williams Group",
+      "firebaseId": "10026933",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60019",
+      "name": "Big Motoring World",
+      "firebaseId": "10039194",
+      "userId": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60020",
+      "name": "The Car Co",
+      "firebaseId": "10027113",
+      "userId": "NULL",
+      "openId": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tfirebaseId\tuserId\topenId\n60001\tAutobarn 100\t11027084\tNULL\tNULL\n60002\tNottingham\t10026610\tNULL\tNULL\n60003\tEclipse Car Sales\t10023707\tNULL\tNULL\n60004\tGC Motors\t10038576\tNULL\tNULL\n60005\tHalliwell Jones\t10038159\tNULL\tNULL\n60006\tArnold Clark\t10038395\tNULL\tNULL\n60007\tAshridge Vehicles Ltd\t10023492\tNULL\tNULL\n60008\tSteven Eagell Group\t10039505\tNULL\tNULL\n60009\tVindis Group\t10041871\tNULL\tNULL\n60010\tCartime\t10044276\tNULL\tNULL\n60011\tSinclair Group\t10037251\tNULL\tNULL\n60012\tEMG Motor Group\t10026964\tNULL\tNULL\n60013\tIslington Motor Group\t10030182\tNULL\tNULL\n60014\tMotorvogue\t10027135\tNULL\tNULL\n60015\tMarshall Motor Group\t10030188\tNULL\tNULL\n60016\tStirling Cars\t10043049\tNULL\tNULL\n60017\tCarsa Limited\t10044151\tNULL\tNULL\n60018\tWilliams Group\t10026933\tNULL\tNULL\n60019\tBig Motoring World\t10039194\tNULL\tNULL\n60020\tThe Car Co\t10027113\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 362
+}
