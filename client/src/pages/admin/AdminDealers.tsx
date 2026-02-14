@@ -177,11 +177,24 @@ export default function AdminDealers() {
                             <Button
                               variant="default"
                               size="sm"
-                              onClick={() => impersonateMutation.mutate({ dealerId: dealer.id })}
+                              onClick={() => {
+                                if (!impersonateMutation.isPending) {
+                                  impersonateMutation.mutate({ dealerId: dealer.id });
+                                }
+                              }}
                               disabled={impersonateMutation.isPending}
                             >
-                              <UserCog className="w-4 h-4 mr-1" />
-                              {impersonateMutation.isPending ? "Switching..." : "Impersonate"}
+                              {impersonateMutation.isPending ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                  Switching...
+                                </>
+                              ) : (
+                                <>
+                                  <UserCog className="w-4 h-4 mr-1" />
+                                  Impersonate
+                                </>
+                              )}
                             </Button>
                           </div>
                         </TableCell>

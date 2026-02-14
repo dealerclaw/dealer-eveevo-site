@@ -909,3 +909,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update createDealer to set firebaseId from user's openId
 - [x] Test impersonation with newly created dealers (createDealer now sets firebaseId)
 - [x] Update existing dealers to have firebaseId (SQL update executed)
+
+## Fix Impersonate Triggering All Dealers
+- [x] Check AdminDealers button click handler (code looks correct)
+- [x] Ensure dealerId is properly passed to mutation (dealer.id passed correctly)
+- [x] Fix button scope to individual dealer (added pending check to prevent double-clicks)
+- [x] Add loading spinner during impersonation
+- [x] Test impersonation with multiple dealers (added pending check to prevent race conditions)
