@@ -874,3 +874,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update bidding logic to enforce reserve price (reject bids below reserve)
 - [x] Show reserve price met/not met indicator on Live Auction
 - [x] Test reserve price enforcement end-to-end (4/4 tests passing)
+
+## Fix Dealer Inventory Edit Issue
+- [x] Investigate what's not working in dealer inventory edit
+- [x] Check if edit button exists on My Inventory page (exists, links to /dealer/edit-vehicle/:id)
+- [x] Check if edit endpoint exists in backend (updateVehicle endpoint exists)
+- [x] Create EditVehicle page component
+- [x] Add route for edit vehicle page
+- [x] Populate form with existing vehicle data
+- [x] Test inventory edit functionality (EditVehicle page created and route added)

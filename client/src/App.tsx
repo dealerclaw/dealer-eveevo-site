@@ -14,6 +14,7 @@ import Compare from "./pages/Compare";
 import DealerDashboard from "./pages/dealer/DealerDashboard";
 import MyInventory from "./pages/dealer/MyInventory";
 import AddVehicle from "./pages/dealer/AddVehicle";
+import EditVehicle from "./pages/dealer/EditVehicle";
 import DealerMarketplace from "./pages/dealer/DealerMarketplace";
 import DealerAnalytics from "./pages/dealer/Analytics";
 import BulkUpload from "./pages/dealer/BulkUpload";
@@ -82,6 +83,11 @@ function Router() {
       <Route path="/dealer/add-vehicle">
         <DealerAuthGuard>
           <AddVehicle />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/edit-vehicle/:id">
+        <DealerAuthGuard>
+          <EditVehicle />
         </DealerAuthGuard>
       </Route>
       <Route path="/dealer/marketplace">
