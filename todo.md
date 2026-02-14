@@ -942,3 +942,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Create user accounts for all 584 dealers without user accounts
 - [x] Update all dealers' firebaseId to match their user openId
 - [x] Test impersonation works for Arnold Clark and other dealers
+
+## Fix Impersonation Session and Inventory Display
+- [x] Investigate why impersonation asks to login again after switching
+- [x] Fix session token persistence after impersonation (added 500ms delay before redirect)
+- [x] Debug why dealer inventory doesn't show impersonated dealer's cars
+- [x] Fix dealer inventory query to use correct dealer ID (verified all linkages correct)
+- [x] Verify all dealer user accounts have role='dealer' for endpoint access
+- [x] Test complete impersonation flow end-to-end

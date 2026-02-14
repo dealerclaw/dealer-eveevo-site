@@ -30,8 +30,10 @@ export default function AdminDealers() {
   const impersonateMutation = trpc.admin.impersonate.useMutation({
     onSuccess: (data) => {
       toast.success(`Switched to dealer: ${data.dealerName}`);
-      // Redirect to dealer dashboard
-      window.location.href = "/dealer/dashboard";
+      // Wait a moment for cookie to be set, then redirect
+      setTimeout(() => {
+        window.location.href = "/dealer/dashboard";
+      }, 500);
     },
     onError: (error) => {
       toast.error(error.message || "Failed to impersonate dealer");
