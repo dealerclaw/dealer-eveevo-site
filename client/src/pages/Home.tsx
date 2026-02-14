@@ -2,7 +2,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { ArrowRight, Battery, Car, DollarSign, Heart, MapPin, Search, Zap } from "lucide-react";
+import { ArrowRight, Battery, Car, DollarSign, Heart, MapPin, Search, Zap, Store } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 
@@ -248,12 +249,20 @@ export default function Home() {
                         <CardTitle className="line-clamp-1">
                           {car.make} {car.model}
                         </CardTitle>
-                        <CardDescription className="flex items-center gap-2">
-                          {car.year && <span>{car.year}</span>}
-                          {car.condition && (
-                            <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
-                              {car.condition}
-                            </span>
+                        <CardDescription className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            {car.year && <span>{car.year}</span>}
+                            {car.condition && (
+                              <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
+                                {car.condition}
+                              </span>
+                            )}
+                          </div>
+                          {car.dealerName && (
+                            <Badge variant="secondary" className="text-xs">
+                              <Store className="w-3 h-3 mr-1" />
+                              {car.dealerName}
+                            </Badge>
                           )}
                         </CardDescription>
                       </CardHeader>

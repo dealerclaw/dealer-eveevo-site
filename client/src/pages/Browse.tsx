@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus, Images } from "lucide-react";
+import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus, Images, Store } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { Link, useLocation } from "wouter";
@@ -575,8 +576,14 @@ export default function Browse() {
                             <CardTitle className="line-clamp-1">
                               {car.make} {car.model}
                             </CardTitle>
-                            <CardDescription>
-                              {car.year && <span>{car.year}</span>}
+                            <CardDescription className="flex items-center justify-between">
+                              <span>{car.year && <span>{car.year}</span>}</span>
+                              {car.dealerName && (
+                                <Badge variant="secondary" className="text-xs">
+                                  <Store className="w-3 h-3 mr-1" />
+                                  {car.dealerName}
+                                </Badge>
+                              )}
                             </CardDescription>
                           </CardHeader>
                           <CardContent>

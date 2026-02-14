@@ -184,8 +184,54 @@ export async function getCars(filters?: {
   }
 
   const result = await db
-    .select()
+    .select({
+      // Car fields
+      id: cars.id,
+      firebaseId: cars.firebaseId,
+      dealerId: cars.dealerId,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: cars.price,
+      mileage: cars.mileage,
+      condition: cars.condition,
+      bodyType: cars.bodyType,
+      color: cars.color,
+      fuelType: cars.fuelType,
+      transmission: cars.transmission,
+      batteryCapacity: cars.batteryCapacity,
+      range: cars.range,
+      realRange: cars.realRange,
+      chargingTime: cars.chargingTime,
+      acceleration: cars.acceleration,
+      topSpeed: cars.topSpeed,
+      power: cars.power,
+      images: cars.images,
+      mainImage: cars.mainImage,
+      description: cars.description,
+      features: cars.features,
+      vin: cars.vin,
+      registrationNumber: cars.registrationNumber,
+      isAvailable: cars.isAvailable,
+      isFeatured: cars.isFeatured,
+      marketplace: cars.marketplace,
+      isAuction: cars.isAuction,
+      auctionStartDate: cars.auctionStartDate,
+      auctionEndDate: cars.auctionEndDate,
+      startingBid: cars.startingBid,
+      reservePrice: cars.reservePrice,
+      currentHighestBid: cars.currentHighestBid,
+      buyNowPrice: cars.buyNowPrice,
+      createdAt: cars.createdAt,
+      updatedAt: cars.updatedAt,
+      // Dealer fields
+      dealerName: dealers.name,
+      dealerEmail: dealers.email,
+      dealerPhone: dealers.phone,
+      dealerAddress: dealers.address,
+    })
     .from(cars)
+    .leftJoin(dealers, eq(cars.dealerId, dealers.id))
     .where(and(...conditions))
     .orderBy(desc(cars.createdAt))
     .limit(filters?.limit ?? 50)

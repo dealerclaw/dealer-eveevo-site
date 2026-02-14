@@ -787,3 +787,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add export dropdown to dealer dashboard
 - [x] Link purchases from dashboard to details page
 - [x] Test all purchase features end-to-end
+
+## Display Dealer Information in Listings
+- [x] Update getCars query to include dealer name and info
+- [x] Add dealer badge/label to car cards on Browse page
+- [x] Display dealer name on car detail page with full contact info card
+- [x] Show dealer info in search results (via Browse page)
+- [x] Add dealer info to featured cars section on Home page
+- [x] Test dealer display across all listing views

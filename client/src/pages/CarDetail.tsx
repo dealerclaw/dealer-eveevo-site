@@ -20,6 +20,9 @@ import {
   DollarSign,
   Loader2,
   MessageCircle,
+  Store,
+  Phone,
+  Mail,
 } from "lucide-react";
 import RebeccaChat from "@/components/RebeccaChat";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
@@ -373,6 +376,54 @@ export default function CarDetail() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Dealer Information */}
+              {car.dealer && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Store className="w-5 h-5" />
+                      Dealer Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div>
+                      <p className="font-semibold text-lg">{car.dealer.name}</p>
+                    </div>
+                    {car.dealer.email && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Mail className="w-4 h-4 text-muted-foreground" />
+                        <a href={`mailto:${car.dealer.email}`} className="text-primary hover:underline">
+                          {car.dealer.email}
+                        </a>
+                      </div>
+                    )}
+                    {car.dealer.phone && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Phone className="w-4 h-4 text-muted-foreground" />
+                        <a href={`tel:${car.dealer.phone}`} className="text-primary hover:underline">
+                          {car.dealer.phone}
+                        </a>
+                      </div>
+                    )}
+                    {car.dealer.address && (
+                      <div className="flex items-start gap-2 text-sm">
+                        <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                        <p className="text-muted-foreground">{car.dealer.address}</p>
+                      </div>
+                    )}
+                    {car.dealer.id && (
+                      <Button
+                        variant="outline"
+                        className="w-full mt-2"
+                        onClick={() => navigate(`/dealers/${car.dealer!.id}`)}
+                      >
+                        View Dealer Profile
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Finance Calculator */}
               {car.price && (
