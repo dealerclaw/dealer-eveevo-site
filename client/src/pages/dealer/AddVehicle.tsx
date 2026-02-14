@@ -43,6 +43,11 @@ export default function AddVehicle() {
     features: "",
     vin: "",
     registrationNumber: "",
+    marketplace: "consumer" as "consumer" | "dealer_only",
+    isAuction: false,
+    startingBid: "",
+    reservePrice: "",
+    buyNowPrice: "",
   });
 
   const addMutation = trpc.dealer.addVehicle.useMutation({
@@ -120,6 +125,25 @@ export default function AddVehicle() {
       return;
     }
 
+    // Validate dealer marketplace fields
+    if (formData.marketplace === "dealer_only") {
+      if (!formData.startingBid || !formData.reservePrice || !formData.buyNowPrice) {
+        toast.error("Starting bid, reserve price, and buy now price are required for dealer marketplace");
+        return;
+      }
+      const starting = parseFloat(formData.startingBid);
+      const reserve = parseFloat(formData.reservePrice);
+      const buyNow = parseFloat(formData.buyNowPrice);
+      if (reserve < starting) {
+        toast.error("Reserve price must be greater than or equal to starting bid");
+        return;
+      }
+      if (buyNow < reserve) {
+        toast.error("Buy now price must be greater than or equal to reserve price");
+        return;
+      }
+    }
+
     // Convert string numbers to actual numbers
     const submitData: any = {
       make: formData.make,
@@ -132,7 +156,16 @@ export default function AddVehicle() {
       description: formData.description || undefined,
       vin: formData.vin || undefined,
       registrationNumber: formData.registrationNumber || undefined,
+      marketplace: formData.marketplace,
     };
+
+    // Add auction fields for dealer marketplace
+    if (formData.marketplace === "dealer_only") {
+      submitData.isAuction = true;
+      submitData.startingBid = parseFloat(formData.startingBid);
+      submitData.reservePrice = parseFloat(formData.reservePrice);
+      submitData.buyNowPrice = parseFloat(formData.buyNowPrice);
+    }
 
     // Add optional numeric fields
     if (formData.year) submitData.year = parseInt(formData.year);
@@ -166,6 +199,83 @@ export default function AddVehicle() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Marketplace Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Marketplace</CardTitle>
+              <CardDescription>Choose where to list this vehicle</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="marketplace">List On</Label>
+                <Select
+                  value={formData.marketplace}
+                  onValueChange={(value) => handleInputChange("marketplace", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="consumer">Consumer Marketplace (Public)</SelectItem>
+                    <SelectItem value="dealer_only">Dealer-to-Dealer Marketplace</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  {formData.marketplace === "consumer" 
+                    ? "Vehicle will be visible to public consumers"
+                    : "Vehicle will only be visible to subscribed dealers"}
+                </p>
+              </div>
+
+              {formData.marketplace === "dealer_only" && (
+                <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
+                  <h4 className="font-semibold">Auction Settings</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="startingBid">Starting Bid (£) *</Label>
+                      <Input
+                        id="startingBid"
+                        type="number"
+                        value={formData.startingBid}
+                        onChange={(e) => handleInputChange("startingBid", e.target.value)}
+                        placeholder="20000"
+                        required={formData.marketplace === "dealer_only"}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="reservePrice">Reserve Price (£) *</Label>
+                      <Input
+                        id="reservePrice"
+                        type="number"
+                        value={formData.reservePrice}
+                        onChange={(e) => handleInputChange("reservePrice", e.target.value)}
+                        placeholder="25000"
+                        required={formData.marketplace === "dealer_only"}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Minimum price you'll accept
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="buyNowPrice">Buy Now Price (£) *</Label>
+                      <Input
+                        id="buyNowPrice"
+                        type="number"
+                        value={formData.buyNowPrice}
+                        onChange={(e) => handleInputChange("buyNowPrice", e.target.value)}
+                        placeholder="30000"
+                        required={formData.marketplace === "dealer_only"}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Instant purchase price
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Basic Information */}
           <Card>
             <CardHeader>

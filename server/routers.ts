@@ -1161,6 +1161,14 @@ export const appRouter = router({
           throw new Error(`Bid must be higher than current bid of £${currentBid.toLocaleString()}`);
         }
 
+        // Check reserve price if set
+        if (car.reservePrice) {
+          const reservePrice = parseFloat(car.reservePrice.toString());
+          if (input.bidAmount < reservePrice) {
+            throw new Error(`Bid must meet or exceed reserve price of £${reservePrice.toLocaleString()}`);
+          }
+        }
+
         // Place the bid
         await db.placeBid({
           carId: input.carId,
@@ -1258,6 +1266,14 @@ export const appRouter = router({
 
         // Process instant purchase
         const buyNowPrice = parseFloat(car.buyNowPrice.toString());
+        
+        // Check reserve price if set
+        if (car.reservePrice) {
+          const reservePrice = parseFloat(car.reservePrice.toString());
+          if (buyNowPrice < reservePrice) {
+            throw new Error('Buy Now price does not meet reserve price');
+          }
+        }
         await db.buyNowAuction(input.carId, dealer.id, ctx.user.id, buyNowPrice);
 
         // Get seller information

@@ -552,11 +552,22 @@ export default function LiveAuction() {
                     </span>
                   </div>
                   {currentVehicle.reservePrice && (
-                    <div className="flex justify-between text-white/60">
-                      <span>Reserve Price:</span>
-                      <span className="text-white font-semibold">
-                        £{parseFloat(currentVehicle.reservePrice.toString()).toLocaleString()}
-                      </span>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-white/60">
+                        <span>Reserve Price:</span>
+                        <span className="text-white font-semibold">
+                          £{parseFloat(currentVehicle.reservePrice.toString()).toLocaleString()}
+                        </span>
+                      </div>
+                      {(() => {
+                        const reservePrice = parseFloat(currentVehicle.reservePrice.toString());
+                        const reserveMet = currentBid >= reservePrice;
+                        return (
+                          <div className={`text-xs px-2 py-1 rounded ${reserveMet ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                            {reserveMet ? '✓ Reserve Met' : '⚠ Reserve Not Met'}
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
                   <div className="flex justify-between text-white/60">

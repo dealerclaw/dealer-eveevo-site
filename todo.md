@@ -861,3 +861,16 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add watchlist page to dealer sidebar navigation
 - [x] Add routes for watchlist page
 - [x] Add "Add to Cart" button from watchlist
+
+## Dealer Minimum Acceptable Price
+- [x] Add dealerMinPrice field to cars table (reservePrice already exists)
+- [x] Add marketplace selection to Add Vehicle form (Consumer/Dealer-to-Dealer)
+- [x] Add auction settings section (starting bid, reserve price, buy now price)
+- [x] Show auction fields only when Dealer-to-Dealer marketplace is selected
+- [x] Validate reserve price is between starting bid and buy now price
+- [ ] Add "List on Dealer Marketplace" button to My Inventory page
+- [ ] Create modal/form for setting auction parameters on existing vehicles
+- [x] Update Buy Now logic to check against reserve price
+- [x] Update bidding logic to enforce reserve price (reject bids below reserve)
+- [x] Show reserve price met/not met indicator on Live Auction
+- [x] Test reserve price enforcement end-to-end (4/4 tests passing)
