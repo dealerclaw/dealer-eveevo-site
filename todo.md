@@ -822,3 +822,14 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Show list of reviews on dealer profile
 - [x] Prevent duplicate reviews from same user
 - [x] Test ratings and reviews end-to-end
+
+## Use Real Data in Dealer-to-Dealer Marketplace
+- [x] Investigate current demo data setup in Live Auction
+- [x] Update getActiveAuctionVehicles to include consumer marketplace cars
+- [x] Allow cars to be available in both consumer and dealer marketplaces
+- [x] When dealer wins auction, remove car from consumer marketplace (already implemented)
+- [x] Update buyNowAuction to mark car as unavailable for consumers (already working)
+- [x] Calculate dealer bid price (85% of consumer price)
+- [x] Display consumer price on Browse page (already working)
+- [x] Display dealer bid price on Live Auction page
+- [x] Test dual marketplace system with real car listings

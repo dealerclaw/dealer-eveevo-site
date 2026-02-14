@@ -1060,18 +1060,50 @@ export async function getActiveAuctionVehicles() {
 
   const now = new Date();
   
-  return await db
-    .select()
+  // Get cars from consumer marketplace that are available for dealer auction
+  // Cars remain available to consumers until a dealer purchases them
+  const results = await db
+    .select({
+      id: cars.id,
+      dealerId: cars.dealerId,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: cars.price,
+      mileage: cars.mileage,
+      condition: cars.condition,
+      mainImage: cars.mainImage,
+      batteryCapacity: cars.batteryCapacity,
+      realRange: cars.realRange,
+      marketplace: cars.marketplace,
+      isAvailable: cars.isAvailable,
+      isAuction: cars.isAuction,
+      auctionStartDate: cars.auctionStartDate,
+      auctionEndDate: cars.auctionEndDate,
+      startingBid: cars.startingBid,
+      reservePrice: cars.reservePrice,
+      currentHighestBid: cars.currentHighestBid,
+      buyNowPrice: cars.buyNowPrice,
+      description: cars.description,
+      chargingTime: cars.chargingTime,
+      dealerName: dealers.name,
+    })
     .from(cars)
+    .leftJoin(dealers, eq(cars.dealerId, dealers.id))
     .where(
       and(
-        eq(cars.marketplace, 'dealer_only'),
-        eq(cars.isAuction, true),
-        lte(cars.auctionStartDate, now),
-        gt(cars.auctionEndDate, now) // Auction hasn't ended yet
+        eq(cars.marketplace, 'consumer'),
+        eq(cars.isAvailable, true)
       )
     )
-    .orderBy(cars.auctionEndDate); // Ending soonest first
+    .orderBy(desc(cars.createdAt))
+    .limit(50); // Show up to 50 cars in dealer marketplace
+
+  // Calculate dealer bid price (85% of consumer price)
+  return results.map(car => ({
+    ...car,
+    dealerBidPrice: car.price ? (parseFloat(car.price) * 0.85).toFixed(2) : null,
+  }))
 }
 
 /**

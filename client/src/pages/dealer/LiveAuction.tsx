@@ -363,7 +363,7 @@ export default function LiveAuction() {
                     )}
                   </Button>
 
-                  {currentVehicle.buyNowPrice && (
+                  {currentVehicle.dealerBidPrice && (
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t border-white/20" />
@@ -374,7 +374,7 @@ export default function LiveAuction() {
                     </div>
                   )}
 
-                  {currentVehicle.buyNowPrice && (
+                  {currentVehicle.dealerBidPrice && (
                     <Button
                       size="lg"
                       variant="secondary"
@@ -390,7 +390,7 @@ export default function LiveAuction() {
                       ) : (
                         <>
                           <Gavel className="w-4 h-4 mr-2" />
-                          Buy Now - £{parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}
+                          Buy Now - £{parseFloat(currentVehicle.dealerBidPrice).toLocaleString()}
                         </>
                       )}
                     </Button>
