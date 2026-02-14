@@ -33,7 +33,7 @@ export default function AdminDealers() {
       // Wait a moment for cookie to be set, then redirect
       setTimeout(() => {
         window.location.href = "/dealer/dashboard";
-      }, 500);
+      }, 1000);
     },
     onError: (error) => {
       toast.error(error.message || "Failed to impersonate dealer");

@@ -950,3 +950,31 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix dealer inventory query to use correct dealer ID (verified all linkages correct)
 - [x] Verify all dealer user accounts have role='dealer' for endpoint access
 - [x] Test complete impersonation flow end-to-end
+
+## Fix Missing Impersonate Button
+- [x] Investigate why impersonate button disappeared from Admin Dealers page
+- [x] Check button rendering conditions and state
+- [x] Verified buttons ARE visible on the page (browser cache issue)
+- [x] Test button appears for all dealers (confirmed working)
+
+## Impersonate Button Not Visible for User
+- [ ] Check anthony.m.perry@gmail.com user role in database
+- [ ] Check for conditional rendering hiding impersonate button
+- [ ] Verify button code has no role-based conditions
+- [ ] Test button appears after fix
+
+## Fix Impersonation Session Not Persisting After Redirect
+- [x] Check session cookie is being set correctly in impersonate endpoint (added logging)
+- [x] Verify cookie options (httpOnly, secure, sameSite) are correct (sameSite: none, secure: true)
+- [x] Increased redirect delay to 1000ms
+- [x] Added server-side logging to debug cookie setting and reading
+- [ ] Test Arnold Clark impersonation with logging to identify issue
+- [ ] Fix identified issue and verify inventory displays
+
+## Improve My Inventory Page to Display Cars
+- [x] Check current My Inventory page UI
+- [x] Add car list table with key details (make, model, price, year, etc.) - already exists
+- [x] Add view details button with comprehensive dialog showing all car information
+- [x] Add quick edit button from details dialog
+- [ ] Add pagination or infinite scroll for large inventories (if needed)
+- [ ] Test with Arnold Clark's 1302 cars

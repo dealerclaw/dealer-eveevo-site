@@ -995,7 +995,10 @@ export const appRouter = router({
         });
 
         const cookieOptions = getSessionCookieOptions(ctx.req);
+        console.log('[Impersonate] Setting cookie with options:', cookieOptions);
+        console.log('[Impersonate] Session token:', sessionToken.substring(0, 20) + '...');
         ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+        console.log('[Impersonate] Cookie set for dealer:', dealer.name, 'openId:', dealerUser.openId);
 
         return { success: true, dealerName: dealer.name };
       }),
