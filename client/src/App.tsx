@@ -33,6 +33,8 @@ import SubscriptionSuccess from "./pages/dealer/SubscriptionSuccess";
 import SubscriptionManage from "./pages/dealer/SubscriptionManage";
 import SubscriptionAnalytics from "./pages/dealer/SubscriptionAnalytics";
 import PurchaseDetails from "./pages/dealer/PurchaseDetails";
+import Cart from "./pages/dealer/Cart";
+import Watchlist from "./pages/dealer/Watchlist";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -60,6 +62,16 @@ function Router() {
       <Route path="/dealer/purchases/:id">
         <DealerAuthGuard>
           <PurchaseDetails />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/cart">
+        <DealerAuthGuard>
+          <Cart />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/watchlist">
+        <DealerAuthGuard>
+          <Watchlist />
         </DealerAuthGuard>
       </Route>
       <Route path="/dealer/inventory">

@@ -785,6 +785,143 @@ export const appRouter = router({
           return { content: pdf, filename: `purchase-history-${Date.now()}.pdf` };
         }
       }),
+
+    // Cart endpoints
+    addToCart: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        priceAtAdd: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        await db.addToCart(dealer.id, input.carId, input.priceAtAdd);
+        return { success: true };
+      }),
+
+    removeFromCart: protectedProcedure
+      .input(z.object({ carId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        await db.removeFromCart(dealer.id, input.carId);
+        return { success: true };
+      }),
+
+    getCart: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        const items = await db.getCartItems(dealer.id);
+        const totalPrice = items.reduce((sum, item) => sum + parseFloat(item.priceAtAdd || '0'), 0);
+        const discount = await db.calculateBulkDiscount(items.length, totalPrice);
+        
+        return {
+          items,
+          totalPrice,
+          ...discount,
+        };
+      }),
+
+    clearCart: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        await db.clearCart(dealer.id);
+        return { success: true };
+      }),
+
+    // Watchlist endpoints
+    addToWatchlist: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        initialPrice: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        await db.addToWatchlist(dealer.id, input.carId, input.initialPrice);
+        return { success: true };
+      }),
+
+    removeFromWatchlist: protectedProcedure
+      .input(z.object({ carId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        await db.removeFromWatchlist(dealer.id, input.carId);
+        return { success: true };
+      }),
+
+    getWatchlist: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        return await db.getWatchlistItems(dealer.id);
+      }),
+
+    checkPriceDrops: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+        
+        return await db.checkPriceDrops(dealer.id);
+      }),
   }),
 
   // Admin router

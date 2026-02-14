@@ -15,6 +15,8 @@ import {
   testDriveBookings,
   dealerBids,
   dealerReviews,
+  dealerCart,
+  dealerWatchlist,
   type Car,
   type Dealer,
   type Reservation,
@@ -1748,4 +1750,200 @@ export async function getAllDealersForFilter() {
     .orderBy(dealers.name);
 
   return result;
+}
+
+
+/**
+ * Dealer Cart Functions
+ */
+export async function addToCart(dealerId: number, carId: number, priceAtAdd: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Check if already in cart
+  const existing = await db
+    .select()
+    .from(dealerCart)
+    .where(and(
+      eq(dealerCart.dealerId, dealerId),
+      eq(dealerCart.carId, carId)
+    ));
+
+  if (existing.length > 0) {
+    throw new Error("Vehicle already in cart");
+  }
+
+  await db.insert(dealerCart).values({
+    dealerId,
+    carId,
+    priceAtAdd,
+  });
+}
+
+export async function removeFromCart(dealerId: number, carId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .delete(dealerCart)
+    .where(and(
+      eq(dealerCart.dealerId, dealerId),
+      eq(dealerCart.carId, carId)
+    ));
+}
+
+export async function getCartItems(dealerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      id: dealerCart.id,
+      carId: dealerCart.carId,
+      priceAtAdd: dealerCart.priceAtAdd,
+      createdAt: dealerCart.createdAt,
+      // Car details
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: cars.price,
+      mainImage: cars.mainImage,
+      condition: cars.condition,
+      mileage: cars.mileage,
+      isAvailable: cars.isAvailable,
+    })
+    .from(dealerCart)
+    .leftJoin(cars, eq(dealerCart.carId, cars.id))
+    .where(eq(dealerCart.dealerId, dealerId));
+}
+
+export async function clearCart(dealerId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .delete(dealerCart)
+    .where(eq(dealerCart.dealerId, dealerId));
+}
+
+export async function calculateBulkDiscount(itemCount: number, totalPrice: number): Promise<{ discountPercent: number; discountedPrice: number; savings: number }> {
+  let discountPercent = 0.85; // Base 15% discount
+
+  if (itemCount >= 5) {
+    discountPercent = 0.90; // 10% discount for 5+ cars
+  } else if (itemCount >= 2) {
+    discountPercent = 0.87; // 13% discount for 2-4 cars
+  }
+
+  const discountedPrice = totalPrice * discountPercent;
+  const savings = totalPrice - discountedPrice;
+
+  return {
+    discountPercent: (1 - discountPercent) * 100,
+    discountedPrice,
+    savings,
+  };
+}
+
+/**
+ * Dealer Watchlist Functions
+ */
+export async function addToWatchlist(dealerId: number, carId: number, initialPrice: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Check if already in watchlist
+  const existing = await db
+    .select()
+    .from(dealerWatchlist)
+    .where(and(
+      eq(dealerWatchlist.dealerId, dealerId),
+      eq(dealerWatchlist.carId, carId)
+    ));
+
+  if (existing.length > 0) {
+    throw new Error("Vehicle already in watchlist");
+  }
+
+  await db.insert(dealerWatchlist).values({
+    dealerId,
+    carId,
+    initialPrice,
+    alertOnPriceDrop: true,
+    alertThreshold: "5.00", // 5% price drop threshold
+  });
+}
+
+export async function removeFromWatchlist(dealerId: number, carId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .delete(dealerWatchlist)
+    .where(and(
+      eq(dealerWatchlist.dealerId, dealerId),
+      eq(dealerWatchlist.carId, carId)
+    ));
+}
+
+export async function getWatchlistItems(dealerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select({
+      id: dealerWatchlist.id,
+      carId: dealerWatchlist.carId,
+      initialPrice: dealerWatchlist.initialPrice,
+      lastNotifiedPrice: dealerWatchlist.lastNotifiedPrice,
+      alertOnPriceDrop: dealerWatchlist.alertOnPriceDrop,
+      alertThreshold: dealerWatchlist.alertThreshold,
+      createdAt: dealerWatchlist.createdAt,
+      // Car details
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: cars.price,
+      mainImage: cars.mainImage,
+      condition: cars.condition,
+      mileage: cars.mileage,
+      isAvailable: cars.isAvailable,
+    })
+    .from(dealerWatchlist)
+    .leftJoin(cars, eq(dealerWatchlist.carId, cars.id))
+    .where(eq(dealerWatchlist.dealerId, dealerId));
+}
+
+export async function checkPriceDrops(dealerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const watchlistItems = await getWatchlistItems(dealerId);
+  const priceDrops = [];
+
+  for (const item of watchlistItems) {
+    if (!item.price || !item.initialPrice) continue;
+
+    const currentPrice = parseFloat(item.price);
+    const initialPrice = parseFloat(item.initialPrice);
+    const priceDrop = ((initialPrice - currentPrice) / initialPrice) * 100;
+
+    const threshold = item.alertThreshold ? parseFloat(item.alertThreshold) : 5;
+
+    if (priceDrop >= threshold) {
+      priceDrops.push({
+        ...item,
+        priceDrop: priceDrop.toFixed(2),
+        savings: (initialPrice - currentPrice).toFixed(2),
+      });
+
+      // Update last notified price
+      await db
+        .update(dealerWatchlist)
+        .set({ lastNotifiedPrice: item.price })
+        .where(eq(dealerWatchlist.id, item.id));
+    }
+  }
+
+  return priceDrops;
 }

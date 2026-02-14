@@ -369,3 +369,43 @@ export const dealerReviews = mysqlTable("dealerReviews", {
 
 export type DealerReview = typeof dealerReviews.$inferSelect;
 export type InsertDealerReview = typeof dealerReviews.$inferInsert;
+
+/**
+ * Dealer Cart table - tracks vehicles selected for bulk purchase
+ */
+export const dealerCart = mysqlTable("dealerCart", {
+  id: int("id").autoincrement().primaryKey(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  
+  // Price at time of adding to cart
+  priceAtAdd: decimal("priceAtAdd", { precision: 10, scale: 2 }).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DealerCartItem = typeof dealerCart.$inferSelect;
+export type InsertDealerCartItem = typeof dealerCart.$inferInsert;
+
+/**
+ * Dealer Watchlist table - tracks vehicles dealers are monitoring
+ */
+export const dealerWatchlist = mysqlTable("dealerWatchlist", {
+  id: int("id").autoincrement().primaryKey(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  
+  // Price tracking
+  initialPrice: decimal("initialPrice", { precision: 10, scale: 2 }).notNull(),
+  lastNotifiedPrice: decimal("lastNotifiedPrice", { precision: 10, scale: 2 }),
+  
+  // Alert preferences
+  alertOnPriceDrop: boolean("alertOnPriceDrop").default(true),
+  alertThreshold: decimal("alertThreshold", { precision: 5, scale: 2 }), // Percentage drop to trigger alert
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DealerWatchlistItem = typeof dealerWatchlist.$inferSelect;
+export type InsertDealerWatchlistItem = typeof dealerWatchlist.$inferInsert;

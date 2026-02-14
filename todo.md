@@ -833,3 +833,31 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Display consumer price on Browse page (already working)
 - [x] Display dealer bid price on Live Auction page
 - [x] Test dual marketplace system with real car listings
+
+## Dealer Profit Calculator
+- [x] Add profit calculator UI to Live Auction vehicle details
+- [x] Show retail price, dealer price, and profit margin
+- [x] Add estimated reconditioning costs input field
+- [x] Calculate net profit after reconditioning
+- [x] Display ROI percentage
+
+## Bulk Purchase Discounts
+- [x] Create dealerCart table to track selected vehicles
+- [x] Add "Add to Cart" button on Live Auction
+- [x] Implement cart UI showing selected vehicles
+- [x] Calculate tiered discounts (2-4 cars: 13%, 5+ cars: 10%)
+- [x] Show total savings with bulk discount
+- [x] Add cart page to dealer sidebar navigation
+- [x] Add routes for cart page
+- [x] All cart and watchlist features implemented and tested
+
+## Watchlist & Price Alerts
+- [x] Create dealerWatchlist table in database
+- [x] Add "Add to Watchlist" button on Live Auction
+- [x] Create watchlist page showing saved vehicles
+- [x] Track price changes for watchlisted vehicles
+- [x] Check for price drops and show alerts
+- [x] Show price history on watchlist items
+- [x] Add watchlist page to dealer sidebar navigation
+- [x] Add routes for watchlist page
+- [x] Add "Add to Cart" button from watchlist

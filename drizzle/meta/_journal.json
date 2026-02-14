@@ -113,6 +113,13 @@
       "when": 1771028071024,
       "tag": "0015_bored_chimera",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1771029350163,
+      "tag": "0016_adorable_scarecrow",
+      "breakpoints": true
     }
   ]
 }

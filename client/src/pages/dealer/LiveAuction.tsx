@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, ChevronLeft, ChevronRight, Gavel, Clock, TrendingUp, Home } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Gavel, Clock, TrendingUp, Home, ShoppingCart, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -34,12 +34,30 @@ export default function LiveAuction() {
   });
 
   const buyNowMutation = trpc.auction.buyNow.useMutation({
-    onSuccess: (data) => {
-      toast.success(`Vehicle purchased for £${data.price.toLocaleString()}!`);
+    onSuccess: () => {
+      toast.success("Vehicle purchased successfully!");
       refetch();
     },
     onError: (error) => {
       toast.error(error.message || "Failed to purchase vehicle");
+    },
+  });
+
+  const addToCartMutation = trpc.dealer.addToCart.useMutation({
+    onSuccess: () => {
+      toast.success("Added to cart!");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to add to cart");
+    },
+  });
+
+  const addToWatchlistMutation = trpc.dealer.addToWatchlist.useMutation({
+    onSuccess: () => {
+      toast.success("Added to watchlist!");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to add to watchlist");
     },
   });
 
@@ -280,6 +298,87 @@ export default function LiveAuction() {
                 {currentVehicle.description && (
                   <p className="text-white/80">{currentVehicle.description}</p>
                 )}
+
+                {/* Profit Calculator */}
+                <div className="mt-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
+                  <h3 className="text-lg font-semibold text-green-400 mb-3 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Profit Calculator
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-white/60">Retail Price</p>
+                        <p className="text-xl font-bold text-white">£{currentVehicle.price ? parseFloat(currentVehicle.price).toLocaleString() : 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-white/60">Dealer Price</p>
+                        <p className="text-xl font-bold text-green-400">£{currentVehicle.dealerBidPrice ? parseFloat(currentVehicle.dealerBidPrice).toLocaleString() : 'N/A'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-3 border-t border-white/10">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-sm text-white/60">Gross Profit</p>
+                        <p className="text-lg font-bold text-green-400">
+                          £{currentVehicle.price && currentVehicle.dealerBidPrice 
+                            ? (parseFloat(currentVehicle.price) - parseFloat(currentVehicle.dealerBidPrice)).toLocaleString()
+                            : 'N/A'}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm text-white/60">Profit Margin</p>
+                        <p className="text-lg font-bold text-green-400">
+                          {currentVehicle.price && currentVehicle.dealerBidPrice
+                            ? `${(((parseFloat(currentVehicle.price) - parseFloat(currentVehicle.dealerBidPrice)) / parseFloat(currentVehicle.price)) * 100).toFixed(1)}%`
+                            : 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-3 border-t border-white/10">
+                      <label className="text-sm text-white/60 block mb-2">Est. Reconditioning Costs</label>
+                      <input
+                        type="number"
+                        placeholder="Enter costs..."
+                        className="w-full px-3 py-2 bg-black/40 border border-white/20 rounded text-white placeholder:text-white/40"
+                        onChange={(e) => {
+                          const costs = parseFloat(e.target.value) || 0;
+                          const gross = currentVehicle.price && currentVehicle.dealerBidPrice
+                            ? parseFloat(currentVehicle.price) - parseFloat(currentVehicle.dealerBidPrice)
+                            : 0;
+                          const net = gross - costs;
+                          const netElement = document.getElementById('net-profit');
+                          const roiElement = document.getElementById('roi-percentage');
+                          if (netElement) netElement.textContent = `£${net.toLocaleString()}`;
+                          if (roiElement && currentVehicle.dealerBidPrice) {
+                            const roi = (net / parseFloat(currentVehicle.dealerBidPrice)) * 100;
+                            roiElement.textContent = `${roi.toFixed(1)}%`;
+                          }
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="pt-3 border-t border-white/10">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-sm text-white/60">Net Profit</p>
+                        <p id="net-profit" className="text-xl font-bold text-green-400">
+                          £{currentVehicle.price && currentVehicle.dealerBidPrice 
+                            ? (parseFloat(currentVehicle.price) - parseFloat(currentVehicle.dealerBidPrice)).toLocaleString()
+                            : 'N/A'}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm text-white/60">ROI</p>
+                        <p id="roi-percentage" className="text-xl font-bold text-green-400">
+                          {currentVehicle.price && currentVehicle.dealerBidPrice
+                            ? `${(((parseFloat(currentVehicle.price) - parseFloat(currentVehicle.dealerBidPrice)) / parseFloat(currentVehicle.dealerBidPrice)) * 100).toFixed(1)}%`
+                            : 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -394,6 +493,48 @@ export default function LiveAuction() {
                         </>
                       )}
                     </Button>
+                  )}
+
+                  {/* Cart and Watchlist buttons */}
+                  {user && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10"
+                        onClick={() => {
+                          if (!currentVehicle.dealerBidPrice) {
+                            toast.error("Price not available");
+                            return;
+                          }
+                          addToCartMutation.mutate({
+                            carId: currentVehicle.id,
+                            priceAtAdd: currentVehicle.dealerBidPrice,
+                          });
+                        }}
+                        disabled={addToCartMutation.isPending}
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        Add to Cart
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10"
+                        onClick={() => {
+                          if (!currentVehicle.dealerBidPrice) {
+                            toast.error("Price not available");
+                            return;
+                          }
+                          addToWatchlistMutation.mutate({
+                            carId: currentVehicle.id,
+                            initialPrice: currentVehicle.dealerBidPrice,
+                          });
+                        }}
+                        disabled={addToWatchlistMutation.isPending}
+                      >
+                        <Heart className="w-4 h-4 mr-2" />
+                        Watchlist
+                      </Button>
+                    </div>
                   )}
 
                   {!user && (
