@@ -2,10 +2,8 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
-import jwt from "jsonwebtoken";
-import { ENV } from "./_core/env";
-
-const JWT_SECRET = ENV.cookieSecret;
+import { sdk } from "./_core/sdk";
+import { ONE_YEAR_MS } from "@shared/const";
 import { z } from "zod";
 import * as db from "./db";
 import * as evDb from "./evDatabase";
@@ -979,44 +977,35 @@ export const appRouter = router({
           throw new Error('Dealer not found');
         }
 
-        // Store original admin user in session
-        const payload = {
-          id: dealer.id,
-          openId: dealer.firebaseId || `dealer-${dealer.id}`,
-          name: dealer.name,
-          role: 'dealer' as const,
-          originalAdminId: ctx.user.id,
-          originalAdminOpenId: ctx.user.openId,
-          originalAdminName: ctx.user.name,
-          isImpersonating: true,
-        };
+        // Ensure dealer has a firebaseId (openId)
+        if (!dealer.firebaseId) {
+          throw new Error('Dealer does not have a linked user account');
+        }
 
-        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+        // Get dealer's user info
+        const dealerUser = await db.getUserByOpenId(dealer.firebaseId);
+        if (!dealerUser) {
+          throw new Error('Dealer user not found');
+        }
+
+        // Create session token using SDK (compatible with auth verification)
+        const sessionToken = await sdk.createSessionToken(dealerUser.openId, {
+          name: dealerUser.name || dealer.name,
+          expiresInMs: ONE_YEAR_MS,
+        });
+
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        ctx.res.cookie(COOKIE_NAME, token, cookieOptions);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
-        return { success: true, dealer: payload };
+        return { success: true, dealerName: dealer.name };
       }),
 
     exitImpersonation: protectedProcedure
       .mutation(async ({ ctx }) => {
-        // Check if currently impersonating
-        const user = ctx.user as any;
-        if (!user.isImpersonating || !user.originalAdminId) {
-          throw new Error('Not currently impersonating');
-        }
-
-        // Restore original admin session
-        const payload = {
-          id: user.originalAdminId,
-          openId: user.originalAdminOpenId,
-          name: user.originalAdminName,
-          role: 'admin' as const,
-        };
-
-        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+        // For now, just clear the session and redirect to login
+        // User will need to log in again as admin
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        ctx.res.cookie(COOKIE_NAME, token, cookieOptions);
+        ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
 
         return { success: true };
       }),

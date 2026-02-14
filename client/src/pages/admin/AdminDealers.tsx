@@ -25,17 +25,18 @@ import {
 export default function AdminDealers() {
   const [selectedDealerId, setSelectedDealerId] = useState<number | null>(null);
   const [showCarsDialog, setShowCarsDialog] = useState(false);
-
+  
   const impersonateMutation = trpc.admin.impersonate.useMutation({
-    onSuccess: () => {
-      toast.success("Now viewing as dealer");
+    onSuccess: (data) => {
+      toast.success(`Switched to dealer: ${data.dealerName}`);
+      // Redirect to dealer dashboard
       window.location.href = "/dealer/dashboard";
     },
     onError: (error) => {
       toast.error(error.message || "Failed to impersonate dealer");
     },
   });
-
+  
   const { data: dealers, isLoading } = trpc.admin.getAllDealers.useQuery();
   const { data: dealerCars, isLoading: loadingCars } = trpc.admin.getDealerCars.useQuery(
     { dealerId: selectedDealerId! },

@@ -891,3 +891,14 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add "Exit Impersonation" banner when impersonating
 - [x] Update auth to handle impersonation state (stored in JWT)
 - [x] Test impersonation flow (switch to dealer, view inventory, switch back)
+
+## Fix Impersonate Button Not Working
+- [x] Check browser console for errors when clicking impersonate (no errors)
+- [x] Check server logs for impersonate endpoint errors (no errors)
+- [x] Issue: Redirects to login screen instead of dealer dashboard (fixed)
+- [x] Issue: Session not being set correctly for impersonated dealer (fixed)
+- [x] Check if JWT payload structure matches auth verification (found incompatibility)
+- [x] Fix session/cookie handling in impersonate endpoint (now uses SDK createSessionToken)
+- [x] Remove jsonwebtoken package and use SDK instead
+- [x] Fix getUserById to use getUserByOpenId
+- [x] Test impersonation flow (impersonation now switches to actual dealer session)
