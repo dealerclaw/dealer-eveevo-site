@@ -1,0 +1,80 @@
+{
+  "query": "SELECT d.id, d.name, d.userId, d.firebaseId, u.openId \nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT d.id, d.name, d.userId, d.firebaseId, u.openId \nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nLIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Anthony Perry Motors",
+      "userId": "1",
+      "firebaseId": "QzpBnhhytn6jJTKW5uUPFd",
+      "openId": "QzpBnhhytn6jJTKW5uUPFd"
+    },
+    {
+      "id": "30001",
+      "name": "TEsla",
+      "userId": "1",
+      "firebaseId": "QzpBnhhytn6jJTKW5uUPFd",
+      "openId": "QzpBnhhytn6jJTKW5uUPFd"
+    },
+    {
+      "id": "30002",
+      "name": "TEsla",
+      "userId": "1",
+      "firebaseId": "QzpBnhhytn6jJTKW5uUPFd",
+      "openId": "QzpBnhhytn6jJTKW5uUPFd"
+    },
+    {
+      "id": "60001",
+      "name": "Autobarn 100",
+      "userId": "NULL",
+      "firebaseId": "11027084",
+      "openId": "NULL"
+    },
+    {
+      "id": "60002",
+      "name": "Nottingham",
+      "userId": "NULL",
+      "firebaseId": "10026610",
+      "openId": "NULL"
+    },
+    {
+      "id": "60003",
+      "name": "Eclipse Car Sales",
+      "userId": "NULL",
+      "firebaseId": "10023707",
+      "openId": "NULL"
+    },
+    {
+      "id": "60004",
+      "name": "GC Motors",
+      "userId": "NULL",
+      "firebaseId": "10038576",
+      "openId": "NULL"
+    },
+    {
+      "id": "60005",
+      "name": "Halliwell Jones",
+      "userId": "NULL",
+      "firebaseId": "10038159",
+      "openId": "NULL"
+    },
+    {
+      "id": "60006",
+      "name": "Arnold Clark",
+      "userId": "NULL",
+      "firebaseId": "10038395",
+      "openId": "NULL"
+    },
+    {
+      "id": "60007",
+      "name": "Ashridge Vehicles Ltd",
+      "userId": "NULL",
+      "firebaseId": "10023492",
+      "openId": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tuserId\tfirebaseId\topenId\n1\tAnthony Perry Motors\t1\tQzpBnhhytn6jJTKW5uUPFd\tQzpBnhhytn6jJTKW5uUPFd\n30001\tTEsla\t1\tQzpBnhhytn6jJTKW5uUPFd\tQzpBnhhytn6jJTKW5uUPFd\n30002\tTEsla\t1\tQzpBnhhytn6jJTKW5uUPFd\tQzpBnhhytn6jJTKW5uUPFd\n60001\tAutobarn 100\tNULL\t11027084\tNULL\n60002\tNottingham\tNULL\t10026610\tNULL\n60003\tEclipse Car Sales\tNULL\t10023707\tNULL\n60004\tGC Motors\tNULL\t10038576\tNULL\n60005\tHalliwell Jones\tNULL\t10038159\tNULL\n60006\tArnold Clark\tNULL\t10038395\tNULL\n60007\tAshridge Vehicles Ltd\tNULL\t10023492\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 348
+}

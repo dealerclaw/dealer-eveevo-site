@@ -1,0 +1,42 @@
+{
+  "query": "SELECT d.id, d.name, d.firebaseId, d.userId, u.id as user_id, u.openId\nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nWHERE d.name LIKE '%Arnold Clark%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT d.id, d.name, d.firebaseId, d.userId, u.id as user_id, u.openId\nFROM dealers d \nLEFT JOIN users u ON d.userId = u.id \nWHERE d.name LIKE '%Arnold Clark%';",
+  "rows": [
+    {
+      "id": "60006",
+      "name": "Arnold Clark",
+      "firebaseId": "10038395",
+      "userId": "NULL",
+      "user_id": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60240",
+      "name": "Arnold Clark Glasgow",
+      "firebaseId": "11033076",
+      "userId": "NULL",
+      "user_id": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60519",
+      "name": "Arnold Clark Irvine",
+      "firebaseId": "10026136",
+      "userId": "NULL",
+      "user_id": "NULL",
+      "openId": "NULL"
+    },
+    {
+      "id": "60564",
+      "name": "Arnold Clark Kirkcaldy",
+      "firebaseId": "10038982",
+      "userId": "NULL",
+      "user_id": "NULL",
+      "openId": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tfirebaseId\tuserId\tuser_id\topenId\n60006\tArnold Clark\t10038395\tNULL\tNULL\tNULL\n60240\tArnold Clark Glasgow\t11033076\tNULL\tNULL\tNULL\n60519\tArnold Clark Irvine\t10026136\tNULL\tNULL\tNULL\n60564\tArnold Clark Kirkcaldy\t10038982\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 358
+}

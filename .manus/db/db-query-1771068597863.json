@@ -1,0 +1,38 @@
+{
+  "query": "SELECT id, openId, name, email, role FROM users LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, openId, name, email, role FROM users LIMIT 20;",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "QzpBnhhytn6jJTKW5uUPFd",
+      "name": "Anthony Perry",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "admin"
+    },
+    {
+      "id": "420012",
+      "openId": "anthony.m.perry@gmail.com",
+      "name": "Anthony Perry",
+      "email": "anthony.m.perry@gmail.com",
+      "role": "dealer"
+    },
+    {
+      "id": "840127",
+      "openId": "test-dealer-001",
+      "name": "Test Dealer",
+      "email": "testdealer@eveevo.com",
+      "role": "dealer"
+    },
+    {
+      "id": "1050210",
+      "openId": "manus_dealer_60001_1771068578134",
+      "name": "Autobarn 100",
+      "email": "autobarn100@dealer.eveevo.com",
+      "role": "user"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\n1\tQzpBnhhytn6jJTKW5uUPFd\tAnthony Perry\tanthony.m.perry@gmail.com\tadmin\n420012\tanthony.m.perry@gmail.com\tAnthony Perry\tanthony.m.perry@gmail.com\tdealer\n840127\ttest-dealer-001\tTest Dealer\ttestdealer@eveevo.com\tdealer\n1050210\tmanus_dealer_60001_1771068578134\tAutobarn 100\tautobarn100@dealer.eveevo.com\tuser\n",
+  "stderr": "",
+  "execution_time_ms": 344
+}

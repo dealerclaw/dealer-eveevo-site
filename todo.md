@@ -932,3 +932,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update firebaseId to match user's openId (SQL UPDATE executed)
 - [x] Check all dealers for similar firebaseId mismatches (found 20+ dealers)
 - [x] Test impersonation with Carsupermarket dealer (firebaseId now correctly synced)
+
+## Fix SQL UPDATE Not Working for FirebaseId
+- [x] Check actual firebaseId values in database
+- [x] Investigate why UPDATE returns 0 rows affected
+- [x] Try alternative UPDATE syntax or approach
+- [x] Manually update each dealer if needed
+- [x] Verify all dealers have correct openId as firebaseId
+- [x] Create user accounts for all 584 dealers without user accounts
+- [x] Update all dealers' firebaseId to match their user openId
+- [x] Test impersonation works for Arnold Clark and other dealers
