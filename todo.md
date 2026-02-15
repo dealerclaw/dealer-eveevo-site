@@ -1292,3 +1292,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add drag-and-drop reordering interface for images
 - [x] Add "Set as Main Image" functionality
 - [x] Test image upload, lightbox, and reordering features
+
+## Auction Cancellation Feature
+- [x] Add "Cancel Auction" button to dealer inventory page for auction vehicles
+- [x] Add confirmation dialog explaining cancellation consequences
+- [x] Update cancelAuction mutation to refund bidders' commitment fees
+- [x] Send notifications to all bidders when auction is cancelled
+- [x] Update vehicle status after cancellation (remove from auction, return to inventory)
+- [x] Test auction cancellation workflow

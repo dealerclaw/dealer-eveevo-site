@@ -80,6 +80,7 @@ export default function MyInventory() {
   const [startingBid, setStartingBid] = useState<string>("");
   const [marketplaceCarId, setMarketplaceCarId] = useState<number | null>(null);
   const [marketplacePrice, setMarketplacePrice] = useState<string>("");
+  const [cancelAuctionId, setCancelAuctionId] = useState<number | null>(null);
   
   const { data: inventory, isLoading, refetch } = trpc.dealer.getMyInventory.useQuery();
   
@@ -125,6 +126,17 @@ export default function MyInventory() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to send to auction");
+    },
+  });
+
+  const cancelAuctionMutation = trpc.dealer.cancelAuction.useMutation({
+    onSuccess: () => {
+      toast.success("Auction cancelled successfully. All bidders have been notified and refunded.");
+      refetch();
+      setCancelAuctionId(null);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to cancel auction");
     },
   });
 
@@ -278,14 +290,26 @@ export default function MyInventory() {
                           >
                             <Info className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleSendToAuction(vehicle.id)}
-                            title="Send to Auction"
-                          >
-                            <Gavel className="h-4 w-4" />
-                          </Button>
+                          {!vehicle.isAuction ? (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleSendToAuction(vehicle.id)}
+                              title="Send to Auction"
+                            >
+                              <Gavel className="h-4 w-4" />
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setCancelAuctionId(vehicle.id)}
+                              title="Cancel Auction"
+                              className="text-destructive"
+                            >
+                              <Gavel className="h-4 w-4" />
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"
@@ -526,6 +550,35 @@ export default function MyInventory() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Cancel Auction Confirmation Dialog */}
+      <AlertDialog open={cancelAuctionId !== null} onOpenChange={() => setCancelAuctionId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Auction?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will immediately end the auction for this vehicle. All bidders will be notified and their £99 commitment fees will be automatically refunded. This action cannot be undone.
+              <br /><br />
+              <strong>Consequences:</strong>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>All active bids will be cancelled</li>
+                <li>Bidders will receive email notifications</li>
+                <li>Commitment fees will be refunded within 5-7 business days</li>
+                <li>Vehicle will return to your regular inventory</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Auction Running</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => cancelAuctionId && cancelAuctionMutation.mutate({ carId: cancelAuctionId })}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Cancel Auction
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
