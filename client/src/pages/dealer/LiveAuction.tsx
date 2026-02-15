@@ -813,38 +813,37 @@ export default function LiveAuction() {
                     🤖 Set Proxy Bid (Auto-Bid)
                   </Button>
 
-                  {currentVehicle.buyNowPrice && (
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-white/20" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-black/40 px-2 text-white/60">or</span>
-                      </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-white/20" />
                     </div>
-                  )}
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-black/40 px-2 text-white/60">or</span>
+                    </div>
+                  </div>
 
-                  {currentVehicle.buyNowPrice && (
-                    <Button
-                      size="lg"
-                      variant="secondary"
-                      className="w-full bg-green-600 hover:bg-green-700 text-white border-0"
-                      onClick={handleBuyNow}
-                      disabled={buyNowMutation.isPending}
-                    >
-                      {buyNowMutation.isPending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <Gavel className="w-4 h-4 mr-2" />
-                          Buy Now - £{parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}
-                        </>
-                      )}
-                    </Button>
-                  )}
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white border-0"
+                    onClick={handleBuyNow}
+                    disabled={buyNowMutation.isPending || !currentVehicle.buyNowPrice}
+                  >
+                    {buyNowMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Gavel className="w-4 h-4 mr-2" />
+                        {currentVehicle.buyNowPrice 
+                          ? `Buy Now - £${parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}`
+                          : 'Buy Now - Not Available'
+                        }
+                      </>
+                    )}
+                  </Button>
 
                   {!user && (
                     <p className="text-xs text-center text-white/60">

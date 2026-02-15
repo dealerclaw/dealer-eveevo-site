@@ -1217,3 +1217,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Remove Add to Cart button from LiveAuction bidding panel
 - [x] Remove Watchlist button from LiveAuction bidding panel
 - [x] Reorganize Buy Now button placement for better visibility
+
+## Fix Buy Now Button Visibility
+- [x] Check Buy Now button conditional rendering logic
+- [x] Make Buy Now button always visible on auction page
+- [x] Test Buy Now button visibility and functionality
