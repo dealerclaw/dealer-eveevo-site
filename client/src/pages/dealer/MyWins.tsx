@@ -23,7 +23,7 @@ export default function MyWins() {
   });
 
   // Filter to only show won auctions
-  const wonAuctions = wins?.filter((bid: any) => bid.status === 'won') || [];
+  const wonAuctions = wins?.filter((item: any) => item.bid?.status === 'won') || [];
 
   if (isLoading) {
     return (
@@ -68,15 +68,18 @@ export default function MyWins() {
           </Card>
         ) : (
           <div className="grid gap-6">
-            {wonAuctions.map((win: any) => (
+            {wonAuctions.map((item: any) => {
+              const win = item.bid;
+              const car = item.car;
+              return (
               <Card key={win.id} className="overflow-hidden">
                 <div className="grid md:grid-cols-[300px_1fr] gap-6">
                   {/* Vehicle Image */}
                   <div className="relative h-64 md:h-auto bg-gradient-to-br from-slate-800 to-slate-900">
-                    {win.car?.mainImage ? (
+                    {car?.mainImage ? (
                       <img
-                        src={win.car.mainImage}
-                        alt={`${win.car.make} ${win.car.model}`}
+                        src={car.mainImage}
+                        alt={`${car.make} ${car.model}`}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -94,23 +97,23 @@ export default function MyWins() {
                   <div className="p-6 space-y-6">
                     <div>
                       <h2 className="text-2xl font-bold mb-2">
-                        {win.car?.make} {win.car?.model} {win.car?.year}
+                        {car?.make} {car?.model} {car?.year}
                       </h2>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="outline">
-                          {win.car?.mileage?.toLocaleString()} miles
+                          {car?.mileage?.toLocaleString()} miles
                         </Badge>
                         <Badge variant="outline">
-                          {win.car?.condition}
+                          {car?.condition}
                         </Badge>
-                        {win.car?.batteryCapacity && (
+                        {car?.batteryCapacity && (
                           <Badge variant="outline">
-                            {win.car.batteryCapacity} kWh
+                            {car.batteryCapacity} kWh
                           </Badge>
                         )}
-                        {win.car?.realRange && (
+                        {car?.realRange && (
                           <Badge variant="outline">
-                            {win.car.realRange} miles range
+                            {car.realRange} miles range
                           </Badge>
                         )}
                       </div>
@@ -168,7 +171,7 @@ export default function MyWins() {
                     </div>
 
                     {/* Seller Contact Info */}
-                    {win.car?.dealerName && (
+                    {car?.dealerName && (
                       <div className="border-t pt-4">
                         <h3 className="font-semibold mb-3 flex items-center gap-2">
                           <User className="h-4 w-4" />
@@ -177,21 +180,21 @@ export default function MyWins() {
                         <div className="space-y-2 text-sm">
                           <p className="flex items-center gap-2">
                             <span className="text-muted-foreground">Dealer:</span>
-                            <span className="font-medium">{win.car.dealerName}</span>
+                            <span className="font-medium">{car.dealerName}</span>
                           </p>
-                          {win.car.dealerEmail && (
+                          {car.dealerEmail && (
                             <p className="flex items-center gap-2">
                               <Mail className="h-4 w-4 text-muted-foreground" />
-                              <a href={`mailto:${win.car.dealerEmail}`} className="text-primary hover:underline">
-                                {win.car.dealerEmail}
+                              <a href={`mailto:${car.dealerEmail}`} className="text-primary hover:underline">
+                                {car.dealerEmail}
                               </a>
                             </p>
                           )}
-                          {win.car.dealerPhone && (
+                          {car.dealerPhone && (
                             <p className="flex items-center gap-2">
                               <Phone className="h-4 w-4 text-muted-foreground" />
-                              <a href={`tel:${win.car.dealerPhone}`} className="text-primary hover:underline">
-                                {win.car.dealerPhone}
+                              <a href={`tel:${car.dealerPhone}`} className="text-primary hover:underline">
+                                {car.dealerPhone}
                               </a>
                             </p>
                           )}
@@ -240,7 +243,8 @@ export default function MyWins() {
                   </div>
                 </div>
               </Card>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>

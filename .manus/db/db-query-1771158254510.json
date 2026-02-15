@@ -1,0 +1,65 @@
+{
+  "query": "SELECT db.id, db.carId, db.dealerId, db.bidAmount, db.message, db.status, db.createdAt, c.make, c.model \nFROM dealerBids db \nLEFT JOIN cars c ON db.carId = c.id \nWHERE db.message LIKE '%Buy Now%' \nORDER BY db.createdAt DESC \nLIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT db.id, db.carId, db.dealerId, db.bidAmount, db.message, db.status, db.createdAt, c.make, c.model \nFROM dealerBids db \nLEFT JOIN cars c ON db.carId = c.id \nWHERE db.message LIKE '%Buy Now%' \nORDER BY db.createdAt DESC \nLIMIT 5;",
+  "rows": [
+    {
+      "id": "90004",
+      "carId": "180014",
+      "dealerId": "60006",
+      "bidAmount": "102000.00",
+      "message": "Buy Now - Instant Purchase",
+      "status": "won",
+      "createdAt": "2026-02-15 12:22:58",
+      "make": "Mercedes-Benz",
+      "model": "EQS 450+"
+    },
+    {
+      "id": "90003",
+      "carId": "150063",
+      "dealerId": "60006",
+      "bidAmount": "31998.00",
+      "message": "Buy Now - Instant Purchase",
+      "status": "won",
+      "createdAt": "2026-02-15 12:21:03",
+      "make": "SKODA",
+      "model": "Enyaq"
+    },
+    {
+      "id": "30003",
+      "carId": "180013",
+      "dealerId": "1",
+      "bidAmount": "75000.00",
+      "message": "Buy Now - Instant Purchase",
+      "status": "won",
+      "createdAt": "2026-02-14 00:05:44",
+      "make": "BMW",
+      "model": "iX xDrive50"
+    },
+    {
+      "id": "30002",
+      "carId": "180019",
+      "dealerId": "1",
+      "bidAmount": "54000.00",
+      "message": "Buy Now - Instant Purchase",
+      "status": "won",
+      "createdAt": "2026-02-14 00:05:29",
+      "make": "Jaguar",
+      "model": "I-PACE EV400"
+    },
+    {
+      "id": "2",
+      "carId": "180015",
+      "dealerId": "1",
+      "bidAmount": "85000.00",
+      "message": "Buy Now - Instant Purchase",
+      "status": "won",
+      "createdAt": "2026-02-13 23:33:50",
+      "make": "Porsche",
+      "model": "Taycan 4S"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcarId\tdealerId\tbidAmount\tmessage\tstatus\tcreatedAt\tmake\tmodel\n90004\t180014\t60006\t102000.00\tBuy Now - Instant Purchase\twon\t2026-02-15 12:22:58\tMercedes-Benz\tEQS 450+\n90003\t150063\t60006\t31998.00\tBuy Now - Instant Purchase\twon\t2026-02-15 12:21:03\tSKODA\tEnyaq\n30003\t180013\t1\t75000.00\tBuy Now - Instant Purchase\twon\t2026-02-14 00:05:44\tBMW\tiX xDrive50\n30002\t180019\t1\t54000.00\tBuy Now - Instant Purchase\twon\t2026-02-14 00:05:29\tJaguar\tI-PACE EV400\n2\t180015\t1\t85000.00\tBuy Now - Instant Purchase\twon\t2026-02-13 23:33:50\tPorsche\tTaycan 4S\n",
+  "stderr": "",
+  "execution_time_ms": 367
+}

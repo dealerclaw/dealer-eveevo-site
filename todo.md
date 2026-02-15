@@ -1123,3 +1123,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Buy Now Button Visibility
 - [x] Fix Buy Now button not showing on Live Auction page (set buyNowPrice for all auction cars)
 - [x] Ensure Buy Now button is prominently displayed when buyNowPrice is available
+
+## My Wins Dashboard Issue
+- [x] Fix My Wins page not showing Buy Now purchases (fixed nested data structure access)
+- [x] Ensure Buy Now wins appear alongside auction wins
