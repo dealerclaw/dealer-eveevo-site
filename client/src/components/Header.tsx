@@ -36,7 +36,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <img 
-            src="https://files.manuscdn.com/user_upload_by_module/session_file/105909607/gGOHcQBXvUKMfHRV.png" 
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/105909607/ZZAWICaigqiQHuMn.png" 
             alt="EVEEVO Logo" 
             className="h-12 w-auto"
           />

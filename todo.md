@@ -1316,3 +1316,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Upload combined logo to S3
 - [x] Update Header component to use combined logo
 - [x] Test merged logo display
+
+## Update Logo with Green Text and Flipped Car
+- [x] Generate new logo with green EVEEVO text
+- [x] Flip car icon to face right direction
+- [x] Upload updated logo to S3
+- [x] Update Header component with new logo URL
