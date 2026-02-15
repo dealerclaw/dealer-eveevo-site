@@ -720,6 +720,7 @@ export const appRouter = router({
       .input(z.object({
         carId: z.number(),
         marketplace: z.enum(['consumer', 'dealer_only']),
+        minimumPrice: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
@@ -737,12 +738,54 @@ export const appRouter = router({
           throw new Error('Unauthorized: You can only move your own vehicles');
         }
         
-        // Update marketplace
-        await db.updateDealerCar(ctx.user.id, input.carId, {
+        // Update marketplace and minimum price if provided
+        const updateData: any = {
           marketplace: input.marketplace,
-        });
+        };
+        
+        if (input.minimumPrice) {
+          updateData.reservePrice = input.minimumPrice.toString();
+        }
+        
+        await db.updateDealerCar(ctx.user.id, input.carId, updateData);
         
         return { success: true };
+       }),
+
+    sendToAuction: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        reservePrice: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        // Verify car belongs to dealer
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer || car.dealerId !== dealer.id) {
+          throw new Error('Unauthorized: You can only send your own vehicles to auction');
+        }
+        
+        // Set auction with 48-hour duration
+        const now = new Date();
+        const auctionEnd = new Date(now.getTime() + 48 * 60 * 60 * 1000); // 48 hours from now
+        
+        await db.updateDealerCar(ctx.user.id, input.carId, {
+          isAuction: true,
+          auctionStartDate: now,
+          auctionEndDate: auctionEnd,
+          reservePrice: input.reservePrice.toString(),
+          marketplace: 'dealer_only', // Auctions are dealer-only
+        });
+        
+        return { success: true, auctionEndDate: auctionEnd };
        }),
 
     // Purchase management

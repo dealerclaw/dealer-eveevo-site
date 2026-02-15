@@ -988,3 +988,15 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Identify why DealerAuthGuard redirects to login (redirects before auth query completes)
 - [x] Fix root cause - added loading check to wait for auth before redirecting
 - [ ] Test complete impersonation flow works end-to-end
+
+## Add Auction Functionality
+- [x] Check current marketplace implementation and database schema
+- [x] Add "Send to Auction" button in My Inventory (Gavel icon)
+- [x] Create auction with 48-hour duration
+- [x] Add minimum price (reserve price) input when sending to auction
+- [x] Add minimum price input when sending to dealer marketplace
+- [x] Database schema already supports auction fields (isAuction, auctionStartDate, auctionEndDate, reservePrice)
+- [x] Created sendToAuction backend endpoint
+- [x] Updated moveToMarketplace to accept minimumPrice
+- [ ] Test auction creation with Arnold Clark inventory
+- [ ] Add auction status badge and countdown display in inventory list

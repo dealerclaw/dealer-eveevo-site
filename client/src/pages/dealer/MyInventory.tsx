@@ -11,7 +11,17 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowRightLeft, Info } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowRightLeft, Info, Gavel } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import DealerLayout from "@/components/DealerLayout";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -30,6 +40,10 @@ export default function MyInventory() {
   const [, navigate] = useLocation();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [viewingCar, setViewingCar] = useState<any | null>(null);
+  const [auctionCarId, setAuctionCarId] = useState<number | null>(null);
+  const [reservePrice, setReservePrice] = useState<string>("");
+  const [marketplaceCarId, setMarketplaceCarId] = useState<number | null>(null);
+  const [marketplacePrice, setMarketplacePrice] = useState<string>("");
   
   const { data: inventory, isLoading, refetch } = trpc.dealer.getMyInventory.useQuery();
   
@@ -58,17 +72,64 @@ export default function MyInventory() {
     onSuccess: () => {
       toast.success("Vehicle moved successfully");
       refetch();
+      setMarketplaceCarId(null);
+      setMarketplacePrice("");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to move vehicle");
     },
   });
 
+  const sendToAuctionMutation = trpc.dealer.sendToAuction.useMutation({
+    onSuccess: () => {
+      toast.success("Vehicle sent to auction successfully");
+      refetch();
+      setAuctionCarId(null);
+      setReservePrice("");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to send to auction");
+    },
+  });
+
   const handleMoveToMarketplace = (carId: number, currentMarketplace: string) => {
     const newMarketplace = currentMarketplace === 'consumer' ? 'dealer_only' : 'consumer';
+    // If moving to dealer marketplace, ask for minimum price
+    if (newMarketplace === 'dealer_only') {
+      setMarketplaceCarId(carId);
+      return;
+    }
+    // Moving back to consumer, no price needed
     moveToMarketplaceMutation.mutate({
       carId,
-      marketplace: newMarketplace as 'consumer' | 'dealer_only',
+      marketplace: newMarketplace,
+    });
+  };
+
+  const handleSendToAuction = (carId: number) => {
+    setAuctionCarId(carId);
+  };
+
+  const confirmSendToAuction = () => {
+    if (!reservePrice || parseFloat(reservePrice) <= 0) {
+      toast.error("Please enter a valid reserve price");
+      return;
+    }
+    sendToAuctionMutation.mutate({
+      carId: auctionCarId!,
+      reservePrice: parseFloat(reservePrice),
+    });
+  };
+
+  const confirmMoveToMarketplace = () => {
+    if (!marketplacePrice || parseFloat(marketplacePrice) <= 0) {
+      toast.error("Please enter a valid minimum price");
+      return;
+    }
+    moveToMarketplaceMutation.mutate({
+      carId: marketplaceCarId!,
+      marketplace: 'dealer_only',
+      minimumPrice: parseFloat(marketplacePrice),
     });
   };
 
@@ -166,6 +227,14 @@ export default function MyInventory() {
                             title="View Details"
                           >
                             <Info className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleSendToAuction(vehicle.id)}
+                            title="Send to Auction"
+                          >
+                            <Gavel className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -303,6 +372,93 @@ export default function MyInventory() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Send to Auction Dialog */}
+      <Dialog open={auctionCarId !== null} onOpenChange={() => {
+        setAuctionCarId(null);
+        setReservePrice("");
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send to Auction</DialogTitle>
+            <DialogDescription>
+              Set a reserve price (minimum acceptable price) for this 48-hour auction.
+              The vehicle will be listed in the dealer-only marketplace.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reservePrice">Reserve Price (£)</Label>
+              <Input
+                id="reservePrice"
+                type="number"
+                placeholder="Enter minimum price"
+                value={reservePrice}
+                onChange={(e) => setReservePrice(e.target.value)}
+                min="0"
+                step="100"
+              />
+              <p className="text-sm text-muted-foreground">
+                Auction will run for 48 hours. Dealers can bid, and the car will only sell if bids meet or exceed your reserve price.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setAuctionCarId(null);
+              setReservePrice("");
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={confirmSendToAuction}>
+              Send to Auction
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Move to Dealer Marketplace Dialog */}
+      <Dialog open={marketplaceCarId !== null} onOpenChange={() => {
+        setMarketplaceCarId(null);
+        setMarketplacePrice("");
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Move to Dealer Marketplace</DialogTitle>
+            <DialogDescription>
+              Set a minimum price for this vehicle in the dealer-only marketplace.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="marketplacePrice">Minimum Price (£)</Label>
+              <Input
+                id="marketplacePrice"
+                type="number"
+                placeholder="Enter minimum price"
+                value={marketplacePrice}
+                onChange={(e) => setMarketplacePrice(e.target.value)}
+                min="0"
+                step="100"
+              />
+              <p className="text-sm text-muted-foreground">
+                This is the minimum price other dealers must pay to purchase this vehicle.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setMarketplaceCarId(null);
+              setMarketplacePrice("");
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={confirmMoveToMarketplace}>
+              Move to Marketplace
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
