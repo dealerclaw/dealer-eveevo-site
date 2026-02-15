@@ -1,0 +1,19 @@
+{
+  "query": "SELECT id, make, model, year, price, buyNowPrice, isAuction FROM cars WHERE make = 'SKODA' AND model LIKE '%Enyaq%' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, price, buyNowPrice, isAuction FROM cars WHERE make = 'SKODA' AND model LIKE '%Enyaq%' LIMIT 1;",
+  "rows": [
+    {
+      "id": "90037",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2021",
+      "price": "19999.00",
+      "buyNowPrice": "NULL",
+      "isAuction": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tprice\tbuyNowPrice\tisAuction\n90037\tSKODA\tEnyaq\t2021\t19999.00\tNULL\t0\n",
+  "stderr": "",
+  "execution_time_ms": 369
+}

@@ -1119,3 +1119,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Debug why no EVs are showing in auction page (assigned dealers to auction cars)
 - [x] Add "Apply Filters" button instead of instant filtering
 - [x] Ensure filters only apply when Apply button is clicked
+
+## Buy Now Button Visibility
+- [x] Fix Buy Now button not showing on Live Auction page (set buyNowPrice for all auction cars)
+- [x] Ensure Buy Now button is prominently displayed when buyNowPrice is available

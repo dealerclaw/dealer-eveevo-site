@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, make, model, buyNowPrice, price FROM cars WHERE isAuction = 1 AND isAvailable = 1 LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, buyNowPrice, price FROM cars WHERE isAuction = 1 AND isAvailable = 1 LIMIT 5;",
+  "rows": [
+    {
+      "id": "150006",
+      "make": "MERCEDES-BENZ",
+      "model": "EQC",
+      "buyNowPrice": "NULL",
+      "price": "29498.00"
+    },
+    {
+      "id": "150063",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "buyNowPrice": "NULL",
+      "price": "31998.00"
+    },
+    {
+      "id": "180011",
+      "make": "Tesla",
+      "model": "Model 3 Long Range",
+      "buyNowPrice": "36000.00",
+      "price": "35000.00"
+    },
+    {
+      "id": "180012",
+      "make": "Audi",
+      "model": "e-tron GT",
+      "buyNowPrice": "98000.00",
+      "price": "95000.00"
+    },
+    {
+      "id": "180014",
+      "make": "Mercedes-Benz",
+      "model": "EQS 450+",
+      "buyNowPrice": "102000.00",
+      "price": "98000.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tbuyNowPrice\tprice\n150006\tMERCEDES-BENZ\tEQC\tNULL\t29498.00\n150063\tSKODA\tEnyaq\tNULL\t31998.00\n180011\tTesla\tModel 3 Long Range\t36000.00\t35000.00\n180012\tAudi\te-tron GT\t98000.00\t95000.00\n180014\tMercedes-Benz\tEQS 450+\t102000.00\t98000.00\n",
+  "stderr": "",
+  "execution_time_ms": 441
+}
