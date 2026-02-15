@@ -1047,3 +1047,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Change rotation time from 60 seconds to 30 seconds per car
 - [x] Fix image display to show full car without cropping (changed to object-contain with taller container)
 - [x] Test live auction displays correctly with proper timing
+
+## Live Auction Enhancements
+- [x] Add real-time bid history timeline in sidebar showing recent bids
+- [x] Display dealer names, bid amounts, and timestamps for each bid
+- [x] Add sound notification for new bids (Web Audio API beep)
+- [x] Add visual alert (flash border with pulse animation) when new bids arrive
+- [x] Add quick bid increment buttons (+£500, +£1,000, +£2,000)
+- [x] Test all auction enhancements work correctly

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
+import { BidHistoryTimeline } from "@/components/BidHistoryTimeline";
 
 export default function LiveAuction() {
   const { user } = useAuth();
@@ -441,6 +442,34 @@ export default function LiveAuction() {
                     <p className="text-xs text-white/60 mt-2">
                       Minimum bid: £{(currentBid + 100).toLocaleString()}
                     </p>
+                    
+                    {/* Quick Bid Increment Buttons */}
+                    <div className="grid grid-cols-3 gap-2 mt-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                        onClick={() => setBidAmount((currentBid + 500).toString())}
+                      >
+                        +£500
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                        onClick={() => setBidAmount((currentBid + 1000).toString())}
+                      >
+                        +£1,000
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-white/5 border-white/20 text-white hover:bg-white/10"
+                        onClick={() => setBidAmount((currentBid + 2000).toString())}
+                      >
+                        +£2,000
+                      </Button>
+                    </div>
                   </div>
 
                   <Button
@@ -587,6 +616,9 @@ export default function LiveAuction() {
               </CardContent>
             </Card>
 
+            {/* Bid History Timeline */}
+            <BidHistoryTimeline carId={currentVehicle.id} />
+
             {/* Progress Indicator */}
             <Card className="bg-black/20 border-white/10 backdrop-blur-sm">
               <CardContent className="p-4">
@@ -597,7 +629,7 @@ export default function LiveAuction() {
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-primary transition-all duration-1000 ease-linear"
-                    style={{ width: `${((60 - timeLeft) / 60) * 100}%` }}
+                    style={{ width: `${((30 - timeLeft) / 30) * 100}%` }}
                   />
                 </div>
               </CardContent>
