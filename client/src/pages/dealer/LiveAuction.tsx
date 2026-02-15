@@ -631,7 +631,7 @@ export default function LiveAuction() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-white/60">Retail Price</p>
-                        <p className="text-xl font-bold text-white">£{currentVehicle.price ? parseFloat(currentVehicle.price).toLocaleString() : 'N/A'}</p>
+                        <p className="text-xl font-bold text-white">£{currentVehicle.retailPrice ? parseFloat(currentVehicle.retailPrice.toString()).toLocaleString() : 'N/A'}</p>
                       </div>
                       <div>
                         <p className="text-sm text-white/60">Current Bid</p>

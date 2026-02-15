@@ -68,6 +68,7 @@ export const cars = mysqlTable("cars", {
   model: varchar("model", { length: 100 }).notNull(),
   year: int("year"),
   price: decimal("price", { precision: 10, scale: 2 }),
+  retailPrice: decimal("retailPrice", { precision: 10, scale: 2 }), // Retail/market price for reference
   mileage: int("mileage"),
   condition: mysqlEnum("condition", ["new", "used"]).default("used"),
   bodyType: varchar("bodyType", { length: 50 }),

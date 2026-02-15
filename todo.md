@@ -1205,3 +1205,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add Buy Now price display to LiveAuction page
 - [x] Make reserve price more prominent under vehicle image
 - [x] Test pricing display visibility and layout
+
+## Auction Page - Buy Now Button and Retail Price
+- [x] Add retailPrice field to cars table schema
+- [x] Update database queries to include retailPrice
+- [x] Add Buy Now button to LiveAuction page bidding panel
+- [x] Display retail price on auction page for pricing context
+- [x] Test Buy Now functionality from auction page
