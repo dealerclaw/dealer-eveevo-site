@@ -1162,3 +1162,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update all backend references from cart to shortlist
 - [x] Update all frontend UI text from "Add to Cart" to "Add to Shortlist"
 - [x] Update navigation links and icons to reflect shortlist terminology
+
+## Shortlist Enhancements
+- [x] Create shortlist management page at /dealer/shortlist
+- [x] Add bulk actions (compare, remove, request quotes)
+- [x] Implement price drop notifications for shortlisted vehicles
+- [x] Add inspection report upload notifications
+- [x] Create shortlist sharing functionality with email links

@@ -33,6 +33,7 @@ import LiveAuction from "./pages/dealer/LiveAuction";
 import MyAuctions from "./pages/dealer/MyAuctions";
 import AuctionAnalytics from "./pages/dealer/AuctionAnalytics";
 import MyWins from "./pages/dealer/MyWins";
+import MyShortlist from "./pages/dealer/MyShortlist";
 import Subscription from "./pages/dealer/Subscription";
 import SubscriptionSuccess from "./pages/dealer/SubscriptionSuccess";
 import SubscriptionManage from "./pages/dealer/SubscriptionManage";
@@ -137,6 +138,11 @@ function Router() {
       <Route path="/dealer/my-wins">
         <DealerAuthGuard>
           <MyWins />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/shortlist">
+        <DealerAuthGuard>
+          <MyShortlist />
         </DealerAuthGuard>
       </Route>
       <Route path="/dealer/subscription">

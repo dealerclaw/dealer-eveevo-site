@@ -855,6 +855,14 @@ export const appRouter = router({
         };
       }),
 
+    getShortlistVehicles: protectedProcedure
+      .input(z.object({ carIds: z.array(z.number()) }))
+      .query(async ({ input }) => {
+        if (input.carIds.length === 0) return [];
+        
+        return await db.getCarsByIds(input.carIds);
+      }),
+
     moveToMarketplace: protectedProcedure
       .input(z.object({
         carId: z.number(),
@@ -2026,6 +2034,93 @@ export const appRouter = router({
         await db.updateBidInspectionSchedule(input.bidId, {
           inspectionScheduledAt: new Date(input.scheduledAt),
           inspectionNotes: input.notes || null,
+        });
+
+        return { success: true };
+      }),
+
+    shareShortlist: protectedProcedure
+      .input(z.object({
+        carIds: z.array(z.number()),
+        recipientEmail: z.string().email(),
+        message: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Get vehicle details
+        const vehicles = await db.getCarsByIds(input.carIds);
+        
+        // Build email content
+        const vehicleList = vehicles.map(v => 
+          `• ${v.year} ${v.make} ${v.model} - £${v.price?.toLocaleString()} (${v.mileage?.toLocaleString()} miles)`
+        ).join('\n');
+
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: linear-gradient(135deg, #86efac 0%, #4ade80 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+              .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+              .vehicle-card { background: white; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #4ade80; }
+              .button { display: inline-block; background: #16a34a; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin-top: 10px; }
+              .message-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+              .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>🚗 Shared Vehicle Shortlist</h1>
+              </div>
+              <div class="content">
+                <p>${ctx.user.name || 'A colleague'} has shared a vehicle shortlist with you:</p>
+                
+                ${input.message ? `
+                  <div class="message-box">
+                    <strong>Message:</strong><br>
+                    ${input.message}
+                  </div>
+                ` : ''}
+
+                <h3 style="margin-top: 20px;">Vehicles (${vehicles.length}):</h3>
+                
+                ${vehicles.map(v => `
+                  <div class="vehicle-card">
+                    <h4 style="margin: 0 0 10px 0;">${v.year} ${v.make} ${v.model}</h4>
+                    <p style="margin: 5px 0; color: #666;">
+                      ${v.mileage?.toLocaleString()} miles • ${v.condition}
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 20px; font-weight: bold; color: #16a34a;">
+                      £${v.price?.toLocaleString()}
+                    </p>
+                    <a href="${process.env.VITE_APP_URL || 'https://eveevo.com'}/dealer/marketplace/${v.id}" class="button">
+                      View Details
+                    </a>
+                  </div>
+                `).join('')}
+
+                <div class="footer">
+                  <p>EVEEVO - Smart, Easy, Electric EVs</p>
+                  <p>Dealer-to-Dealer Marketplace</p>
+                </div>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+
+        // Send email
+        const { sendEmail } = await import('./email');
+        await sendEmail({
+          to: input.recipientEmail,
+          subject: `${ctx.user.name || 'A colleague'} shared ${vehicles.length} vehicles with you`,
+          html: htmlContent,
         });
 
         return { success: true };
