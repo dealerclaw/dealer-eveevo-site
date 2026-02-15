@@ -1433,6 +1433,200 @@ export const appRouter = router({
 
         return { url };
       }),
+
+    // EV Faults Database (Premium Feature)
+    getFaultsByModel: protectedProcedure
+      .input(z.object({
+        make: z.string(),
+        model: z.string().optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Check subscription status
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to access EV faults database');
+        }
+
+        return await db.getEvFaultsByModel(input.make, input.model);
+      }),
+
+    getAllFaultMakes: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Check subscription status
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to access EV faults database');
+        }
+
+        return await db.getAllFaultMakes();
+      }),
+
+    getAllFaultModels: protectedProcedure
+      .input(z.object({ make: z.string() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Check subscription status
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to access EV faults database');
+        }
+
+        return await db.getAllFaultModels(input.make);
+      }),
+
+    addFaultReport: protectedProcedure
+      .input(z.object({
+        make: z.string(),
+        model: z.string(),
+        yearFrom: z.number().optional(),
+        yearTo: z.number().optional(),
+        problemTitle: z.string(),
+        description: z.string(),
+        symptoms: z.string(),
+        resolution: z.string(),
+        category: z.enum([
+          'battery',
+          'charging',
+          'motor_drivetrain',
+          'brakes',
+          'suspension',
+          'electrical',
+          'infotainment',
+          'hvac',
+          'body_trim',
+          'safety_systems',
+          'software',
+          'other'
+        ]),
+        severity: z.enum(['low', 'medium', 'high', 'critical']),
+        frequency: z.enum(['rare', 'occasional', 'common', 'very_common']),
+        estimatedCostMin: z.number().optional(),
+        estimatedCostMax: z.number().optional(),
+        laborHours: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Check subscription status
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to contribute to EV faults database');
+        }
+
+        return await db.addEvFault({
+          ...input,
+          contributedByDealerId: dealer.id,
+          sourceType: 'dealer_contributed' as const,
+        });
+      }),
+
+    addFaultContribution: protectedProcedure
+      .input(z.object({
+        faultId: z.number(),
+        contributionType: z.enum([
+          'additional_solution',
+          'cost_update',
+          'symptom_clarification',
+          'alternative_fix',
+          'parts_recommendation'
+        ]),
+        content: z.string(),
+        actualCost: z.number().optional(),
+        actualLaborHours: z.number().optional(),
+        partsUsed: z.array(z.object({
+          partName: z.string(),
+          partNumber: z.string().optional(),
+          supplier: z.string().optional(),
+          cost: z.number().optional(),
+        })).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Check subscription status
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to contribute to EV faults database');
+        }
+
+        return await db.addEvFaultContribution({
+          ...input,
+          dealerId: dealer.id,
+        });
+      }),
+
+    markFaultHelpful: protectedProcedure
+      .input(z.object({ faultId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to access EV faults database');
+        }
+
+        return await db.markEvFaultHelpful(input.faultId, dealer.id);
+      }),
+
+    getFaultContributions: protectedProcedure
+      .input(z.object({ faultId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to access EV faults database');
+        }
+
+        return await db.getEvFaultContributions(input.faultId);
+      }),
   }),
 
   // Admin router

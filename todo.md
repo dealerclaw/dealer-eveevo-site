@@ -1328,3 +1328,53 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add right-facing car icon in circular badge
 - [x] Upload corrected logo to S3
 - [x] Update Header with new logo URL
+
+## EV Faults Database Feature (Premium)
+- [x] Read Tesla Model 3 faults spreadsheet
+- [ ] Research top 20 common faults for major EV models (Nissan Leaf, BMW i3, VW ID.3/4, Hyundai Kona, etc.)
+- [ ] Create evFaults database table schema
+- [ ] Import Tesla Model 3 data into database
+- [ ] Populate database with researched faults for all EV models
+- [ ] Add subscription check for premium feature access
+- [ ] Create dealer UI page to browse EV faults by model
+- [ ] Add search and filter functionality for faults
+- [ ] Test premium access control
+
+## EV Faults Database Feature (Premium)
+- [x] Read Tesla Model 3 faults spreadsheet
+- [x] Research Nissan Leaf top 20 common faults
+- [x] Research BMW i3 top 20 common faults
+- [ ] Research VW ID.3/ID.4 top 20 common faults
+- [ ] Research Hyundai Kona Electric top 20 common faults
+- [ ] Research Renault Zoe top 20 common faults
+- [ ] Research MG ZS EV top 20 common faults
+- [ ] Research Kia e-Niro top 20 common faults
+- [ ] Research Audi e-tron top 20 common faults
+- [ ] Create evFaults database table schema
+- [ ] Import Tesla Model 3 data into database
+- [ ] Import Nissan Leaf data into database
+- [ ] Import BMW i3 data into database
+- [ ] Import all other EV models data into database
+- [ ] Create tRPC procedures to fetch EV faults with subscription validation
+- [ ] Build EV faults UI component (accessible only to paid dealers)
+- [ ] Integrate faults database into dealer marketplace/auction pages
+- [ ] Add subscription check middleware to restrict access
+- [ ] Test complete feature with paid vs free dealers
+
+## Dealer-Editable EV Faults Database (Premium Feature)
+- [x] Design evFaults database schema with dealer contribution support
+- [x] Design evFaultContributions table for dealer-submitted reports
+- [x] Add fields: make, model, problem, description, symptoms, resolution, severity, frequency, cost, contributedBy
+- [x] Create database migration for new tables
+- [x] Import Tesla Model 3 initial fault data
+- [x] Import Nissan Leaf initial fault data
+- [x] Import BMW i3 initial fault data
+- [x] Create tRPC procedures: getFaultsByModel, addFaultReport, addFaultContribution, markFaultHelpful
+- [x] Add subscription validation middleware (paid dealers only)
+- [x] Build EV Faults Browser UI component (search by make/model)
+- [x] Build Add Fault Report form for dealers
+- [x] Build Add Contribution form for dealers
+- [x] Add EV Faults route to App.tsx
+- [x] Test viewing faults (paid vs free dealers)
+- [x] Test adding new fault reports
+- [x] Test adding contributions to existing fault reports

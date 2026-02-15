@@ -19,6 +19,9 @@ import {
   dealerWatchlist,
   auctionHistory,
   dealerOffers,
+  evFaults,
+  evFaultContributions,
+  evFaultHelpful,
   type Car,
   type Dealer,
   type Reservation,
@@ -34,7 +37,11 @@ import {
   type DealerBid,
   type InsertDealerBid,
   type DealerReview,
-  type InsertDealerReview
+  type InsertDealerReview,
+  type EvFault,
+  type InsertEvFault,
+  type EvFaultContribution,
+  type InsertEvFaultContribution
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -2505,4 +2512,221 @@ export async function respondToDealerOffer(data: {
   }
 
   return { success: true };
+}
+
+// ============================================
+// EV Faults Database Functions
+// ============================================
+
+/**
+ * Get all EV faults for a specific make and optional model
+ */
+export async function getEvFaultsByModel(make: string, model?: string): Promise<EvFault[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const whereConditions = [eq(evFaults.make, make)];
+    if (model) {
+      whereConditions.push(eq(evFaults.model, model));
+    }
+
+    const results = await db
+      .select()
+      .from(evFaults)
+      .where(and(...whereConditions))
+      .orderBy(desc(evFaults.frequency), desc(evFaults.severity));
+    
+    return results;
+  } catch (error) {
+    console.error("[Database] Error fetching EV faults:", error);
+    return [];
+  }
+}
+
+/**
+ * Get all unique makes from EV faults database
+ */
+export async function getAllFaultMakes(): Promise<string[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const results = await db
+      .selectDistinct({ make: evFaults.make })
+      .from(evFaults)
+      .orderBy(evFaults.make);
+    
+    return results.map(r => r.make);
+  } catch (error) {
+    console.error("[Database] Error fetching fault makes:", error);
+    return [];
+  }
+}
+
+/**
+ * Get all unique models for a specific make from EV faults database
+ */
+export async function getAllFaultModels(make: string): Promise<string[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const results = await db
+      .selectDistinct({ model: evFaults.model })
+      .from(evFaults)
+      .where(eq(evFaults.make, make))
+      .orderBy(evFaults.model);
+    
+    return results.map(r => r.model);
+  } catch (error) {
+    console.error("[Database] Error fetching fault models:", error);
+    return [];
+  }
+}
+
+/**
+ * Add a new EV fault report
+ */
+export async function addEvFault(fault: any): Promise<EvFault> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Convert number fields to strings for decimal columns
+    const values: any = { ...fault };
+    if (typeof values.estimatedCostMin === 'number') {
+      values.estimatedCostMin = values.estimatedCostMin.toString();
+    }
+    if (typeof values.estimatedCostMax === 'number') {
+      values.estimatedCostMax = values.estimatedCostMax.toString();
+    }
+    if (typeof values.laborHours === 'number') {
+      values.laborHours = values.laborHours.toString();
+    }
+    
+    const [result] = await db.insert(evFaults).values(values);
+    
+    // Fetch the inserted fault
+    const [inserted] = await db
+      .select()
+      .from(evFaults)
+      .where(eq(evFaults.id, result.insertId))
+      .limit(1);
+    
+    return inserted;
+  } catch (error) {
+    console.error("[Database] Error adding EV fault:", error);
+    throw error;
+  }
+}
+
+/**
+ * Add a contribution to an existing fault
+ */
+export async function addEvFaultContribution(
+  contribution: {
+    faultId: number;
+    dealerId: number;
+    contributionType: any;
+    content: string;
+    actualCost?: number;
+    actualLaborHours?: number;
+    partsUsed?: Array<{
+      partName: string;
+      partNumber?: string;
+      supplier?: string;
+      cost?: number;
+    }>;
+  }
+): Promise<EvFaultContribution> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Convert number fields to strings for decimal columns
+    const values: any = { ...contribution };
+    if (typeof values.actualCost === 'number') {
+      values.actualCost = values.actualCost.toString();
+    }
+    if (typeof values.actualLaborHours === 'number') {
+      values.actualLaborHours = values.actualLaborHours.toString();
+    }
+    
+    const [result] = await db.insert(evFaultContributions).values(values);
+    
+    // Fetch the inserted contribution
+    const [inserted] = await db
+      .select()
+      .from(evFaultContributions)
+      .where(eq(evFaultContributions.id, result.insertId))
+      .limit(1);
+    
+    return inserted;
+  } catch (error) {
+    console.error("[Database] Error adding fault contribution:", error);
+    throw error;
+  }
+}
+
+/**
+ * Mark a fault as helpful by a dealer
+ */
+export async function markEvFaultHelpful(faultId: number, dealerId: number): Promise<{ success: boolean }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    // Check if already marked
+    const existing = await db
+      .select()
+      .from(evFaultHelpful)
+      .where(and(
+        eq(evFaultHelpful.faultId, faultId),
+        eq(evFaultHelpful.dealerId, dealerId)
+      ))
+      .limit(1);
+
+    if (existing.length > 0) {
+      return { success: false }; // Already marked
+    }
+
+    // Add helpful mark
+    await db.insert(evFaultHelpful).values({
+      faultId,
+      dealerId,
+    });
+
+    // Increment helpful count
+    await db
+      .update(evFaults)
+      .set({ helpfulCount: sql`${evFaults.helpfulCount} + 1` })
+      .where(eq(evFaults.id, faultId));
+
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Error marking fault helpful:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get all contributions for a specific fault
+ */
+export async function getEvFaultContributions(faultId: number): Promise<EvFaultContribution[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const results = await db
+      .select()
+      .from(evFaultContributions)
+      .where(eq(evFaultContributions.faultId, faultId))
+      .orderBy(desc(evFaultContributions.createdAt));
+    
+    return results;
+  } catch (error) {
+    console.error("[Database] Error fetching fault contributions:", error);
+    return [];
+  }
 }

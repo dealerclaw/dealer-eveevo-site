@@ -162,6 +162,13 @@
       "when": 1771173244678,
       "tag": "0022_first_hammerhead",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1771189485078,
+      "tag": "0023_smooth_mandarin",
+      "breakpoints": true
     }
   ]
 }

@@ -475,3 +475,122 @@ export const auctionHistory = mysqlTable("auctionHistory", {
 
 export type AuctionHistory = typeof auctionHistory.$inferSelect;
 export type InsertAuctionHistory = typeof auctionHistory.$inferInsert;
+
+/**
+ * EV Faults Database - Common problems and solutions for EV models
+ * Premium feature for paid dealer subscribers
+ */
+export const evFaults = mysqlTable("evFaults", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Vehicle identification
+  make: varchar("make", { length: 100 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  yearFrom: int("yearFrom"), // Applicable from year (e.g., 2013)
+  yearTo: int("yearTo"), // Applicable to year (e.g., 2017), null = ongoing
+  
+  // Problem details
+  problemTitle: varchar("problemTitle", { length: 255 }).notNull(),
+  description: text("description").notNull(), // Detailed problem description
+  symptoms: text("symptoms").notNull(), // What the driver/dealer will notice
+  resolution: text("resolution").notNull(), // How to fix or mitigate the problem
+  
+  // Classification
+  category: mysqlEnum("category", [
+    "battery",
+    "charging",
+    "motor_drivetrain",
+    "brakes",
+    "suspension",
+    "electrical",
+    "infotainment",
+    "hvac",
+    "body_trim",
+    "safety_systems",
+    "software",
+    "other"
+  ]).notNull(),
+  
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).notNull(),
+  frequency: mysqlEnum("frequency", ["rare", "occasional", "common", "very_common"]).notNull(),
+  
+  // Cost information
+  estimatedCostMin: decimal("estimatedCostMin", { precision: 10, scale: 2 }),
+  estimatedCostMax: decimal("estimatedCostMax", { precision: 10, scale: 2 }),
+  laborHours: decimal("laborHours", { precision: 5, scale: 2 }),
+  
+  // Source tracking
+  sourceType: mysqlEnum("sourceType", ["research", "dealer_contributed", "recall", "tsb"]).default("research").notNull(),
+  contributedByDealerId: int("contributedByDealerId").references(() => dealers.id),
+  recallNumber: varchar("recallNumber", { length: 100 }),
+  tsbNumber: varchar("tsbNumber", { length: 100 }),
+  
+  // Metadata
+  isVerified: boolean("isVerified").default(false), // Admin verified
+  viewCount: int("viewCount").default(0),
+  helpfulCount: int("helpfulCount").default(0), // Dealers can mark as helpful
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvFault = typeof evFaults.$inferSelect;
+export type InsertEvFault = typeof evFaults.$inferInsert;
+
+/**
+ * Dealer contributions to EV faults database
+ * Allows dealers to share their experience and solutions
+ */
+export const evFaultContributions = mysqlTable("evFaultContributions", {
+  id: int("id").autoincrement().primaryKey(),
+  faultId: int("faultId").references(() => evFaults.id).notNull(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  
+  // Contribution type
+  contributionType: mysqlEnum("contributionType", [
+    "additional_solution",
+    "cost_update",
+    "symptom_clarification",
+    "alternative_fix",
+    "parts_recommendation"
+  ]).notNull(),
+  
+  // Contribution content
+  content: text("content").notNull(),
+  
+  // Cost data if applicable
+  actualCost: decimal("actualCost", { precision: 10, scale: 2 }),
+  actualLaborHours: decimal("actualLaborHours", { precision: 5, scale: 2 }),
+  
+  // Parts information
+  partsUsed: json("partsUsed").$type<Array<{
+    partName: string;
+    partNumber?: string;
+    supplier?: string;
+    cost?: number;
+  }>>(),
+  
+  // Metadata
+  isVerified: boolean("isVerified").default(false),
+  helpfulCount: int("helpfulCount").default(0),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EvFaultContribution = typeof evFaultContributions.$inferSelect;
+export type InsertEvFaultContribution = typeof evFaultContributions.$inferInsert;
+
+/**
+ * Track which dealers have marked faults as helpful
+ */
+export const evFaultHelpful = mysqlTable("evFaultHelpful", {
+  id: int("id").autoincrement().primaryKey(),
+  faultId: int("faultId").references(() => evFaults.id).notNull(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EvFaultHelpful = typeof evFaultHelpful.$inferSelect;
+export type InsertEvFaultHelpful = typeof evFaultHelpful.$inferInsert;
