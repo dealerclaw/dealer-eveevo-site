@@ -1239,3 +1239,20 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Check Buy Now price on auction page button
 - [x] Verify all displays use currentVehicle.buyNowPrice
 - [x] Fix any hardcoded or incorrect price references
+
+## Dealer Marketplace Buy Now Price Consistency
+- [x] Check Buy Now price display on DealerMarketplaceDetails page
+- [x] Ensure it uses buyNowPrice field (not price field)
+- [x] Verify consistency across auction and marketplace pages
+
+## Improve Auction Vehicle Clarity on Marketplace Details
+- [ ] Add prominent banner indicating vehicle is in live auction
+- [ ] Add "View on Live Auction Page" CTA button
+- [ ] Make it clear that Live Auction is the primary page for bidding
+- [ ] Keep full vehicle details accessible from both pages
+
+## Improve Buy Now Button and Auction Clarity
+- [x] Add Buy Now price to button text on marketplace details page
+- [x] Add prominent auction banner on marketplace details page
+- [x] Add "View on Live Auction Page" CTA button
+- [x] Test Buy Now button with price display

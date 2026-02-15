@@ -119,10 +119,10 @@ export default function DealerMarketplaceDetails() {
                 
                 {/* Auction Status Banner */}
                 {car.isAuction && car.auctionEndDate && (
-                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="mt-4 p-4 bg-red-50 border-2 border-red-300 rounded-lg space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-semibold text-red-900">Live Auction</p>
+                        <p className="text-sm font-semibold text-red-900">🔴 Live Auction in Progress</p>
                         <p className="text-xs text-red-700 mt-1">
                           Ends: {new Date(car.auctionEndDate).toLocaleString()}
                         </p>
@@ -136,6 +136,14 @@ export default function DealerMarketplaceDetails() {
                         </p>
                       </div>
                     </div>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => navigate('/dealer/live-auction')}
+                    >
+                      View on Live Auction Page →
+                    </Button>
                   </div>
                 )}
               </CardHeader>
@@ -277,12 +285,16 @@ export default function DealerMarketplaceDetails() {
             {/* Price card */}
             <Card className="sticky top-4">
               <CardHeader>
-                <CardTitle className="text-sm text-muted-foreground">Trade Price</CardTitle>
+                <CardTitle className="text-sm text-muted-foreground">
+                  {car.isAuction ? 'Buy Now Price' : 'Trade Price'}
+                </CardTitle>
                 <div className="text-3xl font-bold">
-                  £{car.price ? parseFloat(car.price.toString()).toLocaleString() : 'N/A'}
+                  £{car.isAuction && car.buyNowPrice 
+                    ? parseFloat(car.buyNowPrice.toString()).toLocaleString()
+                    : (car.price ? parseFloat(car.price.toString()).toLocaleString() : 'N/A')}
                 </div>
                 <CardDescription className="text-xs">
-                  + VAT if applicable
+                  {car.isAuction ? 'Instant purchase price' : '+ VAT if applicable'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -310,7 +322,9 @@ export default function DealerMarketplaceDetails() {
                   ) : (
                     <>
                       <CreditCard className="w-4 h-4 mr-2" />
-                      Buy Now (£99 deposit)
+                      Buy Now - £{car.isAuction && car.buyNowPrice 
+                        ? parseFloat(car.buyNowPrice.toString()).toLocaleString()
+                        : (car.price ? parseFloat(car.price.toString()).toLocaleString() : 'N/A')}
                     </>
                   )}
                 </Button>
@@ -318,7 +332,7 @@ export default function DealerMarketplaceDetails() {
                 <MakeOfferDialog
                   carId={car.id}
                   carName={`${car.make} ${car.model}`}
-                  askingPrice={parseFloat(car.price || '0')}
+                  askingPrice={parseFloat((car.isAuction && car.buyNowPrice ? car.buyNowPrice : car.price) || '0')}
                   sellerId={car.dealerId || 0}
                 />
 
