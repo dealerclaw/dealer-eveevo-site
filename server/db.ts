@@ -2519,9 +2519,15 @@ export async function respondToDealerOffer(data: {
 // ============================================
 
 /**
- * Get all EV faults for a specific make and optional model
+ * Get all EV faults for a specific make and optional model with filters
  */
-export async function getEvFaultsByModel(make: string, model?: string): Promise<EvFault[]> {
+export async function getEvFaultsByModel(
+  make: string, 
+  model?: string, 
+  category?: string, 
+  severity?: string, 
+  searchText?: string
+): Promise<EvFault[]> {
   const db = await getDb();
   if (!db) return [];
 
@@ -2529,6 +2535,23 @@ export async function getEvFaultsByModel(make: string, model?: string): Promise<
     const whereConditions = [eq(evFaults.make, make)];
     if (model) {
       whereConditions.push(eq(evFaults.model, model));
+    }
+    if (category) {
+      whereConditions.push(sql`${evFaults.category} = ${category}`);
+    }
+    if (severity) {
+      whereConditions.push(sql`${evFaults.severity} = ${severity}`);
+    }
+    if (searchText) {
+      // Search in problem title, description, and symptoms
+      const searchLower = searchText.toLowerCase();
+      whereConditions.push(
+        or(
+          sql`LOWER(${evFaults.problemTitle}) LIKE ${`%${searchLower}%`}`,
+          sql`LOWER(${evFaults.description}) LIKE ${`%${searchLower}%`}`,
+          sql`LOWER(${evFaults.symptoms}) LIKE ${`%${searchLower}%`}`
+        )!
+      );
     }
 
     const results = await db

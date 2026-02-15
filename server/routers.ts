@@ -1439,6 +1439,9 @@ export const appRouter = router({
       .input(z.object({
         make: z.string(),
         model: z.string().optional(),
+        category: z.string().optional(),
+        severity: z.string().optional(),
+        searchText: z.string().optional(),
       }))
       .query(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
@@ -1455,7 +1458,13 @@ export const appRouter = router({
           throw new Error('Active subscription required to access EV faults database');
         }
 
-        return await db.getEvFaultsByModel(input.make, input.model);
+        return await db.getEvFaultsByModel(
+          input.make, 
+          input.model, 
+          input.category, 
+          input.severity, 
+          input.searchText
+        );
       }),
 
     getAllFaultMakes: protectedProcedure

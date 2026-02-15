@@ -47,6 +47,9 @@ export default function EvFaultsBrowser() {
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [selectedFault, setSelectedFault] = useState<any>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [severityFilter, setSeverityFilter] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
 
   // Fetch makes
   const { data: makes, isLoading: makesLoading } = trpc.dealer.getAllFaultMakes.useQuery();
@@ -59,7 +62,13 @@ export default function EvFaultsBrowser() {
 
   // Fetch faults when make is selected
   const { data: faults, isLoading: faultsLoading, refetch: refetchFaults } = trpc.dealer.getFaultsByModel.useQuery(
-    { make: selectedMake, model: selectedModel || undefined },
+    { 
+      make: selectedMake, 
+      model: selectedModel || undefined,
+      category: categoryFilter || undefined,
+      severity: severityFilter || undefined,
+      searchText: searchText || undefined
+    },
     { enabled: !!selectedMake }
   );
 
@@ -97,6 +106,21 @@ export default function EvFaultsBrowser() {
 
   const CategoryIcon = selectedFault ? categoryIcons[selectedFault.category] || AlertCircle : AlertCircle;
 
+  // Filter faults client-side for immediate feedback
+  const filteredFaults = faults?.filter(fault => {
+    if (categoryFilter && fault.category !== categoryFilter) return false;
+    if (severityFilter && fault.severity !== severityFilter) return false;
+    if (searchText) {
+      const search = searchText.toLowerCase();
+      return (
+        fault.problemTitle.toLowerCase().includes(search) ||
+        fault.description?.toLowerCase().includes(search) ||
+        fault.symptoms?.toLowerCase().includes(search)
+      );
+    }
+    return true;
+  });
+
   return (
     <div className="container py-8">
       <div className="mb-8">
@@ -113,7 +137,7 @@ export default function EvFaultsBrowser() {
           <CardDescription>Select a make and optionally a model to view known faults</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             <div>
               <Label htmlFor="make">Make</Label>
               <Select value={selectedMake} onValueChange={(value) => {
@@ -153,35 +177,86 @@ export default function EvFaultsBrowser() {
               </Select>
             </div>
 
-            <div className="flex items-end">
-              <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-                <DialogTrigger asChild>
-                  <Button className="w-full" disabled={!selectedMake}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Fault Report
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Add Fault Report</DialogTitle>
-                    <DialogDescription>
-                      Share a fault you've encountered with {selectedMake} {selectedModel || "vehicles"}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <AddFaultForm
-                    make={selectedMake}
-                    model={selectedModel}
-                    onSuccess={() => {
-                      setShowAddDialog(false);
-                      refetchFaults();
-      toast.success("Fault report added", {
-        description: "Thank you for contributing to the database!",
-      });
-                    }}
-                  />
-                </DialogContent>
-              </Dialog>
+            <div>
+              <Label htmlFor="category">Category</Label>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter} disabled={!selectedMake}>
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="All categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All categories</SelectItem>
+                  <SelectItem value="battery">Battery</SelectItem>
+                  <SelectItem value="charging">Charging</SelectItem>
+                  <SelectItem value="motor_drivetrain">Motor/Drivetrain</SelectItem>
+                  <SelectItem value="brakes">Brakes</SelectItem>
+                  <SelectItem value="suspension">Suspension</SelectItem>
+                  <SelectItem value="electrical">Electrical</SelectItem>
+                  <SelectItem value="infotainment">Infotainment</SelectItem>
+                  <SelectItem value="hvac">HVAC</SelectItem>
+                  <SelectItem value="body_trim">Body/Trim</SelectItem>
+                  <SelectItem value="safety_systems">Safety Systems</SelectItem>
+                  <SelectItem value="software">Software</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+
+            <div>
+              <Label htmlFor="severity">Severity</Label>
+              <Select value={severityFilter} onValueChange={setSeverityFilter} disabled={!selectedMake}>
+                <SelectTrigger id="severity">
+                  <SelectValue placeholder="All severities" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All severities</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="lg:col-span-2">
+              <Label htmlFor="search">Search</Label>
+              <Input 
+                id="search"
+                placeholder="Search by problem, description, or symptoms..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                disabled={!selectedMake}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+              <DialogTrigger asChild>
+                <Button disabled={!selectedMake}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Fault Report
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Add Fault Report</DialogTitle>
+                  <DialogDescription>
+                    Share a fault you've encountered with {selectedMake} {selectedModel || "vehicles"}
+                  </DialogDescription>
+                </DialogHeader>
+                <AddFaultForm
+                  make={selectedMake}
+                  model={selectedModel}
+                  onSuccess={() => {
+                    setShowAddDialog(false);
+                    refetchFaults();
+                    toast.success("Fault report added", {
+                      description: "Thank you for contributing to the database!",
+                    });
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>
@@ -192,7 +267,7 @@ export default function EvFaultsBrowser() {
           {/* Faults List */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">
-              {faultsLoading ? "Loading..." : `${faults?.length || 0} Known Faults`}
+              {faultsLoading ? "Loading..." : `${filteredFaults?.length || 0} Known Faults`}
             </h2>
             
             {faultsLoading && (
@@ -203,7 +278,7 @@ export default function EvFaultsBrowser() {
               </Card>
             )}
 
-            {!faultsLoading && faults?.length === 0 && (
+            {!faultsLoading && filteredFaults?.length === 0 && (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
                   No faults found for this selection.
@@ -211,7 +286,7 @@ export default function EvFaultsBrowser() {
               </Card>
             )}
 
-            {faults?.map((fault) => {
+            {filteredFaults?.map((fault) => {
               const Icon = categoryIcons[fault.category] || AlertCircle;
               return (
                 <Card

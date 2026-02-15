@@ -1378,3 +1378,24 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Test viewing faults (paid vs free dealers)
 - [x] Test adding new fault reports
 - [x] Test adding contributions to existing fault reports
+
+## EV Faults Database Enhancements
+
+- [x] Add "EV Faults Database" link to dealer sidebar navigation
+- [x] Research VW ID.3/ID.4 common faults
+- [x] Research Hyundai Kona Electric common faults
+- [x] Research Renault Zoe common faults
+- [x] Research MG ZS EV common faults
+- [x] Research Polestar 2 common faults
+- [x] Import VW ID.3/ID.4 fault data to database
+- [x] Import Hyundai Kona Electric fault data to database
+- [x] Import Renault Zoe fault data to database
+- [x] Import MG ZS EV fault data to database
+- [x] Import Polestar 2 fault data to database
+- [x] Add category filter dropdown to UI
+- [x] Add severity filter dropdown to UI
+- [x] Add text search input to UI
+- [x] Update getFaultsByModel to support all filters (category, severity, text search)
+- [x] Update getEvFaultsByModel database function with filter logic
+- [x] Client-side filtering for immediate feedback
+- [x] Test all filters work correctly (25 tests passed)
