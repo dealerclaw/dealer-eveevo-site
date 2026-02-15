@@ -35,10 +35,11 @@ export default function Header() {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary">
-            <Car className="w-6 h-6 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold text-primary">EVEEVO</span>
+          <img 
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/105909607/wcQhzPmbNZtZHJPS.png" 
+            alt="EVEEVO Logo" 
+            className="h-8 w-auto"
+          />
         </Link>
 
         {/* Desktop Navigation */}
