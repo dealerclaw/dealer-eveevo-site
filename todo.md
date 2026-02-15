@@ -1310,3 +1310,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Increase logo size in Header component
 - [x] Add stylish EV car outline icon next to logo
 - [x] Test logo and icon display on all pages
+
+## Create Combined Logo Image
+- [x] Generate combined logo with EV car icon and EVEEVO text
+- [x] Upload combined logo to S3
+- [x] Update Header component to use combined logo
+- [x] Test merged logo display

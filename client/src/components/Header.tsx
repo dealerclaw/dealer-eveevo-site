@@ -34,14 +34,11 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary">
-            <Car className="w-7 h-7 text-primary-foreground" />
-          </div>
+        <Link href="/" className="flex items-center">
           <img 
-            src="https://files.manuscdn.com/user_upload_by_module/session_file/105909607/wcQhzPmbNZtZHJPS.png" 
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/105909607/gGOHcQBXvUKMfHRV.png" 
             alt="EVEEVO Logo" 
-            className="h-10 w-auto"
+            className="h-12 w-auto"
           />
         </Link>
 
