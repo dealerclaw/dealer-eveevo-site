@@ -110,6 +110,9 @@ export const cars = mysqlTable("cars", {
   currentHighestBid: decimal("currentHighestBid", { precision: 10, scale: 2 }),
   buyNowPrice: decimal("buyNowPrice", { precision: 10, scale: 2 }), // Instant purchase price
   
+  // Inspection reports (S3 URLs to PDF files)
+  inspectionReports: json("inspectionReports").$type<Array<{url: string, name: string, type: string, uploadedAt: string}>>(),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

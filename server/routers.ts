@@ -13,6 +13,7 @@ import { financeRouter } from "./financeRouter";
 import Stripe from "stripe";
 import { PRODUCTS } from "./products";
 import { notifyOwner } from "./_core/notification";
+import { calculatePostcodeDistance } from "./postcodeDistance";
 
 export const appRouter = router({
   system: systemRouter,
@@ -491,6 +492,85 @@ export const appRouter = router({
           throw new Error('Unauthorized: Dealer access required');
         }
         return await db.deleteDealerCar(ctx.user.id, input.id);
+      }),
+
+    uploadInspectionReport: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        fileName: z.string(),
+        fileData: z.string(), // base64
+        fileType: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Verify car belongs to dealer
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer || car.dealerId !== dealer.id) {
+          throw new Error('Unauthorized: You can only upload reports for your own vehicles');
+        }
+
+        // Upload to S3
+        const { storagePut } = await import('./storage');
+        const base64Data = input.fileData.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        const fileKey = `inspection-reports/${dealer.id}/${input.carId}/${Date.now()}-${input.fileName}`;
+        const { url } = await storagePut(fileKey, buffer, input.fileType);
+
+        // Update car with new report
+        const existingReports = car.inspectionReports || [];
+        const newReport = {
+          url,
+          name: input.fileName,
+          type: input.fileType,
+          uploadedAt: new Date().toISOString(),
+        };
+        const updatedReports = [...existingReports, newReport];
+
+        await db.updateDealerCar(ctx.user.id, input.carId, {
+          inspectionReports: updatedReports,
+        });
+
+        return { report: newReport };
+      }),
+
+    deleteInspectionReport: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        reportUrl: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Verify car belongs to dealer
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer || car.dealerId !== dealer.id) {
+          throw new Error('Unauthorized: You can only delete reports for your own vehicles');
+        }
+
+        // Remove report from list
+        const existingReports = car.inspectionReports || [];
+        const updatedReports = existingReports.filter(r => r.url !== input.reportUrl);
+
+        await db.updateDealerCar(ctx.user.id, input.carId, {
+          inspectionReports: updatedReports,
+        });
+
+        return { success: true };
       }),
 
     getInquiries: protectedProcedure
@@ -978,6 +1058,157 @@ export const appRouter = router({
           const pdf = await db.exportPurchaseHistoryPDF(dealer.id);
           return { content: pdf, filename: `purchase-history-${Date.now()}.pdf` };
         }
+      }),
+
+    // Offer/Negotiation endpoints
+    makeOffer: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        toDealerId: z.number(),
+        offerAmount: z.number(),
+        message: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        // Verify car exists and belongs to target dealer
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+
+        if (car.dealerId !== input.toDealerId) {
+          throw new Error('Car does not belong to the specified dealer');
+        }
+
+        // Create offer
+        await db.createDealerOffer({
+          carId: input.carId,
+          fromDealerId: dealer.id,
+          toDealerId: input.toDealerId,
+          offerAmount: input.offerAmount,
+          message: input.message,
+        });
+
+        return { success: true };
+      }),
+
+    getMyOffers: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        // Get offers made by this dealer and offers received
+        return await db.getDealerOffers(dealer.id);
+      }),
+
+    respondToOffer: protectedProcedure
+      .input(z.object({
+        offerId: z.number(),
+        action: z.enum(['accept', 'reject', 'counter']),
+        counterAmount: z.number().optional(),
+        counterMessage: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        await db.respondToDealerOffer({
+          offerId: input.offerId,
+          dealerId: dealer.id,
+          action: input.action,
+          counterAmount: input.counterAmount,
+          counterMessage: input.counterMessage,
+        });
+
+        return { success: true };
+      }),
+
+    // Delivery endpoints
+    calculateDeliveryCost: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        fromPostcode: z.string(),
+        toPostcode: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        // Simple distance-based pricing algorithm
+        // In production, integrate with actual haulier API
+        const distance = calculatePostcodeDistance(input.fromPostcode, input.toPostcode);
+        
+        // Base rate: £1.50 per mile, minimum £150
+        const baseCost = Math.max(distance * 1.5, 150);
+        
+        // Add 20% for insurance and handling
+        const totalCost = Math.round(baseCost * 1.2);
+        
+        // Estimate delivery time based on distance
+        const estimatedDays = distance < 100 ? 2 : distance < 200 ? 3 : distance < 300 ? 4 : 5;
+
+        return {
+          distance,
+          cost: totalCost,
+          estimatedDays,
+        };
+      }),
+
+    bookDelivery: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        fromPostcode: z.string(),
+        toPostcode: z.string(),
+        cost: z.number(),
+        distance: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        // In production, integrate with haulier booking API
+        // For now, just log the booking request
+        console.log('[Delivery Booking]', {
+          dealerId: dealer.id,
+          carId: input.carId,
+          from: input.fromPostcode,
+          to: input.toPostcode,
+          cost: input.cost,
+          distance: input.distance,
+        });
+
+        // TODO: Send confirmation email to dealer
+        // TODO: Notify haulier partner
+        // TODO: Create delivery tracking record in database
+
+        return { success: true, bookingId: `DEL-${Date.now()}` };
       }),
 
     // Cart endpoints

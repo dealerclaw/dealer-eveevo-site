@@ -14,6 +14,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import { Upload, X, Loader2 } from "lucide-react";
 import DealerLayout from "@/components/DealerLayout";
+import InspectionReportsUpload from "@/components/InspectionReportsUpload";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 
@@ -640,6 +641,12 @@ export default function EditVehicle() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Inspection Reports */}
+          <InspectionReportsUpload 
+            carId={vehicleId} 
+            existingReports={vehicle?.inspectionReports || []}
+          />
 
           {/* Submit Buttons */}
           <div className="flex items-center gap-4">

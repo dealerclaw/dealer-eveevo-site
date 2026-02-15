@@ -1147,3 +1147,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add trade details section (faults, service history, auction grade)
 - [x] Add location and logistics information (collection/delivery)
 - [x] Show pricing transparency (trade price, fees, VAT status)
+
+## Dealer Marketplace Enhancements
+- [x] Add vehicle inspection reports upload (PDF for HPI checks, battery health certificates)
+- [x] Implement negotiation messaging system with offer/counter/accept/decline workflow
+- [x] Create delivery cost calculator with postcode-based transport quotes and booking

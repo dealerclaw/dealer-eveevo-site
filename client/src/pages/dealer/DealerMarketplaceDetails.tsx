@@ -7,6 +7,8 @@ import { Loader2, ArrowLeft, ShoppingCart, CreditCard, MapPin, AlertTriangle, Ch
 import { toast } from "sonner";
 import { useLocation, useParams } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
+import MakeOfferDialog from "@/components/MakeOfferDialog";
+import DeliveryCostCalculator from "@/components/DeliveryCostCalculator";
 
 export default function DealerMarketplaceDetails() {
   const params = useParams();
@@ -273,6 +275,13 @@ export default function DealerMarketplaceDetails() {
                   )}
                 </Button>
 
+                <MakeOfferDialog
+                  carId={car.id}
+                  carName={`${car.make} ${car.model}`}
+                  askingPrice={parseFloat(car.price || '0')}
+                  sellerId={car.dealerId || 0}
+                />
+
                 <Button 
                   variant="outline" 
                   className="w-full"
@@ -326,10 +335,18 @@ export default function DealerMarketplaceDetails() {
                   </Button>
                 </div>
               </CardContent>
-            </Card>
+              </Card>
+            </div>
+
+            {/* Delivery Calculator */}
+            {car.dealer?.postcode && (
+              <DeliveryCostCalculator
+                carId={car.id}
+                sellerPostcode={car.dealer.postcode}
+              />
+            )}
           </div>
         </div>
-      </div>
-    </DealerLayout>
+      </DealerLayout>
   );
 }

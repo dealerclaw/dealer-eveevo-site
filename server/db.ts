@@ -18,6 +18,7 @@ import {
   dealerCart,
   dealerWatchlist,
   auctionHistory,
+  dealerOffers,
   type Car,
   type Dealer,
   type Reservation,
@@ -2378,4 +2379,125 @@ export async function updateBidInspectionSchedule(
     .where(eq(dealerBids.id, bidId));
 
   return true;
+}
+
+/**
+ * Create a dealer offer
+ */
+export async function createDealerOffer(data: {
+  carId: number;
+  fromDealerId: number;
+  toDealerId: number;
+  offerAmount: number;
+  message?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.insert(dealerOffers).values({
+    carId: data.carId,
+    fromDealerId: data.fromDealerId,
+    toDealerId: data.toDealerId,
+    offerAmount: data.offerAmount.toString(),
+    message: data.message,
+    status: 'pending',
+  });
+  return { success: true };
+}
+
+/**
+ * Get dealer offers (both made and received)
+ */
+export async function getDealerOffers(dealerId: number) {
+  const db = await getDb();
+  if (!db) return { made: [], received: [] };
+
+  // Offers made by this dealer
+  const madeOffers = await db
+    .select()
+    .from(dealerOffers)
+    .leftJoin(cars, eq(dealerOffers.carId, cars.id))
+    .leftJoin(dealers, eq(dealerOffers.toDealerId, dealers.id))
+    .where(eq(dealerOffers.fromDealerId, dealerId))
+    .orderBy(desc(dealerOffers.createdAt));
+
+  // Offers received by this dealer
+  const receivedOffers = await db
+    .select()
+    .from(dealerOffers)
+    .leftJoin(cars, eq(dealerOffers.carId, cars.id))
+    .leftJoin(dealers, eq(dealerOffers.fromDealerId, dealers.id))
+    .where(eq(dealerOffers.toDealerId, dealerId))
+    .orderBy(desc(dealerOffers.createdAt));
+
+  return {
+    made: madeOffers.map(row => ({
+      offer: row.dealerOffers,
+      car: row.cars,
+      toDealer: row.dealers,
+    })),
+    received: receivedOffers.map(row => ({
+      offer: row.dealerOffers,
+      car: row.cars,
+      fromDealer: row.dealers,
+    })),
+  };
+}
+
+/**
+ * Respond to a dealer offer
+ */
+export async function respondToDealerOffer(data: {
+  offerId: number;
+  dealerId: number;
+  action: 'accept' | 'reject' | 'counter';
+  counterAmount?: number;
+  counterMessage?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Verify offer exists and belongs to this dealer
+  const [offer] = await db
+    .select()
+    .from(dealerOffers)
+    .where(eq(dealerOffers.id, data.offerId));
+
+  if (!offer) {
+    throw new Error('Offer not found');
+  }
+
+  if (offer.toDealerId !== data.dealerId) {
+    throw new Error('Unauthorized: This offer is not for you');
+  }
+
+  if (offer.status !== 'pending' && offer.status !== 'countered') {
+    throw new Error('This offer has already been responded to');
+  }
+
+  // Update offer status
+  const updateData: any = {
+    status: data.action === 'accept' ? 'accepted' : data.action === 'reject' ? 'rejected' : 'countered',
+    updatedAt: new Date(),
+  };
+
+  if (data.action === 'counter') {
+    updateData.counterAmount = data.counterAmount?.toString();
+    updateData.counterMessage = data.counterMessage;
+  }
+
+  await db
+    .update(dealerOffers)
+    .set(updateData)
+    .where(eq(dealerOffers.id, data.offerId));
+
+  // If accepted, mark car as sold
+  if (data.action === 'accept') {
+    await db
+      .update(cars)
+      .set({ isAvailable: false })
+      .where(eq(cars.id, offer.carId));
+  }
+
+  return { success: true };
 }
