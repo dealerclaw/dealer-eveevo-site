@@ -448,6 +448,28 @@ export default function LiveAuction() {
                 <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg">
                   {currentVehicle.auctionEndDate && formatTimeRemaining(currentVehicle.auctionEndDate)}
                 </div>
+                
+                {/* Reserve Price & Buy Now Price Banner */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent py-6 px-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-white/60 mb-1">Reserve Price</p>
+                      <p className="text-3xl font-bold text-yellow-400">
+                        £{currentVehicle.reservePrice 
+                          ? parseFloat(currentVehicle.reservePrice.toString()).toLocaleString()
+                          : 'Not Set'}
+                      </p>
+                    </div>
+                    {currentVehicle.price && (
+                      <div className="text-right">
+                        <p className="text-xs text-white/60 mb-1">Buy Now Price</p>
+                        <p className="text-3xl font-bold text-green-400">
+                          £{parseFloat(currentVehicle.price.toString()).toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* Navigation Arrows */}
                 <Button

@@ -1200,3 +1200,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Fix Back to Auction Button Route
 - [x] Update DealerMarketplaceDetails back button route from /dealer/auction to /dealer/live-auction
+
+## Auction Page - Buy Now and Reserve Price Display
+- [x] Add Buy Now price display to LiveAuction page
+- [x] Make reserve price more prominent under vehicle image
+- [x] Test pricing display visibility and layout
