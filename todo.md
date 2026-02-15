@@ -1152,3 +1152,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add vehicle inspection reports upload (PDF for HPI checks, battery health certificates)
 - [x] Implement negotiation messaging system with offer/counter/accept/decline workflow
 - [x] Create delivery cost calculator with postcode-based transport quotes and booking
+
+## Logo Update
+- [ ] Upload new EVEEVO green logo to S3
+- [ ] Update website logo configuration to use new logo
+
+## Rename Cart to Shortlist
+- [x] Rename dealerCart table to dealerShortlist in schema (localStorage only, no DB table)
+- [x] Update all backend references from cart to shortlist
+- [x] Update all frontend UI text from "Add to Cart" to "Add to Shortlist"
+- [x] Update navigation links and icons to reflect shortlist terminology

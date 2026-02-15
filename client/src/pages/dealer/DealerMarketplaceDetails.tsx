@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, ArrowLeft, ShoppingCart, CreditCard, MapPin, AlertTriangle, CheckCircle2, FileText, Phone, Mail } from "lucide-react";
+import { Loader2, ArrowLeft, ShoppingCart, CreditCard, MapPin, AlertTriangle, CheckCircle2, FileText, Phone, Mail, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation, useParams } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
@@ -295,8 +295,8 @@ export default function DealerMarketplaceDetails() {
                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      Add to Cart
+                      <Bookmark className="w-4 h-4 mr-2" />
+                      Add to Shortlist
                     </>
                   )}
                 </Button>

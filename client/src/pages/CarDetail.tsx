@@ -28,7 +28,7 @@ import RebeccaChat from "@/components/RebeccaChat";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import FinanceCalculator from "@/components/FinanceCalculator";
 import CarImageGallery from "@/components/CarImageGallery";
-import AddToCartButton from "@/components/AddToCartButton";
+import AddToShortlistButton from "@/components/AddToShortlistButton";
 import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -332,9 +332,9 @@ export default function CarDetail() {
                     )}
                   </Button>
 
-                  {/* Add to Cart button for dealer users viewing dealer marketplace items */}
+                  {/* Add to Shortlist button for dealer users viewing dealer marketplace items */}
                   {user?.role === 'dealer' && car.marketplace === 'dealer_only' && (
-                    <AddToCartButton carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
+                    <AddToShortlistButton carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
                   )}
 
                   <Button 
