@@ -65,6 +65,15 @@ export const appRouter = router({
         return await db.getCarsByIds(input.ids);
       }),
 
+    getSimilarCars: publicProcedure
+      .input(z.object({ 
+        carId: z.number(),
+        limit: z.number().default(4)
+      }))
+      .query(async ({ input }) => {
+        return await db.getSimilarCars(input.carId, input.limit);
+      }),
+
     featured: publicProcedure
       .query(async () => {
         return await db.getCars({ isFeatured: true, limit: 10 });

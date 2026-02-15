@@ -28,6 +28,7 @@ import RebeccaChat from "@/components/RebeccaChat";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import FinanceCalculator from "@/components/FinanceCalculator";
 import CarImageGallery from "@/components/CarImageGallery";
+import AddToCartButton from "@/components/AddToCartButton";
 import { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -331,6 +332,11 @@ export default function CarDetail() {
                     )}
                   </Button>
 
+                  {/* Add to Cart button for dealer users viewing dealer marketplace items */}
+                  {user?.role === 'dealer' && car.marketplace === 'dealer_only' && (
+                    <AddToCartButton carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
+                  )}
+
                   <Button 
                     variant="outline" 
                     className="w-full" 
@@ -436,6 +442,87 @@ export default function CarDetail() {
           </div>
         </div>
       </main>
+
+      {/* Similar Vehicles Section */}
+      <SimilarVehiclesSection carId={parseInt(id || "0")} />
     </div>
+  );
+}
+
+// Similar Vehicles Component
+function SimilarVehiclesSection({ carId }: { carId: number }) {
+  const [, navigate] = useLocation();
+  const { data: similarCars, isLoading } = trpc.cars.getSimilarCars.useQuery(
+    { carId, limit: 4 },
+    { enabled: !!carId }
+  );
+
+  if (isLoading || !similarCars || similarCars.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="bg-muted/30 py-12">
+      <div className="container">
+        <h2 className="text-2xl font-bold mb-6">Similar Vehicles</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {similarCars.map((car) => (
+            <Card 
+              key={car.id} 
+              className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => navigate(`/cars/${car.id}`)}
+            >
+              <div className="aspect-video relative bg-muted">
+                {car.mainImage ? (
+                  <img
+                    src={car.mainImage}
+                    alt={`${car.make} ${car.model}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-muted-foreground">No image</span>
+                  </div>
+                )}
+              </div>
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  {car.year} {car.make} {car.model}
+                </CardTitle>
+                <CardDescription className="flex items-center gap-2">
+                  <Badge variant="outline">{car.condition}</Badge>
+                  {car.mileage && <span>{car.mileage.toLocaleString()} miles</span>}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Price</span>
+                    <span className="text-xl font-bold">
+                      £{car.price ? parseFloat(car.price.toString()).toLocaleString() : 'N/A'}
+                    </span>
+                  </div>
+                  {car.realRange && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Real Range</span>
+                      <span>{car.realRange} miles</span>
+                    </div>
+                  )}
+                  {car.batteryCapacity && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Battery</span>
+                      <span>{car.batteryCapacity} kWh</span>
+                    </div>
+                  )}
+                </div>
+                <Button className="w-full mt-4" variant="outline">
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

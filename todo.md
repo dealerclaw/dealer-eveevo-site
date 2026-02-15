@@ -1035,3 +1035,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Check if car detail route exists for dealer marketplace (found /cars/:id route)
 - [x] Fix incorrect URL from /car/:id to /cars/:id
 - [x] Test View Details works from dealer marketplace
+
+## Car Detail Page Enhancements
+- [x] Add "Add to Cart" button for dealer users viewing marketplace vehicles
+- [x] Display selling dealer contact info (name, phone, WhatsApp) - already exists
+- [x] Add similar vehicles section showing 3-4 related vehicles
+- [x] Create backend endpoint to get similar vehicles by make/model/price
+- [x] Test all features work correctly

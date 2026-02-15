@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, gt, lt, like, inArray, desc, sql, ne } from "drizzle-orm";
+import { eq, and, gte, lte, gt, lt, like, inArray, desc, sql, ne, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -2196,4 +2196,55 @@ export async function processExpiredAuctions() {
   }
 
   return results;
+}
+
+
+export async function getSimilarCars(carId: number, limit: number = 4) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Get the target car first
+  const targetCar = await db.select().from(cars).where(eq(cars.id, carId)).limit(1);
+  
+  if (!targetCar || targetCar.length === 0) {
+    return [];
+  }
+  
+  const car = targetCar[0];
+  
+  // Find similar cars based on make, model, and price range
+  const priceMin = car.price ? parseFloat(car.price.toString()) * 0.8 : 0;
+  const priceMax = car.price ? parseFloat(car.price.toString()) * 1.2 : 999999;
+  
+  const similarCars = await db
+    .select({
+      id: cars.id,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: cars.price,
+      mileage: cars.mileage,
+      realRange: cars.realRange,
+      batteryCapacity: cars.batteryCapacity,
+      condition: cars.condition,
+      mainImage: cars.mainImage,
+      isAvailable: cars.isAvailable,
+    })
+    .from(cars)
+    .where(
+      and(
+        ne(cars.id, carId), // Exclude the current car
+        eq(cars.isAvailable, true),
+        or(
+          eq(cars.make, car.make), // Same make
+          and( // Or similar price range
+            gte(cars.price, priceMin.toString()),
+            lte(cars.price, priceMax.toString())
+          )
+        )
+      )
+    )
+    .limit(limit);
+  
+  return similarCars;
 }
