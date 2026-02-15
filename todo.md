@@ -1305,3 +1305,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Upload logo image to S3
 - [x] Update navigation bar to use logo image
 - [x] Test logo display on all pages
+
+## Increase Logo Size and Add EV Car Icon
+- [x] Increase logo size in Header component
+- [x] Add stylish EV car outline icon next to logo
+- [x] Test logo and icon display on all pages
