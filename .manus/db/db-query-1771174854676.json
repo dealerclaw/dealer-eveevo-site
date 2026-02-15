@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE cars \nSET buyNowPrice = reservePrice + 1000 \nWHERE isAuction = 1 \nAND reservePrice IS NOT NULL \nAND isAvailable = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute UPDATE cars \nSET buyNowPrice = reservePrice + 1000 \nWHERE isAuction = 1 \nAND reservePrice IS NOT NULL \nAND isAvailable = 1;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2752
+}

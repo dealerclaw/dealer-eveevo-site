@@ -1228,3 +1228,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Verify buyNowPrice input field in EditVehicle form (already exists)
 - [x] Test editing existing vehicles to add Buy Now prices
 - [x] Verify Buy Now button works after setting prices
+
+## Bulk Update Buy Now Prices
+- [x] Update all auction vehicles to set buyNowPrice = reservePrice + 1000
+- [x] Verify updated prices in database
+- [x] Test Buy Now button activation on auction page

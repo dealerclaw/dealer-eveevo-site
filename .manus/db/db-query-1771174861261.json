@@ -1,0 +1,43 @@
+{
+  "query": "SELECT id, make, model, year, startingBid, reservePrice, buyNowPrice, isAuction, isAvailable \nFROM cars \nWHERE isAuction = 1 \nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, startingBid, reservePrice, buyNowPrice, isAuction, isAvailable \nFROM cars \nWHERE isAuction = 1 \nLIMIT 10;",
+  "rows": [
+    {
+      "id": "150121",
+      "make": "TESLA",
+      "model": "Model Y",
+      "year": "2022",
+      "startingBid": "100.00",
+      "reservePrice": "25000.00",
+      "buyNowPrice": "26000.00",
+      "isAuction": "1",
+      "isAvailable": "1"
+    },
+    {
+      "id": "150176",
+      "make": "FORD",
+      "model": "Mustang Mach-E",
+      "year": "2023",
+      "startingBid": "5000.00",
+      "reservePrice": "35000.00",
+      "buyNowPrice": "36000.00",
+      "isAuction": "1",
+      "isAvailable": "1"
+    },
+    {
+      "id": "150306",
+      "make": "BMW",
+      "model": "i4",
+      "year": "2022",
+      "startingBid": "200.00",
+      "reservePrice": "25000.00",
+      "buyNowPrice": "26000.00",
+      "isAuction": "1",
+      "isAvailable": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tstartingBid\treservePrice\tbuyNowPrice\tisAuction\tisAvailable\n150121\tTESLA\tModel Y\t2022\t100.00\t25000.00\t26000.00\t1\t1\n150176\tFORD\tMustang Mach-E\t2023\t5000.00\t35000.00\t36000.00\t1\t1\n150306\tBMW\ti4\t2022\t200.00\t25000.00\t26000.00\t1\t1\n",
+  "stderr": "",
+  "execution_time_ms": 409
+}
