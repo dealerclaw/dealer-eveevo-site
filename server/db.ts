@@ -22,6 +22,8 @@ import {
   evFaults,
   evFaultContributions,
   evFaultHelpful,
+  evFaultRatings,
+  evFaultViews,
   type Car,
   type Dealer,
   type Reservation,
@@ -41,7 +43,11 @@ import {
   type EvFault,
   type InsertEvFault,
   type EvFaultContribution,
-  type InsertEvFaultContribution
+  type InsertEvFaultContribution,
+  type EvFaultRating,
+  type InsertEvFaultRating,
+  type EvFaultView,
+  type InsertEvFaultView
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -2751,5 +2757,153 @@ export async function getEvFaultContributions(faultId: number): Promise<EvFaultC
   } catch (error) {
     console.error("[Database] Error fetching fault contributions:", error);
     return [];
+  }
+}
+
+
+/**
+ * Add or update a fault rating by a dealer
+ */
+export async function addEvFaultRating(data: {
+  faultId: number;
+  dealerId: number;
+  rating: number;
+  comment?: string;
+}) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error('Database not initialized');
+    
+    // Check if dealer already rated this fault
+    const existing = await db
+      .select()
+      .from(evFaultRatings)
+      .where(and(
+        eq(evFaultRatings.faultId, data.faultId),
+        eq(evFaultRatings.dealerId, data.dealerId)
+      ))
+      .limit(1);
+    
+    if (existing.length > 0) {
+      // Update existing rating
+      await db
+        .update(evFaultRatings)
+        .set({
+          rating: data.rating,
+          comment: data.comment,
+        })
+        .where(eq(evFaultRatings.id, existing[0].id));
+      return { success: true, updated: true };
+    }
+    
+    // Insert new rating
+    await db.insert(evFaultRatings).values(data);
+    return { success: true, updated: false };
+  } catch (error) {
+    console.error("[Database] Error adding fault rating:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get average rating for a fault
+ */
+export async function getEvFaultAverageRating(faultId: number) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error('Database not initialized');
+    
+    const result = await db
+      .select({
+        avgRating: sql<number>`AVG(${evFaultRatings.rating})`,
+        totalRatings: sql<number>`COUNT(*)`,
+      })
+      .from(evFaultRatings)
+      .where(eq(evFaultRatings.faultId, faultId));
+    
+    if (result.length === 0 || result[0].totalRatings === 0) {
+      return { avgRating: 0, totalRatings: 0 };
+    }
+    
+    return {
+      avgRating: Math.round(result[0].avgRating * 10) / 10, // Round to 1 decimal
+      totalRatings: result[0].totalRatings,
+    };
+  } catch (error) {
+    console.error("[Database] Error getting fault average rating:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get dealer's rating for a specific fault
+ */
+export async function getDealerFaultRating(faultId: number, dealerId: number) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error('Database not initialized');
+    
+    const result = await db
+      .select()
+      .from(evFaultRatings)
+      .where(and(
+        eq(evFaultRatings.faultId, faultId),
+        eq(evFaultRatings.dealerId, dealerId)
+      ))
+      .limit(1);
+    
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("[Database] Error getting dealer fault rating:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get all ratings for a fault with dealer info
+ */
+export async function getEvFaultRatings(faultId: number) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error('Database not initialized');
+    
+    const result = await db
+      .select({
+        id: evFaultRatings.id,
+        rating: evFaultRatings.rating,
+        comment: evFaultRatings.comment,
+        createdAt: evFaultRatings.createdAt,
+        dealerName: dealers.name,
+      })
+      .from(evFaultRatings)
+      .leftJoin(dealers, eq(evFaultRatings.dealerId, dealers.id))
+      .where(eq(evFaultRatings.faultId, faultId))
+      .orderBy(desc(evFaultRatings.createdAt));
+    
+    return result;
+  } catch (error) {
+    console.error("[Database] Error getting fault ratings:", error);
+    throw error;
+  }
+}
+
+/**
+ * Track fault view for analytics
+ */
+export async function trackEvFaultView(faultId: number, dealerId?: number) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error('Database not initialized');
+    
+    await db.insert(evFaultViews).values({
+      faultId,
+      dealerId: dealerId || null,
+    });
+    
+    return { success: true };
+  } catch (error) {
+    console.error("[Database] Error tracking fault view:", error);
+    // Don't throw - view tracking shouldn't break the app
+    return { success: false };
   }
 }

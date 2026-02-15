@@ -594,3 +594,32 @@ export const evFaultHelpful = mysqlTable("evFaultHelpful", {
 
 export type EvFaultHelpful = typeof evFaultHelpful.$inferSelect;
 export type InsertEvFaultHelpful = typeof evFaultHelpful.$inferInsert;
+
+
+/**
+ * EV Fault Ratings - dealer ratings for fault accuracy and solution effectiveness
+ */
+export const evFaultRatings = mysqlTable("evFaultRatings", {
+  id: int("id").autoincrement().primaryKey(),
+  faultId: int("faultId").references(() => evFaults.id).notNull(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  rating: int("rating").notNull(), // 1-5 stars
+  comment: text("comment"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EvFaultRating = typeof evFaultRatings.$inferSelect;
+export type InsertEvFaultRating = typeof evFaultRatings.$inferInsert;
+
+/**
+ * EV Fault Views - track fault view counts for analytics and trending
+ */
+export const evFaultViews = mysqlTable("evFaultViews", {
+  id: int("id").autoincrement().primaryKey(),
+  faultId: int("faultId").references(() => evFaults.id).notNull(),
+  dealerId: int("dealerId").references(() => dealers.id),
+  viewedAt: timestamp("viewedAt").defaultNow().notNull(),
+});
+
+export type EvFaultView = typeof evFaultViews.$inferSelect;
+export type InsertEvFaultView = typeof evFaultViews.$inferInsert;

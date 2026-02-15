@@ -1427,3 +1427,41 @@ Note: Notification system for matching vehicles can be implemented as a future e
   - [x] Batch 5: Models 161-200 (800 faults)
   - [x] Batch 6: Models 201-213 (260 faults)
 - [x] Verify total fault count and model coverage (4,594 faults across 233 models confirmed)
+
+## EV Faults Database Enhancements
+
+### 1. Fault Frequency Heatmap
+- [x] Add evFaultViews table to track fault view counts
+- [x] Add evFaultRatings table for dealer ratings (1-5 stars + comments)
+- [x] Create database migration for new tables
+- [ ] Build heatmap visualization component using chart library
+- [ ] Add dashboard page with interactive heatmap
+- [ ] Add date range filters for trend analysis
+
+### 2. Dealer Ratings Syst- [x] Add evFaultRatings table (faultId, dealerId, rating 1-5, comment)
+- [x] Add tRPC procedures for rating faults (rateFault, getFaultRatings, getMyFaultRating, getFaultAverageRating) getFaultRatings, getAverageRating
+- [ ] Add star rating UI component to fault detail view
+- [ ] Display average rating and rating count on fault cards
+- [ ] Add "Top Rated Solutions" filter option
+
+### 3. Related Faults Suggestions
+- [ ] Create algorithm to find related faults (same category, same make, similar symptoms)
+- [ ] Add tRPC procedure: getRelatedFaults
+- [ ] Build "Related Faults" section in fault detail view
+- [ ] Show "Dealers who viewed this also viewed..." recommendations
+- [ ] Track fault co-viewing patterns for better suggestions
+
+
+## Add Unique Model-Specific Faults
+
+- [x] Research 10 unique faults for top 11 popular models
+- [x] Models enhanced: Tesla Model 3/Y, Nissan Leaf, Kia EV6, Hyundai IONIQ 5, VW ID.3/4, BMW i3/i4, MG MG4, Polestar 2
+- [x] Import 110 unique faults to database
+- [x] Verified fault diversity - each model now has 30 total faults (20 generic + 10 unique)
+
+
+## Remove Generic Faults
+
+- [x] Delete all generic faults (sourceType = 'research' and not in top 11 models)
+- [x] Keep only unique model-specific faults for: Tesla Model 3/Y, Nissan Leaf, Kia EV6, Hyundai IONIQ 5, VW ID.3/4, BMW i3/i4, MG MG4, Polestar 2
+- [x] Verify database only contains 110 unique researched faults (10 per model × 11 models)
