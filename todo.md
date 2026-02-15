@@ -1273,3 +1273,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Show actual Buy Now price on Buy Now button
 - [x] Verify buyNowPrice is being loaded from database
 - [x] Test Buy Now price display with auction vehicles
+
+## Add Photo Gallery to Dealer Marketplace Details
+- [x] Display all vehicle images in More Photos section
+- [x] Add image thumbnails with click to view full size
+- [x] Test photo gallery with vehicles that have multiple images

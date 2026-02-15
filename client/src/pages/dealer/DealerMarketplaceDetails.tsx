@@ -102,6 +102,32 @@ export default function DealerMarketplaceDetails() {
               </CardContent>
             </Card>
 
+            {/* More Photos Gallery */}
+            {car.images && car.images.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">More Photos ({car.images.length})</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {car.images.map((image, index) => (
+                      <div
+                        key={index}
+                        className="aspect-video relative bg-muted rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => window.open(image, '_blank')}
+                      >
+                        <img
+                          src={image}
+                          alt={`${car.make} ${car.model} - Photo ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Vehicle details */}
             <Card>
               <CardHeader>
