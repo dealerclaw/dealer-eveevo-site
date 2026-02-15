@@ -1,0 +1,13 @@
+{
+  "query": "\n-- Delete from dealer watchlist\nDELETE FROM dealerWatchlist WHERE carId = 180020;\n\n-- Delete from dealer cart\nDELETE FROM dealerCart WHERE carId = 180020;\n\n-- Delete related bids\nDELETE FROM dealerBids WHERE carId = 180020;\n\n-- Delete related finance applications\nDELETE FROM financeApplications WHERE carId = 180020;\n\n-- Now delete the car\nDELETE FROM cars WHERE id = 180020;\n\nSELECT 'Car 180020 deleted successfully' as result;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute \n-- Delete from dealer watchlist\nDELETE FROM dealerWatchlist WHERE carId = 180020;\n\n-- Delete from dealer cart\nDELETE FROM dealerCart WHERE carId = 180020;\n\n-- Delete related bids\nDELETE FROM dealerBids WHERE carId = 180020;\n\n-- Delete related finance applications\nDELETE FROM financeApplications WHERE carId = 180020;\n\n-- Now delete the car\nDELETE FROM cars WHERE id = 180020;\n\nSELECT 'Car 180020 deleted successfully' as result;\n",
+  "rows": [
+    {
+      "result": "Car 180020 deleted successfully"
+    }
+  ],
+  "messages": [],
+  "stdout": "result\nCar 180020 deleted successfully\n",
+  "stderr": "",
+  "execution_time_ms": 664
+}

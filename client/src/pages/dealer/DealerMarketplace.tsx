@@ -265,7 +265,7 @@ export default function DealerMarketplace() {
                       <MessageCircle className="w-4 h-4 mr-2" />
                       WhatsApp
                     </Button>
-                    <Button className="flex-1" onClick={() => navigate(`/cars/${car.id}`)}>
+                    <Button className="flex-1" onClick={() => navigate(`/dealer/marketplace/${car.id}`)}>
                       View Details
                     </Button>
                   </div>

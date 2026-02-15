@@ -752,6 +752,29 @@ export const appRouter = router({
         });
       }),
 
+    getMarketplaceVehicleDetails: protectedProcedure
+      .input(z.object({ carId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const car = await db.getCarById(input.carId);
+        if (!car) return null;
+
+        // Get dealer info if available
+        let dealerInfo = null;
+        if (car.dealerId) {
+          dealerInfo = await db.getDealerById(car.dealerId);
+        }
+
+        return {
+          ...car,
+          dealerName: dealerInfo?.name,
+          dealerCity: dealerInfo?.city,
+        };
+      }),
+
     moveToMarketplace: protectedProcedure
       .input(z.object({
         carId: z.number(),

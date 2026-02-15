@@ -1,0 +1,330 @@
+{
+  "query": "\nSELECT id, make, model, year, price, mileage, batteryCapacity, realRange FROM cars \nWHERE make = 'KIA' AND model = 'EV6' AND year = 2023 \n  AND mileage BETWEEN 27000 AND 27200\n  AND batteryCapacity = 77.4\n  AND realRange = 220;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute \nSELECT id, make, model, year, price, mileage, batteryCapacity, realRange FROM cars \nWHERE make = 'KIA' AND model = 'EV6' AND year = 2023 \n  AND mileage BETWEEN 27000 AND 27200\n  AND batteryCapacity = 77.4\n  AND realRange = 220;\n",
+  "rows": [
+    {
+      "id": "90012",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "90396",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "90574",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "90603",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "90759",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "91625",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "92072",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "92147",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "92659",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "93906",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "94389",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "94566",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "94971",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "95128",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "95422",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "96466",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "97033",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "97158",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "97592",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "97747",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "98083",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "98124",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "99113",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "100037",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "100292",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "100412",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "100599",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "101592",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "102817",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "103756",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "104471",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "30795.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "150012",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "29995.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tprice\tmileage\tbatteryCapacity\trealRange\n90012\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n90396\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n90574\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n90603\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n90759\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n91625\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n92072\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n92147\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n92659\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n93906\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n94389\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n94566\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n94971\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n95128\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n95422\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n96466\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n97033\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n97158\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n97592\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n97747\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n98083\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n98124\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n99113\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n100037\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n100292\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n100412\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n100599\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n101592\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n102817\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n103756\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n104471\tKIA\tEV6\t2023\t30795.00\t27156\t77.40\t220\n150012\tKIA\tEV6\t2023\t29995.00\t27156\t77.40\t220\n",
+  "stderr": "",
+  "execution_time_ms": 453
+}

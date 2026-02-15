@@ -1,0 +1,13 @@
+{
+  "query": "\n-- Get the car ID first\nSET @carId = (SELECT id FROM cars \n  WHERE make = 'KIA' AND model = 'EV6' AND year = 2023 \n    AND price = 29995\n    AND dealerId IN (SELECT id FROM dealers WHERE name LIKE '%EMG%')\n  LIMIT 1);\n\n-- Delete from dealer watchlist\nDELETE FROM dealerWatchlist WHERE carId = @carId;\n\n-- Delete from dealer cart\nDELETE FROM dealerCart WHERE carId = @carId;\n\n-- Delete related bids\nDELETE FROM dealerBids WHERE carId = @carId;\n\n-- Delete related finance applications\nDELETE FROM financeApplications WHERE carId = @carId;\n\n-- Now delete the car\nDELETE FROM cars WHERE id = @carId;\n\nSELECT CONCAT('Car ID ', @carId, ' (KIA EV6 from EMG) deleted successfully') as result;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute \n-- Get the car ID first\nSET @carId = (SELECT id FROM cars \n  WHERE make = 'KIA' AND model = 'EV6' AND year = 2023 \n    AND price = 29995\n    AND dealerId IN (SELECT id FROM dealers WHERE name LIKE '%EMG%')\n  LIMIT 1);\n\n-- Delete from dealer watchlist\nDELETE FROM dealerWatchlist WHERE carId = @carId;\n\n-- Delete from dealer cart\nDELETE FROM dealerCart WHERE carId = @carId;\n\n-- Delete related bids\nDELETE FROM dealerBids WHERE carId = @carId;\n\n-- Delete related finance applications\nDELETE FROM financeApplications WHERE carId = @carId;\n\n-- Now delete the car\nDELETE FROM cars WHERE id = @carId;\n\nSELECT CONCAT('Car ID ', @carId, ' (KIA EV6 from EMG) deleted successfully') as result;\n",
+  "rows": [
+    {
+      "result": "Car ID 150012 (KIA EV6 from EMG) deleted successfully"
+    }
+  ],
+  "messages": [],
+  "stdout": "result\nCar ID 150012 (KIA EV6 from EMG) deleted successfully\n",
+  "stderr": "",
+  "execution_time_ms": 4914
+}

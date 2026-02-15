@@ -1,0 +1,30 @@
+{
+  "query": "\nSELECT id, make, model, year, price, mileage, batteryCapacity, realRange FROM cars \nWHERE make = 'KIA' AND model = 'EV6' AND year = 2023 AND price = 29995;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute \nSELECT id, make, model, year, price, mileage, batteryCapacity, realRange FROM cars \nWHERE make = 'KIA' AND model = 'EV6' AND year = 2023 AND price = 29995;\n",
+  "rows": [
+    {
+      "id": "150012",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "29995.00",
+      "mileage": "27156",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    },
+    {
+      "id": "152744",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "29995.00",
+      "mileage": "14287",
+      "batteryCapacity": "77.40",
+      "realRange": "220"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tprice\tmileage\tbatteryCapacity\trealRange\n150012\tKIA\tEV6\t2023\t29995.00\t27156\t77.40\t220\n152744\tKIA\tEV6\t2023\t29995.00\t14287\t77.40\t220\n",
+  "stderr": "",
+  "execution_time_ms": 441
+}

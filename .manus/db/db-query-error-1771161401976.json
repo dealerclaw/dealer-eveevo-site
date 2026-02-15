@@ -1,0 +1,8 @@
+{
+  "query": "\n-- Delete from dealer cart\nDELETE FROM dealerCart WHERE carId = 180020;\n\n-- Delete related bids\nDELETE FROM dealerBids WHERE carId = 180020;\n\n-- Delete related finance applications\nDELETE FROM financeApplications WHERE carId = 180020;\n\n-- Now delete the car\nDELETE FROM cars WHERE id = 180020;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute \n-- Delete from dealer cart\nDELETE FROM dealerCart WHERE carId = 180020;\n\n-- Delete related bids\nDELETE FROM dealerBids WHERE carId = 180020;\n\n-- Delete related finance applications\nDELETE FROM financeApplications WHERE carId = 180020;\n\n-- Now delete the car\nDELETE FROM cars WHERE id = 180020;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1451 (23000) at line 12: Cannot delete or update a parent row: a foreign key constraint fails (`nm8u5tmkxcrrcw9fxkuveh`.`dealerwatchlist`, CONSTRAINT `dealerWatchlist_carId_cars_id_fk` FOREIGN KEY (`carId`) REFERENCES `cars` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION)"
+  ]
+}

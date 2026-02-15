@@ -1136,3 +1136,14 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Auction Page Filter Bug
 - [x] Fix filter functionality not working on auction page (fixed navigation buttons to use filteredVehicles)
 - [x] Ensure Apply Filters button properly applies selected filters
+
+## Car Deletion Issue
+- [x] Delete car ID 180020 from database
+- [x] Handle foreign key constraints blocking deletion (removed from watchlist, cart, bids, finance applications)
+
+## Dealer Marketplace Details Page
+- [x] Create dealer-specific vehicle details page (not consumer page)
+- [x] Add Reserve and Buy Now buttons for dealer actions
+- [x] Add trade details section (faults, service history, auction grade)
+- [x] Add location and logistics information (collection/delivery)
+- [x] Show pricing transparency (trade price, fees, VAT status)

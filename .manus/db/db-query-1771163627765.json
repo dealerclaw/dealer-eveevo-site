@@ -1,0 +1,19 @@
+{
+  "query": "\n-- Find the car first\nSELECT id, make, model, year, price, mileage, dealerId FROM cars \nWHERE make = 'KIA' AND model = 'EV6' AND year = 2023 \n  AND price = 29995\n  AND dealerId IN (SELECT id FROM dealers WHERE name LIKE '%EMG%')\nLIMIT 1;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute \n-- Find the car first\nSELECT id, make, model, year, price, mileage, dealerId FROM cars \nWHERE make = 'KIA' AND model = 'EV6' AND year = 2023 \n  AND price = 29995\n  AND dealerId IN (SELECT id FROM dealers WHERE name LIKE '%EMG%')\nLIMIT 1;\n",
+  "rows": [
+    {
+      "id": "150012",
+      "make": "KIA",
+      "model": "EV6",
+      "year": "2023",
+      "price": "29995.00",
+      "mileage": "27156",
+      "dealerId": "60012"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tprice\tmileage\tdealerId\n150012\tKIA\tEV6\t2023\t29995.00\t27156\t60012\n",
+  "stderr": "",
+  "execution_time_ms": 369
+}
