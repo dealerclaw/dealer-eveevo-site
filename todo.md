@@ -1029,3 +1029,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add automated expired auction processing (processExpiredAuctions)
 - [ ] Test complete auction flow end-to-end
 - [ ] Log all auction outcomes (won, lost, expired)
+
+## Fix 404 Error on Dealer Marketplace Car Details
+- [x] Investigate what URL is being used for View Details in dealer marketplace
+- [x] Check if car detail route exists for dealer marketplace (found /cars/:id route)
+- [x] Fix incorrect URL from /car/:id to /cars/:id
+- [x] Test View Details works from dealer marketplace
