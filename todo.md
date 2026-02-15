@@ -1065,3 +1065,16 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Test bidding works correctly on auction vehicles
 - [x] Updated LiveAuction UI to show auction fields (current bid, reserve price, time remaining)
 - [x] Removed profit calculator and replaced with auction-specific information
+
+## Auction Enhancements: Starting Bid, Auto-Extension, Winner Notifications
+- [ ] Add starting bid field to sendToAuction dialog in MyInventory
+- [ ] Update sendToAuction backend endpoint to accept and save startingBid
+- [ ] Implement auction auto-extension logic (extend by 5 minutes if bid in final 2 minutes)
+- [ ] Add auction winner notification system (email/SMS when auction ends)
+- [ ] Create notification template for auction winners with payment instructions
+- [ ] Test all auction enhancements work correctly
+
+## Auction System Enhancements
+- [x] Add starting bid field when sending vehicles to auction
+- [x] Add auction auto-extension (5 minutes if bid placed in final 2 minutes)
+- [x] Add auction winner notification system (email/SMS)

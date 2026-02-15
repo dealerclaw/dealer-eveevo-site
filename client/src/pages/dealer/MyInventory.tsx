@@ -77,6 +77,7 @@ export default function MyInventory() {
   const [viewingCar, setViewingCar] = useState<any | null>(null);
   const [auctionCarId, setAuctionCarId] = useState<number | null>(null);
   const [reservePrice, setReservePrice] = useState<string>("");
+  const [startingBid, setStartingBid] = useState<string>("");
   const [marketplaceCarId, setMarketplaceCarId] = useState<number | null>(null);
   const [marketplacePrice, setMarketplacePrice] = useState<string>("");
   
@@ -146,13 +147,22 @@ export default function MyInventory() {
   };
 
   const confirmSendToAuction = () => {
+    if (!startingBid || parseFloat(startingBid) <= 0) {
+      toast.error("Please enter a valid starting bid");
+      return;
+    }
     if (!reservePrice || parseFloat(reservePrice) <= 0) {
       toast.error("Please enter a valid reserve price");
+      return;
+    }
+    if (parseFloat(startingBid) > parseFloat(reservePrice)) {
+      toast.error("Starting bid cannot be higher than reserve price");
       return;
     }
     sendToAuctionMutation.mutate({
       carId: auctionCarId!,
       reservePrice: parseFloat(reservePrice),
+      startingBid: parseFloat(startingBid),
     });
   };
 
@@ -417,6 +427,7 @@ export default function MyInventory() {
       <Dialog open={auctionCarId !== null} onOpenChange={() => {
         setAuctionCarId(null);
         setReservePrice("");
+        setStartingBid("");
       }}>
         <DialogContent>
           <DialogHeader>
@@ -428,18 +439,33 @@ export default function MyInventory() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
+              <Label htmlFor="startingBid">Starting Bid (£)</Label>
+              <Input
+                id="startingBid"
+                type="number"
+                placeholder="Enter starting bid amount"
+                value={startingBid}
+                onChange={(e) => setStartingBid(e.target.value)}
+                min="0"
+                step="100"
+              />
+              <p className="text-sm text-muted-foreground">
+                The minimum first bid amount. Dealers must bid at or above this amount.
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="reservePrice">Reserve Price (£)</Label>
               <Input
                 id="reservePrice"
                 type="number"
-                placeholder="Enter minimum price"
+                placeholder="Enter minimum acceptable price"
                 value={reservePrice}
                 onChange={(e) => setReservePrice(e.target.value)}
                 min="0"
                 step="100"
               />
               <p className="text-sm text-muted-foreground">
-                Auction will run for 48 hours. Dealers can bid, and the car will only sell if bids meet or exceed your reserve price.
+                Auction will run for 48 hours. The car will only sell if the winning bid meets or exceeds your reserve price.
               </p>
             </div>
           </div>
@@ -447,6 +473,7 @@ export default function MyInventory() {
             <Button variant="outline" onClick={() => {
               setAuctionCarId(null);
               setReservePrice("");
+              setStartingBid("");
             }}>
               Cancel
             </Button>

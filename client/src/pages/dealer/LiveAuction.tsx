@@ -24,8 +24,14 @@ export default function LiveAuction() {
     enabled: !!user,
   });
   const placeBidMutation = trpc.auction.placeBid.useMutation({
-    onSuccess: () => {
-      toast.success("Bid placed successfully!");
+    onSuccess: (data) => {
+      if (data.extended) {
+        toast.success("Bid placed successfully! ⏰ Auction extended by 5 minutes", {
+          duration: 5000,
+        });
+      } else {
+        toast.success("Bid placed successfully!");
+      }
       setBidAmount("");
       refetch();
     },

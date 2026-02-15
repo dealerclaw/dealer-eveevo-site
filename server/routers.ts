@@ -765,6 +765,7 @@ export const appRouter = router({
       .input(z.object({
         carId: z.number(),
         reservePrice: z.number(),
+        startingBid: z.number(),
       }))
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
@@ -791,6 +792,8 @@ export const appRouter = router({
           auctionStartDate: now,
           auctionEndDate: auctionEnd,
           reservePrice: input.reservePrice.toString(),
+          startingBid: input.startingBid.toString(),
+          currentHighestBid: input.startingBid.toString(), // Initialize with starting bid
           marketplace: 'dealer_only', // Auctions are dealer-only
         });
         
@@ -1361,6 +1364,24 @@ export const appRouter = router({
           }
         }
 
+        // Check if bid is placed in final 2 minutes - extend auction by 5 minutes
+        let extended = false;
+        let newEndDate = car.auctionEndDate;
+        if (car.auctionEndDate) {
+          const endDate = new Date(car.auctionEndDate);
+          const timeRemaining = endDate.getTime() - now.getTime();
+          const twoMinutesInMs = 2 * 60 * 1000;
+          
+          if (timeRemaining <= twoMinutesInMs && timeRemaining > 0) {
+            // Extend auction by 5 minutes
+            newEndDate = new Date(endDate.getTime() + 5 * 60 * 1000);
+            await db.updateDealerCar(ctx.user.id, input.carId, {
+              auctionEndDate: newEndDate,
+            });
+            extended = true;
+          }
+        }
+
         // Place the bid
         await db.placeBid({
           carId: input.carId,
@@ -1371,7 +1392,7 @@ export const appRouter = router({
           status: 'winning',
         });
 
-        return { success: true };
+        return { success: true, extended, newEndDate };
       }),
 
     getBidHistory: publicProcedure

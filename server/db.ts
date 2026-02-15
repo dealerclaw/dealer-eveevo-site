@@ -2081,6 +2081,9 @@ export async function getAuctionBidHistory(carId: number) {
 export async function recordAuctionOutcome(carId: number) {
   const db = await getDb();
   if (!db) return null;
+  
+  // Import notification function
+  const { notifyOwner } = await import('./_core/notification');
 
   // Get car and auction details
   const car = await db
@@ -2126,6 +2129,60 @@ export async function recordAuctionOutcome(carId: number) {
       .update(dealerBids)
       .set({ status: 'won' })
       .where(eq(dealerBids.id, winningBid!.id));
+    
+    // Send winner notification
+    try {
+      // Get winner dealer and user details
+      const winnerDealer = await db
+        .select()
+        .from(dealers)
+        .where(eq(dealers.id, winnerDealerId!))
+        .limit(1);
+      
+      const winnerUser = winningBid?.userId ? await db
+        .select()
+        .from(users)
+        .where(eq(users.id, winningBid.userId))
+        .limit(1) : null;
+      
+      if (winnerDealer && winnerDealer.length > 0) {
+        const dealer = winnerDealer[0];
+        const user = winnerUser && winnerUser.length > 0 ? winnerUser[0] : null;
+        
+        // Prepare notification content
+        const vehicleInfo = `${carData.make} ${carData.model} ${carData.year}`;
+        const notificationTitle = `🏆 Auction Won: ${vehicleInfo}`;
+        const notificationContent = `
+Congratulations! You have won the auction for:
+
+**Vehicle:** ${vehicleInfo}
+**VIN:** ${carData.vin || 'N/A'}
+**Winning Bid:** £${parseFloat(finalPrice!).toLocaleString()}
+**Auction Ended:** ${new Date(carData.auctionEndDate!).toLocaleString()}
+
+**Next Steps:**
+1. Payment must be completed within 48 hours
+2. Contact the seller to arrange delivery or pickup
+3. Review vehicle inspection report if available
+
+        **Dealer:** ${dealer.name}
+        **Contact:** ${dealer.email || dealer.phone || 'Contact via platform'}
+
+Thank you for participating in EVEEVO auctions!
+        `;
+        
+        // Send notification to project owner (will be enhanced with email/SMS later)
+        await notifyOwner({
+          title: notificationTitle,
+          content: notificationContent,
+        });
+        
+        console.log(`[Auction] Winner notification sent for car ${carId} to dealer ${dealer.name}`);
+      }
+    } catch (error) {
+      console.error(`[Auction] Failed to send winner notification for car ${carId}:`, error);
+      // Don't throw - notification failure shouldn't break auction processing
+    }
 
     // Update losing bids
     if (bids.length > 1) {
