@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE cars \nSET dealerId = 1,\n    auctionStartDate = DATE_SUB(NOW(), INTERVAL 1 DAY),\n    auctionEndDate = DATE_ADD(NOW(), INTERVAL 2 DAY),\n    startingBid = FLOOR(CAST(price AS DECIMAL) * 0.7),\n    reservePrice = FLOOR(CAST(price AS DECIMAL) * 0.85),\n    buyNowPrice = price\nWHERE isAuction = 1 AND dealerId IS NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute UPDATE cars \nSET dealerId = 1,\n    auctionStartDate = DATE_SUB(NOW(), INTERVAL 1 DAY),\n    auctionEndDate = DATE_ADD(NOW(), INTERVAL 2 DAY),\n    startingBid = FLOOR(CAST(price AS DECIMAL) * 0.7),\n    reservePrice = FLOOR(CAST(price AS DECIMAL) * 0.85),\n    buyNowPrice = price\nWHERE isAuction = 1 AND dealerId IS NULL;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 604
+}

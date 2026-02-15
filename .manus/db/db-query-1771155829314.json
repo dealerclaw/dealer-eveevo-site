@@ -1,0 +1,16 @@
+{
+  "query": "SELECT COUNT(*) as total_auction_cars, \n       SUM(CASE WHEN isAvailable = 1 THEN 1 ELSE 0 END) as available,\n       SUM(CASE WHEN auctionEndDate > NOW() THEN 1 ELSE 0 END) as active,\n       SUM(CASE WHEN dealerId IS NOT NULL THEN 1 ELSE 0 END) as has_dealer\nFROM cars \nWHERE isAuction = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT COUNT(*) as total_auction_cars, \n       SUM(CASE WHEN isAvailable = 1 THEN 1 ELSE 0 END) as available,\n       SUM(CASE WHEN auctionEndDate > NOW() THEN 1 ELSE 0 END) as active,\n       SUM(CASE WHEN dealerId IS NOT NULL THEN 1 ELSE 0 END) as has_dealer\nFROM cars \nWHERE isAuction = 1;",
+  "rows": [
+    {
+      "total_auction_cars": "9",
+      "available": "9",
+      "active": "9",
+      "has_dealer": "9"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_auction_cars\tavailable\tactive\thas_dealer\n9\t9\t9\t9\n",
+  "stderr": "",
+  "execution_time_ms": 505
+}

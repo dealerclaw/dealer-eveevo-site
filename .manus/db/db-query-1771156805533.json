@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, name, city FROM dealers LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, name, city FROM dealers LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Anthony Perry Motors",
+      "city": "Los Angeles"
+    },
+    {
+      "id": "30001",
+      "name": "TEsla",
+      "city": "NULL"
+    },
+    {
+      "id": "30002",
+      "name": "TEsla",
+      "city": "NULL"
+    },
+    {
+      "id": "60001",
+      "name": "Autobarn 100",
+      "city": "NULL"
+    },
+    {
+      "id": "60002",
+      "name": "Nottingham",
+      "city": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcity\n1\tAnthony Perry Motors\tLos Angeles\n30001\tTEsla\tNULL\n30002\tTEsla\tNULL\n60001\tAutobarn 100\tNULL\n60002\tNottingham\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 418
+}

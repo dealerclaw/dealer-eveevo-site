@@ -1,0 +1,65 @@
+{
+  "query": "SELECT id, make, model, year, isAuction, isAvailable, dealerId, auctionEndDate, marketplace\nFROM cars \nWHERE isAuction = 1\nLIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, isAuction, isAvailable, dealerId, auctionEndDate, marketplace\nFROM cars \nWHERE isAuction = 1\nLIMIT 5;",
+  "rows": [
+    {
+      "id": "150006",
+      "make": "MERCEDES-BENZ",
+      "model": "EQC",
+      "year": "2021",
+      "isAuction": "1",
+      "isAvailable": "1",
+      "dealerId": "60006",
+      "auctionEndDate": "2026-02-17 00:29:54",
+      "marketplace": "dealer_only"
+    },
+    {
+      "id": "150063",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024",
+      "isAuction": "1",
+      "isAvailable": "1",
+      "dealerId": "60006",
+      "auctionEndDate": "2026-02-17 00:30:14",
+      "marketplace": "dealer_only"
+    },
+    {
+      "id": "180011",
+      "make": "Tesla",
+      "model": "Model 3 Long Range",
+      "year": "2023",
+      "isAuction": "1",
+      "isAvailable": "1",
+      "dealerId": "1",
+      "auctionEndDate": "2026-02-20 20:21:11",
+      "marketplace": "dealer_only"
+    },
+    {
+      "id": "180012",
+      "make": "Audi",
+      "model": "e-tron GT",
+      "year": "2024",
+      "isAuction": "1",
+      "isAvailable": "1",
+      "dealerId": "1",
+      "auctionEndDate": "2026-02-19 20:21:11",
+      "marketplace": "dealer_only"
+    },
+    {
+      "id": "180014",
+      "make": "Mercedes-Benz",
+      "model": "EQS 450+",
+      "year": "2024",
+      "isAuction": "1",
+      "isAvailable": "1",
+      "dealerId": "1",
+      "auctionEndDate": "2026-02-19 20:21:11",
+      "marketplace": "dealer_only"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tisAuction\tisAvailable\tdealerId\tauctionEndDate\tmarketplace\n150006\tMERCEDES-BENZ\tEQC\t2021\t1\t1\t60006\t2026-02-17 00:29:54\tdealer_only\n150063\tSKODA\tEnyaq\t2024\t1\t1\t60006\t2026-02-17 00:30:14\tdealer_only\n180011\tTesla\tModel 3 Long Range\t2023\t1\t1\t1\t2026-02-20 20:21:11\tdealer_only\n180012\tAudi\te-tron GT\t2024\t1\t1\t1\t2026-02-19 20:21:11\tdealer_only\n180014\tMercedes-Benz\tEQS 450+\t2024\t1\t1\t1\t2026-02-19 20:21:11\tdealer_only\n",
+  "stderr": "",
+  "execution_time_ms": 536
+}

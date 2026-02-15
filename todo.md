@@ -1108,3 +1108,14 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add search functionality for auction vehicles
 - [x] Implement 30-second auto-rotation carousel feature
 - [x] Display dealer information in auction listings (name, location, verification badge)
+
+## Buy Now Auction Enhancement
+- [x] Update Buy Now to remove vehicle from auction immediately
+- [x] Integrate £99 commitment fee payment for Buy Now purchases
+- [x] Add Buy Now purchases to My Wins page
+- [x] Record Buy Now transactions in auction history
+
+## Auction Page Fixes
+- [x] Debug why no EVs are showing in auction page (assigned dealers to auction cars)
+- [x] Add "Apply Filters" button instead of instant filtering
+- [x] Ensure filters only apply when Apply button is clicked

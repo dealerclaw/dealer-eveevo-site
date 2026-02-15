@@ -18,13 +18,49 @@ export default function LiveAuction() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [bidAmount, setBidAmount] = useState("");
   const [timeLeft, setTimeLeft] = useState(30); // 30 seconds per vehicle
+  // Temp filter state (not applied until Apply clicked)
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
+  const [tempSelectedMake, setTempSelectedMake] = useState("");
+  const [tempSelectedCondition, setTempSelectedCondition] = useState("");
+  const [tempMaxPrice, setTempMaxPrice] = useState("");
+  const [tempMaxMileage, setTempMaxMileage] = useState("");
+  
+  // Applied filters (actually used for filtering)
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMake, setSelectedMake] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [maxMileage, setMaxMileage] = useState("");
+  
   const [showFilters, setShowFilters] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
+  
+  // Apply filters function
+  const applyFilters = () => {
+    setSearchQuery(tempSearchQuery);
+    setSelectedMake(tempSelectedMake);
+    setSelectedCondition(tempSelectedCondition);
+    setMaxPrice(tempMaxPrice);
+    setMaxMileage(tempMaxMileage);
+    setCurrentIndex(0); // Reset to first vehicle
+    toast.success("Filters applied!");
+  };
+  
+  // Clear filters function
+  const clearFilters = () => {
+    setTempSearchQuery("");
+    setTempSelectedMake("");
+    setTempSelectedCondition("");
+    setTempMaxPrice("");
+    setTempMaxMileage("");
+    setSearchQuery("");
+    setSelectedMake("");
+    setSelectedCondition("");
+    setMaxPrice("");
+    setMaxMileage("");
+    setCurrentIndex(0);
+    toast.success("Filters cleared!");
+  };
 
   const { data: vehicles, isLoading, refetch } = trpc.auction.getActiveVehicles.useQuery();
   const { data: subscriptionStatus } = trpc.dealer.getSubscriptionStatus.useQuery(undefined, {
@@ -48,9 +84,15 @@ export default function LiveAuction() {
   });
 
   const buyNowMutation = trpc.auction.buyNow.useMutation({
-    onSuccess: () => {
-      toast.success("Vehicle purchased successfully!");
-      refetch();
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        toast.success("Redirecting to payment...");
+        window.open(data.checkoutUrl, '_blank');
+        refetch();
+      } else {
+        toast.success("Vehicle purchased successfully!");
+        refetch();
+      }
     },
     onError: (error) => {
       toast.error(error.message || "Failed to purchase vehicle");
@@ -296,8 +338,9 @@ export default function LiveAuction() {
           <div className="flex gap-3">
             <Input
               placeholder="Search by make, model, year, or dealer..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={tempSearchQuery}
+              onChange={(e) => setTempSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && applyFilters()}
               className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
             />
             <Button
@@ -307,6 +350,12 @@ export default function LiveAuction() {
             >
               {showFilters ? 'Hide' : 'Show'} Filters
             </Button>
+            <Button
+              onClick={applyFilters}
+              className="bg-primary hover:bg-primary/90 text-white"
+            >
+              Apply Filters
+            </Button>
           </div>
 
           {showFilters && (
@@ -314,8 +363,8 @@ export default function LiveAuction() {
               <div>
                 <Label className="text-white/80 text-sm">Make</Label>
                 <select
-                  value={selectedMake}
-                  onChange={(e) => setSelectedMake(e.target.value)}
+                  value={tempSelectedMake}
+                  onChange={(e) => setTempSelectedMake(e.target.value)}
                   className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
                 >
                   <option value="">All Makes</option>
@@ -327,8 +376,8 @@ export default function LiveAuction() {
               <div>
                 <Label className="text-white/80 text-sm">Condition</Label>
                 <select
-                  value={selectedCondition}
-                  onChange={(e) => setSelectedCondition(e.target.value)}
+                  value={tempSelectedCondition}
+                  onChange={(e) => setTempSelectedCondition(e.target.value)}
                   className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
                 >
                   <option value="">All Conditions</option>
@@ -342,8 +391,8 @@ export default function LiveAuction() {
                 <Input
                   type="number"
                   placeholder="Any"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
+                  value={tempMaxPrice}
+                  onChange={(e) => setTempMaxPrice(e.target.value)}
                   className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
                 />
               </div>
@@ -352,8 +401,8 @@ export default function LiveAuction() {
                 <Input
                   type="number"
                   placeholder="Any"
-                  value={maxMileage}
-                  onChange={(e) => setMaxMileage(e.target.value)}
+                  value={tempMaxMileage}
+                  onChange={(e) => setTempMaxMileage(e.target.value)}
                   className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
                 />
               </div>
@@ -366,13 +415,7 @@ export default function LiveAuction() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedMake("");
-                  setSelectedCondition("");
-                  setMaxPrice("");
-                  setMaxMileage("");
-                }}
+                onClick={clearFilters}
                 className="text-white/60 hover:text-white hover:bg-white/10"
               >
                 Clear all filters

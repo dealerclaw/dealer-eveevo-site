@@ -1534,15 +1534,51 @@ export const appRouter = router({
             throw new Error('Buy Now price does not meet reserve price');
           }
         }
+        // Process Buy Now - remove from auction and create winning bid record
         await db.buyNowAuction(input.carId, dealer.id, ctx.user.id, buyNowPrice);
 
         // Get seller information
         const seller = await db.getDealerById(car.dealerId!);
         
+        // Create Stripe checkout session for £99 commitment fee
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        const commitmentFee = 99;
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: [
+            {
+              price_data: {
+                currency: 'gbp',
+                product_data: {
+                  name: `Buy Now Commitment Fee: ${car.make} ${car.model} ${car.year}`,
+                  description: `Non-refundable £99 commitment fee. Purchase price: £${buyNowPrice.toLocaleString()}. Balance due after inspection. VIN: ${car.vin || 'N/A'}`,
+                  images: car.mainImage ? [car.mainImage] : undefined,
+                },
+                unit_amount: commitmentFee * 100, // £99 in pence
+              },
+              quantity: 1,
+            },
+          ],
+          mode: 'payment',
+          success_url: `${ctx.req.headers.origin}/dealer/my-wins?payment=success`,
+          cancel_url: `${ctx.req.headers.origin}/dealer/auction?payment=cancelled`,
+          customer_email: ctx.user.email || undefined,
+          client_reference_id: ctx.user.id.toString(),
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            dealer_id: dealer.id.toString(),
+            car_id: input.carId.toString(),
+            purchase_type: 'buy_now',
+            purchase_price: buyNowPrice.toString(),
+            customer_email: ctx.user.email || '',
+            customer_name: ctx.user.name || dealer.name,
+          },
+        });
+        
         // Send notification to buyer
         await notifyOwner({
           title: `Purchase Confirmed: ${car.make} ${car.model}`,
-          content: `Congratulations! You have successfully purchased ${car.make} ${car.model} ${car.year} for £${buyNowPrice.toLocaleString()} via Buy Now.\n\nSeller: ${seller?.name || 'Unknown'}\nContact: ${seller?.email || 'N/A'}\n\nPlease contact the seller to arrange delivery or pickup.`,
+          content: `Congratulations! You have successfully purchased ${car.make} ${car.model} ${car.year} for £${buyNowPrice.toLocaleString()} via Buy Now.\n\nNext step: Complete £99 commitment fee payment.\n\nSeller: ${seller?.name || 'Unknown'}\nContact: ${seller?.email || 'N/A'}\n\nBalance due after inspection: £${(buyNowPrice - 99).toLocaleString()}`,
         });
         
         // Send notification to seller
@@ -1553,7 +1589,7 @@ export const appRouter = router({
           });
         }
 
-        return { success: true, price: buyNowPrice };
+        return { success: true, price: buyNowPrice, checkoutUrl: session.url };
       }),
 
     setProxyBid: protectedProcedure
