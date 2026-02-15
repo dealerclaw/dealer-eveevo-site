@@ -1212,3 +1212,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add Buy Now button to LiveAuction page bidding panel
 - [x] Display retail price on auction page for pricing context
 - [x] Test Buy Now functionality from auction page
+
+## Live Auction - Remove Add to Cart Button
+- [x] Remove Add to Cart button from LiveAuction bidding panel
+- [x] Remove Watchlist button from LiveAuction bidding panel
+- [x] Reorganize Buy Now button placement for better visibility

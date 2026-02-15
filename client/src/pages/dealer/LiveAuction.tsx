@@ -846,50 +846,6 @@ export default function LiveAuction() {
                     </Button>
                   )}
 
-                  {/* Cart and Watchlist buttons */}
-                  {user && (
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant="outline"
-                        className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10"
-                        onClick={() => {
-                          const price = currentVehicle.currentHighestBid || currentVehicle.startingBid || currentVehicle.price;
-                          if (!price) {
-                            toast.error("Price not available");
-                            return;
-                          }
-                          addToCartMutation.mutate({
-                            carId: currentVehicle.id,
-                            priceAtAdd: price,
-                          });
-                        }}
-                        disabled={addToCartMutation.isPending}
-                      >
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        Add to Cart
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10"
-                        onClick={() => {
-                          const price = currentVehicle.currentHighestBid || currentVehicle.startingBid || currentVehicle.price;
-                          if (!price) {
-                            toast.error("Price not available");
-                            return;
-                          }
-                          addToWatchlistMutation.mutate({
-                            carId: currentVehicle.id,
-                            initialPrice: price,
-                          });
-                        }}
-                        disabled={addToWatchlistMutation.isPending}
-                      >
-                        <Heart className="w-4 h-4 mr-2" />
-                        Watchlist
-                      </Button>
-                    </div>
-                  )}
-
                   {!user && (
                     <p className="text-xs text-center text-white/60">
                       You must be logged in as a dealer to place bids
