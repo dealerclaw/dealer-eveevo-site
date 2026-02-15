@@ -31,6 +31,7 @@ import Finance from "./pages/Finance";
 import LiveAuction from "./pages/dealer/LiveAuction";
 import MyAuctions from "./pages/dealer/MyAuctions";
 import AuctionAnalytics from "./pages/dealer/AuctionAnalytics";
+import MyWins from "./pages/dealer/MyWins";
 import Subscription from "./pages/dealer/Subscription";
 import SubscriptionSuccess from "./pages/dealer/SubscriptionSuccess";
 import SubscriptionManage from "./pages/dealer/SubscriptionManage";
@@ -125,6 +126,11 @@ function Router() {
       <Route path="/dealer/auction-analytics">
         <DealerAuthGuard>
           <AuctionAnalytics />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/my-wins">
+        <DealerAuthGuard>
+          <MyWins />
         </DealerAuthGuard>
       </Route>
       <Route path="/dealer/subscription">

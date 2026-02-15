@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, gt, lt, like, inArray, desc, sql, ne, or } from "drizzle-orm";
+import { eq, and, gte, lte, gt, lt, like, inArray, desc, sql, ne, or, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -1103,7 +1103,8 @@ export async function getActiveAuctionVehicles() {
       and(
         eq(cars.isAuction, true),
         eq(cars.isAvailable, true),
-        gt(cars.auctionEndDate, now)
+        gt(cars.auctionEndDate, now),
+        isNotNull(cars.dealerId) // Exclude demo cars without dealer
       )
     )
     .orderBy(desc(cars.auctionStartDate))
