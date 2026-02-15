@@ -44,11 +44,11 @@ const frequencyColors: Record<string, string> = {
 export default function EvFaultsBrowser() {
 
   const [selectedMake, setSelectedMake] = useState<string>("");
-  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedModel, setSelectedModel] = useState<string>("all");
   const [selectedFault, setSelectedFault] = useState<any>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState<string>("");
-  const [severityFilter, setSeverityFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [severityFilter, setSeverityFilter] = useState<string>("all");
   const [searchText, setSearchText] = useState<string>("");
 
   // Fetch makes
@@ -64,9 +64,9 @@ export default function EvFaultsBrowser() {
   const { data: faults, isLoading: faultsLoading, refetch: refetchFaults } = trpc.dealer.getFaultsByModel.useQuery(
     { 
       make: selectedMake, 
-      model: selectedModel || undefined,
-      category: categoryFilter || undefined,
-      severity: severityFilter || undefined,
+      model: selectedModel === "all" ? undefined : selectedModel,
+      category: categoryFilter === "all" ? undefined : categoryFilter,
+      severity: severityFilter === "all" ? undefined : severityFilter,
       searchText: searchText || undefined
     },
     { enabled: !!selectedMake }
@@ -108,8 +108,8 @@ export default function EvFaultsBrowser() {
 
   // Filter faults client-side for immediate feedback
   const filteredFaults = faults?.filter(fault => {
-    if (categoryFilter && fault.category !== categoryFilter) return false;
-    if (severityFilter && fault.severity !== severityFilter) return false;
+    if (categoryFilter && categoryFilter !== "all" && fault.category !== categoryFilter) return false;
+    if (severityFilter && severityFilter !== "all" && fault.severity !== severityFilter) return false;
     if (searchText) {
       const search = searchText.toLowerCase();
       return (
@@ -142,7 +142,7 @@ export default function EvFaultsBrowser() {
               <Label htmlFor="make">Make</Label>
               <Select value={selectedMake} onValueChange={(value) => {
                 setSelectedMake(value);
-                setSelectedModel("");
+                setSelectedModel("all");
                 setSelectedFault(null);
               }}>
                 <SelectTrigger id="make">
@@ -166,7 +166,7 @@ export default function EvFaultsBrowser() {
                   <SelectValue placeholder="All models" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All models</SelectItem>
+                  <SelectItem value="all">All models</SelectItem>
                   {modelsLoading && <SelectItem value="loading">Loading...</SelectItem>}
                   {models?.map((model) => (
                     <SelectItem key={model} value={model}>
@@ -184,7 +184,7 @@ export default function EvFaultsBrowser() {
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All categories</SelectItem>
+                  <SelectItem value="all">All categories</SelectItem>
                   <SelectItem value="battery">Battery</SelectItem>
                   <SelectItem value="charging">Charging</SelectItem>
                   <SelectItem value="motor_drivetrain">Motor/Drivetrain</SelectItem>
@@ -208,7 +208,7 @@ export default function EvFaultsBrowser() {
                   <SelectValue placeholder="All severities" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All severities</SelectItem>
+                  <SelectItem value="all">All severities</SelectItem>
                   <SelectItem value="low">Low</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
                   <SelectItem value="high">High</SelectItem>

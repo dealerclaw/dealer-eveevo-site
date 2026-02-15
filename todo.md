@@ -1399,3 +1399,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update getEvFaultsByModel database function with filter logic
 - [x] Client-side filtering for immediate feedback
 - [x] Test all filters work correctly (25 tests passed)
+
+## Bug Fixes
+
+- [x] Fix Select component error: Remove empty string values from SelectItem (use "all" instead)
+- [x] Update filter logic to handle "all" value instead of empty string
