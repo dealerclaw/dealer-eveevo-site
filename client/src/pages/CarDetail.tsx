@@ -24,7 +24,7 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-import RebeccaChat from "@/components/RebeccaChat";
+
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import FinanceCalculator from "@/components/FinanceCalculator";
 import CarImageGallery from "@/components/CarImageGallery";
@@ -132,7 +132,6 @@ export default function CarDetail() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <RebeccaChat carId={id} />
 
       <main className="flex-1 py-8">
         <div className="container">

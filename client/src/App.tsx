@@ -5,7 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import RebeccaChat from "./components/RebeccaChat";
+
 import Browse from "./pages/Browse";
 import AdminSync from "./pages/AdminSync";
 import CarDetail from "./pages/CarDetail";
@@ -187,7 +187,6 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
-          <RebeccaChat />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

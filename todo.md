@@ -1278,3 +1278,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Display all vehicle images in More Photos section
 - [x] Add image thumbnails with click to view full size
 - [x] Test photo gallery with vehicles that have multiple images
+
+## Remove Rebecca Chatbot
+- [x] Find Rebecca chatbot component in codebase
+- [x] Remove chatbot from all pages
+- [x] Clean up related imports and dependencies
