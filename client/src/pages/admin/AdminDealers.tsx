@@ -5,7 +5,8 @@ import Header from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Store, Car, Phone, Mail, Globe, MessageSquare, CheckCircle, XCircle, UserCog } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, Store, Car, Phone, Mail, Globe, MessageSquare, CheckCircle, XCircle, UserCog, Search } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -26,6 +27,7 @@ export default function AdminDealers() {
   const [selectedDealerId, setSelectedDealerId] = useState<number | null>(null);
   const [showCarsDialog, setShowCarsDialog] = useState(false);
   const [impersonatingDealerId, setImpersonatingDealerId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const impersonateMutation = trpc.admin.impersonate.useMutation({
     onMutate: (variables) => {
@@ -60,6 +62,19 @@ export default function AdminDealers() {
 
   const selectedDealer = dealers?.find(d => d.id === selectedDealerId);
 
+  // Filter dealers based on search query
+  const filteredDealers = dealers?.filter(dealer => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      dealer.name?.toLowerCase().includes(query) ||
+      dealer.email?.toLowerCase().includes(query) ||
+      dealer.city?.toLowerCase().includes(query) ||
+      dealer.postcode?.toLowerCase().includes(query) ||
+      dealer.phone?.toLowerCase().includes(query)
+    );
+  });
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -86,12 +101,22 @@ export default function AdminDealers() {
 
         <Card>
           <CardHeader>
-            <CardTitle>All Dealers ({dealers?.length || 0})</CardTitle>
+            <CardTitle>All Dealers ({filteredDealers?.length || 0}{searchQuery && ` of ${dealers?.length || 0}`})</CardTitle>
             <CardDescription>
               Complete list of registered dealers with their information and listings
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Search Input */}
+            <div className="mb-4 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Search by name, email, or location..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
@@ -106,8 +131,8 @@ export default function AdminDealers() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {dealers && dealers.length > 0 ? (
-                    dealers.map((dealer) => (
+                  {filteredDealers && filteredDealers.length > 0 ? (
+                    filteredDealers.map((dealer) => (
                       <TableRow key={dealer.id}>
                         <TableCell>
                           <div>

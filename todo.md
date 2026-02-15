@@ -1256,3 +1256,14 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add prominent auction banner on marketplace details page
 - [x] Add "View on Live Auction Page" CTA button
 - [x] Test Buy Now button with price display
+
+## Fix Buy Now Payment Status Update
+- [ ] Check Stripe webhook handler for checkout.session.completed
+- [ ] Verify purchase status updates from 'pending' to 'completed'
+- [ ] Check auctionPurchases table status field
+- [ ] Test Buy Now payment flow end-to-end
+
+## Add Search to Dealer Admin Page
+- [x] Add search input field to dealer admin page
+- [x] Implement client-side filtering by name, email, company
+- [x] Test search functionality with multiple dealers
