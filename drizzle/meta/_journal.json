@@ -120,6 +120,13 @@
       "when": 1771029350163,
       "tag": "0016_adorable_scarecrow",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1771114360388,
+      "tag": "0017_gigantic_elektra",
+      "breakpoints": true
     }
   ]
 }

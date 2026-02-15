@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, gt, like, inArray, desc, sql, ne } from "drizzle-orm";
+import { eq, and, gte, lte, gt, lt, like, inArray, desc, sql, ne } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -17,6 +17,7 @@ import {
   dealerReviews,
   dealerCart,
   dealerWatchlist,
+  auctionHistory,
   type Car,
   type Dealer,
   type Reservation,
@@ -1953,4 +1954,246 @@ export async function checkPriceDrops(dealerId: number) {
   }
 
   return priceDrops;
+}
+
+// ============================================================================
+// Auction Management
+// ============================================================================
+
+export async function getDealerAuctions(dealerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const now = new Date();
+
+  // Get active auctions with bid counts and highest bid
+  const auctions = await db
+    .select({
+      id: cars.id,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: cars.price,
+      reservePrice: cars.reservePrice,
+      auctionStartDate: cars.auctionStartDate,
+      auctionEndDate: cars.auctionEndDate,
+      mainImage: cars.mainImage,
+    })
+    .from(cars)
+    .where(
+      and(
+        eq(cars.dealerId, dealerId),
+        eq(cars.isAuction, true),
+        gt(cars.auctionEndDate, now)
+      )
+    );
+
+  // Get bid counts and highest bids for each auction
+  const auctionsWithBids = await Promise.all(
+    auctions.map(async (auction) => {
+      const bids = await db
+        .select({
+          bidAmount: dealerBids.bidAmount,
+        })
+        .from(dealerBids)
+        .where(eq(dealerBids.carId, auction.id))
+        .orderBy(desc(dealerBids.bidAmount));
+
+      return {
+        ...auction,
+        bidCount: bids.length,
+        currentHighestBid: bids.length > 0 ? bids[0].bidAmount : null,
+      };
+    })
+  );
+
+  return auctionsWithBids;
+}
+
+export async function getDealerAuctionStats(dealerId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const now = new Date();
+
+  // Count active auctions
+  const activeAuctions = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(cars)
+    .where(
+      and(
+        eq(cars.dealerId, dealerId),
+        eq(cars.isAuction, true),
+        gt(cars.auctionEndDate, now)
+      )
+    );
+
+  // Count total bids received on dealer's auctions
+  const totalBids = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(dealerBids)
+    .leftJoin(cars, eq(dealerBids.carId, cars.id))
+    .where(eq(cars.dealerId, dealerId));
+
+  // Get average winning bid from completed auctions
+  const completedAuctions = await db
+    .select({
+      finalPrice: auctionHistory.finalPrice,
+    })
+    .from(auctionHistory)
+    .where(
+      and(
+        eq(auctionHistory.sellerDealerId, dealerId),
+        eq(auctionHistory.status, 'completed')
+      )
+    );
+
+  const avgWinningBid =
+    completedAuctions.length > 0
+      ? completedAuctions.reduce((sum, a) => sum + parseFloat(a.finalPrice || '0'), 0) /
+        completedAuctions.length
+      : 0;
+
+  return {
+    activeAuctions: activeAuctions[0]?.count || 0,
+    totalBids: totalBids[0]?.count || 0,
+    avgWinningBid: avgWinningBid > 0 ? avgWinningBid.toFixed(2) : null,
+  };
+}
+
+export async function getAuctionBidHistory(carId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const bids = await db
+    .select({
+      id: dealerBids.id,
+      bidAmount: dealerBids.bidAmount,
+      message: dealerBids.message,
+      status: dealerBids.status,
+      createdAt: dealerBids.createdAt,
+      dealerName: dealers.name,
+    })
+    .from(dealerBids)
+    .leftJoin(dealers, eq(dealerBids.dealerId, dealers.id))
+    .where(eq(dealerBids.carId, carId))
+    .orderBy(desc(dealerBids.createdAt));
+
+  return bids;
+}
+
+export async function recordAuctionOutcome(carId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get car and auction details
+  const car = await db
+    .select()
+    .from(cars)
+    .where(eq(cars.id, carId))
+    .limit(1);
+
+  if (!car || car.length === 0 || !car[0].isAuction) {
+    return null;
+  }
+
+  const carData = car[0];
+
+  // Get all bids for this auction
+  const bids = await db
+    .select()
+    .from(dealerBids)
+    .where(eq(dealerBids.carId, carId))
+    .orderBy(desc(dealerBids.bidAmount));
+
+  const totalBids = bids.length;
+  const winningBid = bids.length > 0 ? bids[0] : null;
+  const reservePrice = parseFloat(carData.reservePrice || '0');
+  const highestBidAmount = winningBid ? parseFloat(winningBid.bidAmount) : 0;
+
+  // Determine auction status
+  let status: 'completed' | 'expired_no_bids' | 'expired_below_reserve' | 'cancelled' = 'expired_no_bids';
+  let winnerDealerId = null;
+  let finalPrice = null;
+
+  if (totalBids === 0) {
+    status = 'expired_no_bids';
+  } else if (highestBidAmount < reservePrice) {
+    status = 'expired_below_reserve';
+  } else {
+    status = 'completed';
+    winnerDealerId = winningBid!.dealerId;
+    finalPrice = winningBid!.bidAmount;
+
+    // Update winning bid status
+    await db
+      .update(dealerBids)
+      .set({ status: 'won' })
+      .where(eq(dealerBids.id, winningBid!.id));
+
+    // Update losing bids
+    if (bids.length > 1) {
+      const losingBidIds = bids.slice(1).map(b => b.id);
+      for (const bidId of losingBidIds) {
+        await db
+          .update(dealerBids)
+          .set({ status: 'lost' })
+          .where(eq(dealerBids.id, bidId));
+      }
+    }
+  }
+
+  // Record auction history
+  await db.insert(auctionHistory).values({
+    carId,
+    sellerDealerId: carData.dealerId!,
+    auctionStartDate: carData.auctionStartDate!,
+    auctionEndDate: carData.auctionEndDate!,
+    reservePrice: carData.reservePrice!,
+    status,
+    winningBidId: winningBid?.id || null,
+    winnerDealerId,
+    finalPrice,
+    totalBids,
+  });
+
+  // Update car to remove auction status
+  await db
+    .update(cars)
+    .set({
+      isAuction: false,
+      auctionStartDate: null,
+      auctionEndDate: null,
+    })
+    .where(eq(cars.id, carId));
+
+  return { status, totalBids, finalPrice };
+}
+
+export async function processExpiredAuctions() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const now = new Date();
+
+  // Find all expired auctions
+  const expiredAuctions = await db
+    .select({ id: cars.id })
+    .from(cars)
+    .where(
+      and(
+        eq(cars.isAuction, true),
+        lt(cars.auctionEndDate, now)
+      )
+    );
+
+  const results = [];
+  for (const auction of expiredAuctions) {
+    const result = await recordAuctionOutcome(auction.id);
+    if (result) {
+      results.push({ carId: auction.id, ...result });
+    }
+  }
+
+  return results;
 }

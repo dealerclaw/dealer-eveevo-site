@@ -1000,3 +1000,32 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Updated moveToMarketplace to accept minimumPrice
 - [ ] Test auction creation with Arnold Clark inventory
 - [ ] Add auction status badge and countdown display in inventory list
+
+## Auction Status Badges and Countdown Timers
+- [x] Add auction status badge to inventory list showing "🔨 Auction"
+- [x] Implement countdown timer showing remaining time (e.g., "23h 45m")
+- [x] Update badge styling to distinguish auction items (destructive variant with Gavel icon)
+- [x] Add real-time countdown updates using setInterval (updates every minute)
+## Dealer Auction Browse Page (My Auctions)
+- [x] Create /dealer/my-auctions route and page component
+- [x] Add navigation link in DealerLayout sidebar
+- [x] Display dealer's own active auctions
+- [x] Show current bid, reserve price, time remaining
+- [x] Show bid count and highest bid for each auction
+- [x] Add bid history dialog showing all bids with dealer names
+- [x] Add cancel auction functionality
+- [x] Create backend endpoints: getMyAuctions, getAuctionStats, getAuctionBids, cancelAuctioneed current highest bid)
+- [ ] Show auction end time countdown for each listing
+- [ ] Add filters (ending soon, by make/model, price range)
+
+## Auction History Tracking
+- [x] Create auction_bids database table (dealerBids already exists)
+- [x] Create auction_history table (auctionHistory created)
+- [x] Add backend endpoints for placing bids (already exists in auction router)
+- [x] Add backend endpoint to get bid history for a car (getAuctionBids)
+- [x] Create dealer dashboard showing auction metrics (My Auctions page)
+- [x] Display: total auctions (active auctions), total bids received, average winning bid
+- [x] Add auction outcome recording (recordAuctionOutcome function)
+- [x] Add automated expired auction processing (processExpiredAuctions)
+- [ ] Test complete auction flow end-to-end
+- [ ] Log all auction outcomes (won, lost, expired)

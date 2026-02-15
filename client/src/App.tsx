@@ -29,6 +29,7 @@ import DealerProfile from "./pages/DealerProfile";
 import DealerOnboarding from "./pages/DealerOnboarding";
 import Finance from "./pages/Finance";
 import LiveAuction from "./pages/dealer/LiveAuction";
+import MyAuctions from "./pages/dealer/MyAuctions";
 import Subscription from "./pages/dealer/Subscription";
 import SubscriptionSuccess from "./pages/dealer/SubscriptionSuccess";
 import SubscriptionManage from "./pages/dealer/SubscriptionManage";
@@ -113,6 +114,11 @@ function Router() {
       <Route path="/dealer/live-auction">
         <DealerAuthGuard>
           <LiveAuction />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/my-auctions">
+        <DealerAuthGuard>
+          <MyAuctions />
         </DealerAuthGuard>
       </Route>
       <Route path="/dealer/subscription">

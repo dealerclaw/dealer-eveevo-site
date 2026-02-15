@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -35,6 +35,41 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+// Auction Badge Component with countdown timer
+const AuctionBadge = ({ endDate }: { endDate: Date | string }) => {
+  const [timeLeft, setTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const end = new Date(endDate).getTime();
+      const diff = end - now;
+
+      if (diff <= 0) {
+        setTimeLeft("Expired");
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      setTimeLeft(`${hours}h ${minutes}m`);
+    };
+
+    calculateTimeLeft();
+    const interval = setInterval(calculateTimeLeft, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, [endDate]);
+
+  return (
+    <Badge variant="destructive" className="text-xs">
+      <Gavel className="h-3 w-3 mr-1" />
+      Auction: {timeLeft}
+    </Badge>
+  );
+};
 
 export default function MyInventory() {
   const [, navigate] = useLocation();
@@ -214,9 +249,14 @@ export default function MyInventory() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={vehicle.marketplace === 'consumer' ? "outline" : "default"}>
-                          {vehicle.marketplace === 'consumer' ? "Consumer" : "Dealer Only"}
-                        </Badge>
+                        <div className="flex flex-col gap-1">
+                          <Badge variant={vehicle.marketplace === 'consumer' ? "outline" : "default"}>
+                            {vehicle.marketplace === 'consumer' ? "Consumer" : "Dealer Only"}
+                          </Badge>
+                          {vehicle.isAuction && vehicle.auctionEndDate && (
+                            <AuctionBadge endDate={vehicle.auctionEndDate} />
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">

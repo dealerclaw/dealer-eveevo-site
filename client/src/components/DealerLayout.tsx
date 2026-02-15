@@ -38,6 +38,11 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
       icon: Gavel,
     },
     {
+      href: "/dealer/my-auctions",
+      label: "My Auctions",
+      icon: Gavel,
+    },
+    {
       href: "/dealer/cart",
       label: "Shopping Cart",
       icon: ShoppingCart,

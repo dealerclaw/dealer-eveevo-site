@@ -788,6 +788,93 @@ export const appRouter = router({
         return { success: true, auctionEndDate: auctionEnd };
        }),
 
+    getMyAuctions: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+        
+        return await db.getDealerAuctions(dealer.id);
+      }),
+
+    getAuctionStats: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+        
+        return await db.getDealerAuctionStats(dealer.id);
+      }),
+
+    getAuctionBids: protectedProcedure
+      .input(z.object({ carId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        // Verify car belongs to dealer
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer || car.dealerId !== dealer.id) {
+          throw new Error('Unauthorized: You can only view bids on your own vehicles');
+        }
+        
+        return await db.getAuctionBidHistory(input.carId);
+      }),
+
+    cancelAuction: protectedProcedure
+      .input(z.object({ carId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        // Verify car belongs to dealer
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Car not found');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer || car.dealerId !== dealer.id) {
+          throw new Error('Unauthorized: You can only cancel your own auctions');
+        }
+        
+        // Cancel auction
+        await db.updateDealerCar(ctx.user.id, input.carId, {
+          isAuction: false,
+          auctionStartDate: null,
+          auctionEndDate: null,
+        });
+        
+        return { success: true };
+      }),
+
+    processExpiredAuctions: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        
+        const results = await db.processExpiredAuctions();
+        return { processed: results.length, results };
+      }),
+
     // Purchase management
     getPurchaseDetails: protectedProcedure
       .input(z.object({ purchaseId: z.number() }))

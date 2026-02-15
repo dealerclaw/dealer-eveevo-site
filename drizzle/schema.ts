@@ -409,3 +409,30 @@ export const dealerWatchlist = mysqlTable("dealerWatchlist", {
 
 export type DealerWatchlistItem = typeof dealerWatchlist.$inferSelect;
 export type InsertDealerWatchlistItem = typeof dealerWatchlist.$inferInsert;
+
+/**
+ * Auction History table - tracks auction outcomes and winners
+ */
+export const auctionHistory = mysqlTable("auctionHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  sellerDealerId: int("sellerDealerId").references(() => dealers.id).notNull(),
+  
+  // Auction details
+  auctionStartDate: timestamp("auctionStartDate").notNull(),
+  auctionEndDate: timestamp("auctionEndDate").notNull(),
+  reservePrice: decimal("reservePrice", { precision: 10, scale: 2 }).notNull(),
+  
+  // Outcome
+  status: mysqlEnum("status", ["completed", "expired_no_bids", "expired_below_reserve", "cancelled"]).notNull(),
+  winningBidId: int("winningBidId").references(() => dealerBids.id),
+  winnerDealerId: int("winnerDealerId").references(() => dealers.id),
+  finalPrice: decimal("finalPrice", { precision: 10, scale: 2 }),
+  totalBids: int("totalBids").default(0),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AuctionHistory = typeof auctionHistory.$inferSelect;
+export type InsertAuctionHistory = typeof auctionHistory.$inferInsert;
