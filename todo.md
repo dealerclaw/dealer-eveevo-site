@@ -1190,3 +1190,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add "View Details" button to LiveAuction page
 - [x] Link button to DealerMarketplaceDetails page
 - [x] Test navigation between auction and details pages
+
+## Auction-Details Page Integration
+- [x] Add "Back to Auction" button on DealerMarketplaceDetails page
+- [x] Display auction status (time remaining, current bid) on details page
+- [x] Add quick bid panel to details page for auction vehicles
+- [x] Test bidding from details page
+- [x] Test navigation flow between auction and details

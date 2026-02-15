@@ -9,6 +9,7 @@ import { useLocation, useParams } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
 import MakeOfferDialog from "@/components/MakeOfferDialog";
 import DeliveryCostCalculator from "@/components/DeliveryCostCalculator";
+import QuickBidPanel from "@/components/QuickBidPanel";
 
 export default function DealerMarketplaceDetails() {
   const params = useParams();
@@ -70,9 +71,13 @@ export default function DealerMarketplaceDetails() {
     <DealerLayout>
       <div className="container max-w-6xl py-8">
         {/* Back button */}
-        <Button variant="ghost" onClick={() => navigate('/dealer/marketplace')} className="mb-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(car.isAuction ? '/dealer/auction' : '/dealer/marketplace')} 
+          className="mb-6"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Marketplace
+          {car.isAuction ? 'Back to Auction' : 'Back to Marketplace'}
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -111,6 +116,28 @@ export default function DealerMarketplaceDetails() {
                     {car.condition}
                   </Badge>
                 </div>
+                
+                {/* Auction Status Banner */}
+                {car.isAuction && car.auctionEndDate && (
+                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-red-900">Live Auction</p>
+                        <p className="text-xs text-red-700 mt-1">
+                          Ends: {new Date(car.auctionEndDate).toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-red-700">Current Bid</p>
+                        <p className="text-2xl font-bold text-red-900">
+                          £{car.currentHighestBid 
+                            ? parseFloat(car.currentHighestBid.toString()).toLocaleString()
+                            : (car.startingBid ? parseFloat(car.startingBid.toString()).toLocaleString() : 'N/A')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Key specs */}
@@ -259,6 +286,16 @@ export default function DealerMarketplaceDetails() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
+                {/* Quick Bid Panel for Auction Vehicles */}
+                {car.isAuction && car.auctionEndDate && (
+                  <QuickBidPanel 
+                    carId={car.id}
+                    currentBid={car.currentHighestBid 
+                      ? parseFloat(car.currentHighestBid.toString())
+                      : (car.startingBid ? parseFloat(car.startingBid.toString()) : 0)}
+                  />
+                )}
+                
                 <Button 
                   className="w-full" 
                   size="lg"
