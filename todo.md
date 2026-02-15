@@ -1197,3 +1197,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add quick bid panel to details page for auction vehicles
 - [x] Test bidding from details page
 - [x] Test navigation flow between auction and details
+
+## Fix Back to Auction Button Route
+- [x] Update DealerMarketplaceDetails back button route from /dealer/auction to /dealer/live-auction

@@ -73,7 +73,7 @@ export default function DealerMarketplaceDetails() {
         {/* Back button */}
         <Button 
           variant="ghost" 
-          onClick={() => navigate(car.isAuction ? '/dealer/auction' : '/dealer/marketplace')} 
+          onClick={() => navigate(car.isAuction ? '/dealer/live-auction' : '/dealer/marketplace')} 
           className="mb-6"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
