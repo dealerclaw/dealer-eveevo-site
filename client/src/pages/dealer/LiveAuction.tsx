@@ -460,11 +460,11 @@ export default function LiveAuction() {
                           : 'Not Set'}
                       </p>
                     </div>
-                    {currentVehicle.price && (
+                    {currentVehicle.buyNowPrice && (
                       <div className="text-right">
                         <p className="text-xs text-white/60 mb-1">Buy Now Price</p>
                         <p className="text-3xl font-bold text-green-400">
-                          £{parseFloat(currentVehicle.price.toString()).toLocaleString()}
+                          £{parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}
                         </p>
                       </div>
                     )}

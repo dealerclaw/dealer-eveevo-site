@@ -1233,3 +1233,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update all auction vehicles to set buyNowPrice = reservePrice + 1000
 - [x] Verify updated prices in database
 - [x] Test Buy Now button activation on auction page
+
+## Fix Buy Now Price Inconsistency
+- [x] Check Buy Now price display on auction page image overlay
+- [x] Check Buy Now price on auction page button
+- [x] Verify all displays use currentVehicle.buyNowPrice
+- [x] Fix any hardcoded or incorrect price references
