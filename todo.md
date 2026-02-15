@@ -1055,3 +1055,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add visual alert (flash border with pulse animation) when new bids arrive
 - [x] Add quick bid increment buttons (+£500, +£1,000, +£2,000)
 - [x] Test all auction enhancements work correctly
+
+## Fix Auction Bid Validation Error
+- [x] Investigate why bids are rejected with "vehicle is not in auction" error
+- [x] Check auction status validation in placeBid endpoint
+- [x] Fixed getActiveAuctionVehicles to query actual auction vehicles (isAuction=true)
+- [x] Changed filter from marketplace='consumer' to isAuction=true and auctionEndDate > now
+- [x] Verify isAuction flag is set correctly when sending vehicles to auction
+- [x] Test bidding works correctly on auction vehicles
+- [x] Updated LiveAuction UI to show auction fields (current bid, reserve price, time remaining)
+- [x] Removed profit calculator and replaced with auction-specific information

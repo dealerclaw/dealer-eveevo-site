@@ -1070,8 +1070,7 @@ export async function getActiveAuctionVehicles() {
 
   const now = new Date();
   
-  // Get cars from consumer marketplace that are available for dealer auction
-  // Cars remain available to consumers until a dealer purchases them
+  // Get cars that are currently in auction (dealer-to-dealer marketplace)
   const results = await db
     .select({
       id: cars.id,
@@ -1102,18 +1101,15 @@ export async function getActiveAuctionVehicles() {
     .leftJoin(dealers, eq(cars.dealerId, dealers.id))
     .where(
       and(
-        eq(cars.marketplace, 'consumer'),
-        eq(cars.isAvailable, true)
+        eq(cars.isAuction, true),
+        eq(cars.isAvailable, true),
+        gt(cars.auctionEndDate, now)
       )
     )
-    .orderBy(desc(cars.createdAt))
-    .limit(50); // Show up to 50 cars in dealer marketplace
+    .orderBy(desc(cars.auctionStartDate))
+    .limit(50); // Show up to 50 active auctions
 
-  // Calculate dealer bid price (85% of consumer price)
-  return results.map(car => ({
-    ...car,
-    dealerBidPrice: car.price ? (parseFloat(car.price) * 0.85).toFixed(2) : null,
-  }))
+  return results;
 }
 
 /**
