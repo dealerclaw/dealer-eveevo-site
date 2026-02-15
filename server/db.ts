@@ -1096,6 +1096,8 @@ export async function getActiveAuctionVehicles() {
       buyNowPrice: cars.buyNowPrice,
       description: cars.description,
       chargingTime: cars.chargingTime,
+      conditionNotes: cars.conditionNotes,
+      inspectionReports: cars.inspectionReports,
       dealerName: dealers.name,
       dealerCity: dealers.city,
       dealerVerified: dealers.isVerified,

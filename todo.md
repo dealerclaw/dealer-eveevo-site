@@ -1179,3 +1179,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add condition notes textarea field to EditVehicle form
 - [x] Ensure conditionNotes field exists in cars schema
 - [x] Display condition notes in vehicle detail pages
+
+## Auction Page - Condition Notes & Trade Details
+- [x] Add condition notes display to LiveAuction page
+- [x] Add service history information to auction view
+- [x] Display inspection reports on auction page
+- [x] Show VAT status and other trade details

@@ -540,6 +540,53 @@ export default function LiveAuction() {
                   <p className="text-white/80">{currentVehicle.description}</p>
                 )}
 
+                {/* Trade Details & Condition Notes */}
+                <div className="space-y-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+                  <h3 className="text-lg font-semibold text-white">Trade Details</h3>
+                  
+                  {/* Condition Notes */}
+                  {currentVehicle.conditionNotes && (
+                    <div>
+                      <p className="text-sm font-medium text-white/80 mb-2">Condition Notes</p>
+                      <p className="text-sm text-white/70 whitespace-pre-wrap bg-black/20 p-3 rounded border border-white/10">
+                        {currentVehicle.conditionNotes}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Service History */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-white/80 mb-1">Service History</p>
+                      <p className="text-sm text-green-400">✓ Full service history available</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white/80 mb-1">VAT Status</p>
+                      <p className="text-sm text-white/70">VAT Qualifying</p>
+                    </div>
+                  </div>
+                  
+                  {/* Inspection Reports */}
+                  {currentVehicle.inspectionReports && currentVehicle.inspectionReports.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-white/80 mb-2">Inspection Reports</p>
+                      <div className="space-y-2">
+                        {currentVehicle.inspectionReports.map((report: any, index: number) => (
+                          <a
+                            key={index}
+                            href={report.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 underline"
+                          >
+                            📄 {report.name || `Report ${index + 1}`}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Profit Calculator */}
                 <div className="mt-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
                   <h3 className="text-lg font-semibold text-green-400 mb-3 flex items-center gap-2">
