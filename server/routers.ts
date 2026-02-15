@@ -697,6 +697,26 @@ export const appRouter = router({
         return await db.getDealerAnalytics(dealer.id);
       }),
 
+    getWinStats: protectedProcedure
+      .input(z.object({
+        dealerId: z.number().optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        let dealerId = input.dealerId;
+        
+        // If no dealerId provided, get current user's dealer profile
+        if (!dealerId) {
+          const dealer = await db.getDealerByUserId(ctx.user.id);
+          if (!dealer) {
+            return null;
+          }
+          dealerId = dealer.id;
+        }
+        
+        const { getDealerWinStats } = await import('./dealerWinStats');
+        return await getDealerWinStats(dealerId);
+      }),
+
     // Dealer marketplace
     getDealerMarketplace: protectedProcedure
       .input(z.object({
@@ -1618,6 +1638,71 @@ export const appRouter = router({
 
         const { getProxyBid } = await import('./proxyBidding');
         return await getProxyBid(input.carId, dealer.id);
+      }),
+
+    createWinPaymentCheckout: protectedProcedure
+      .input(z.object({
+        bidId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+
+        // Get bid details
+        const bids = await db.getDealerBids(dealer.id);
+        const bid = bids.find((b: any) => b.id === input.bidId && b.status === 'won');
+        
+        if (!bid) {
+          throw new Error('Winning bid not found');
+        }
+
+        const car = bid.car;
+        if (!car) {
+          throw new Error('Vehicle not found');
+        }
+
+        const winningBid = parseFloat(bid.bid.bidAmount);
+        const commitmentFee = 99; // £99 non-refundable commitment fee
+        
+        // Create Stripe checkout session for auction win commitment fee
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: [
+            {
+              price_data: {
+                currency: 'gbp',
+                product_data: {
+                  name: `Auction Commitment Fee: ${car.make} ${car.model} ${car.year}`,
+                  description: `Non-refundable £99 commitment fee. Winning bid: £${winningBid.toLocaleString()}. Balance due after inspection. VIN: ${car.vin || 'N/A'}`,
+                  images: car.mainImage ? [car.mainImage] : undefined,
+                },
+                unit_amount: commitmentFee * 100, // £99 in pence
+              },
+              quantity: 1,
+            },
+          ],
+          mode: 'payment',
+          success_url: `${ctx.req.headers.origin}/dealer/my-wins?payment=success`,
+          cancel_url: `${ctx.req.headers.origin}/dealer/my-wins?payment=cancelled`,
+          customer_email: ctx.user.email || undefined,
+          client_reference_id: ctx.user.id.toString(),
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            dealer_id: dealer.id.toString(),
+            bid_id: input.bidId.toString(),
+            car_id: car.id.toString(),
+            customer_email: ctx.user.email || '',
+            customer_name: ctx.user.name || dealer.name,
+            payment_type: 'auction_win',
+          },
+          allow_promotion_codes: true,
+        });
+
+        return { checkoutUrl: session.url };
       }),
   }),
 });

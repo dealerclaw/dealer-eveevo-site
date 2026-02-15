@@ -3,12 +3,24 @@ import DealerLayout from "@/components/DealerLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trophy, Car, Calendar, DollarSign, User, Phone, Mail } from "lucide-react";
+import { Loader2, Trophy, Car, Calendar, DollarSign, User, Phone, Mail, CreditCard } from "lucide-react";
+import { toast } from "sonner";
 import { useLocation } from "wouter";
 
 export default function MyWins() {
   const [, setLocation] = useLocation();
   const { data: wins, isLoading } = trpc.auction.getMyBids.useQuery();
+  
+  const createPaymentCheckout = trpc.auction.createWinPaymentCheckout.useMutation({
+    onSuccess: (data) => {
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to create payment checkout');
+    },
+  });
 
   // Filter to only show won auctions
   const wonAuctions = wins?.filter((bid: any) => bid.status === 'won') || [];
@@ -105,13 +117,22 @@ export default function MyWins() {
                     </div>
 
                     {/* Winning Bid Info */}
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-3 gap-4">
                       <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
                         <DollarSign className="h-5 w-5 text-green-600" />
                         <div>
                           <p className="text-sm text-muted-foreground">Winning Bid</p>
                           <p className="text-xl font-bold text-green-600">
                             £{parseFloat(win.bidAmount).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                        <CreditCard className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Commitment Fee</p>
+                          <p className="text-xl font-bold text-blue-600">
+                            £99
                           </p>
                         </div>
                       </div>
@@ -127,6 +148,22 @@ export default function MyWins() {
                             })}
                           </p>
                         </div>
+                      </div>
+                    </div>
+
+                    {/* Balance Due */}
+                    <div className="border-t pt-4">
+                      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                        <h3 className="font-semibold mb-2 flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-amber-600" />
+                          Balance Due After Inspection
+                        </h3>
+                        <p className="text-2xl font-bold text-amber-600">
+                          £{(parseFloat(win.bidAmount) - 99).toLocaleString()}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Pay balance via bank transfer after satisfactory vehicle inspection
+                        </p>
                       </div>
                     </div>
 
@@ -166,15 +203,33 @@ export default function MyWins() {
                     <div className="border-t pt-4">
                       <h3 className="font-semibold mb-3">Next Steps</h3>
                       <ol className="space-y-2 text-sm text-muted-foreground">
-                        <li>1. Complete payment within 48 hours</li>
-                        <li>2. Contact the seller to arrange delivery or pickup</li>
-                        <li>3. Review vehicle inspection report if available</li>
-                        <li>4. Ensure all paperwork is completed for transfer</li>
+                        <li>1. Pay £99 commitment fee within 48 hours (secures your win)</li>
+                        <li>2. Contact seller to arrange vehicle inspection</li>
+                        <li>3. Inspect vehicle condition in person</li>
+                        <li>4. Pay remaining balance after satisfactory inspection</li>
+                        <li>5. Arrange delivery or pickup with seller</li>
                       </ol>
                     </div>
 
-                    {/* Action Button */}
+                    {/* Action Buttons */}
                     <div className="flex gap-3">
+                      <Button
+                        onClick={() => createPaymentCheckout.mutate({ bidId: win.id })}
+                        className="flex-1"
+                        disabled={createPaymentCheckout.isPending}
+                      >
+                        {createPaymentCheckout.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="h-4 w-4 mr-2" />
+                            Pay £99 Commitment Fee
+                          </>
+                        )}
+                      </Button>
                       <Button
                         onClick={() => setLocation(`/cars/${win.carId}`)}
                         variant="outline"

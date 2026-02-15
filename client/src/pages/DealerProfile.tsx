@@ -10,7 +10,7 @@ import { Badge } from "../components/ui/badge";
 import { Skeleton } from "../components/ui/skeleton";
 import { 
   Phone, Mail, MessageCircle, MapPin, Star, 
-  CheckCircle, Car, ExternalLink, Navigation
+  CheckCircle, Car, ExternalLink, Navigation, Trophy
 } from "lucide-react";
 
 export default function DealerProfile() {
@@ -25,6 +25,7 @@ export default function DealerProfile() {
   const { data: dealer, isLoading: dealerLoading } = trpc.dealers.getById.useQuery({ id: dealerId });
   const { data: cars, isLoading: carsLoading } = trpc.dealers.getCars.useQuery({ dealerId });
   const { data: reviews } = trpc.dealers.getReviews.useQuery({ dealerId });
+  const { data: winStats } = trpc.dealers.getWinStats.useQuery({ dealerId });
 
   const submitReviewMutation = trpc.dealers.submitReview.useMutation({
     onSuccess: () => {
@@ -114,7 +115,32 @@ export default function DealerProfile() {
                 {dealer.subscriptionStatus === 'active' && (
                   <Badge variant="secondary">Premium Dealer</Badge>
                 )}
+                {winStats && winStats.totalWins > 0 && (
+                  <Badge variant="outline" className="bg-yellow-50 dark:bg-yellow-950/20 border-yellow-300 dark:border-yellow-800">
+                    <Trophy className="w-3 h-3 mr-1 text-yellow-600" />
+                    {winStats.totalWins} Auction {winStats.totalWins === 1 ? 'Win' : 'Wins'}
+                  </Badge>
+                )}
               </div>
+
+              {/* Auction Stats */}
+              {winStats && winStats.totalWins > 0 && (
+                <div className="flex gap-4 mb-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Trophy className="w-4 h-4 text-yellow-600" />
+                    <span className="font-medium">{winStats.totalWins}</span>
+                    <span className="text-muted-foreground">wins</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">{winStats.winRate.toFixed(1)}%</span>
+                    <span className="text-muted-foreground">win rate</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">£{winStats.totalSpent.toLocaleString()}</span>
+                    <span className="text-muted-foreground">total spent</span>
+                  </div>
+                </div>
+              )}
 
               {dealer.rating && (
                 <div className="flex items-center gap-2 mb-4">

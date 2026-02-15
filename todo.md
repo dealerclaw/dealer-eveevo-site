@@ -1092,3 +1092,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Auction UX Improvements
 - [x] Remove demo cars from auction listings (show only real dealer vehicles)
 - [x] Create "My Wins" page showing vehicles won in auctions
+
+## Auction Win Enhancements
+- [x] Add email alerts when dealers win auctions (already implemented)
+- [x] Integrate Stripe payment checkout for won auction vehicles (£99 commitment fee)
+- [x] Add auction win badges and statistics to dealer profiles
+
+## Auction Payment Update
+- [x] Change payment from full amount to £99 commitment fee
+- [x] Update payment description to clarify it's a non-refundable commitment fee
+- [x] Update My Wins UI to show commitment fee vs remaining balance
