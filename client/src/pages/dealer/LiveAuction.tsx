@@ -470,16 +470,28 @@ export default function LiveAuction() {
 
               <CardContent className="p-6 space-y-4">
                 <div>
-                  <h2 className="text-3xl font-bold text-white">
-                    {currentVehicle.year} {currentVehicle.make} {currentVehicle.model}
-                  </h2>
-                  <div className="flex items-center gap-3 mt-2">
-                    <Badge variant="outline" className="border-white/20 text-white">
-                      {currentVehicle.condition}
-                    </Badge>
-                    {currentVehicle.mileage && (
-                      <span className="text-white/60">{currentVehicle.mileage.toLocaleString()} miles</span>
-                    )}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-3xl font-bold text-white">
+                        {currentVehicle.year} {currentVehicle.make} {currentVehicle.model}
+                      </h2>
+                      <div className="flex items-center gap-3 mt-2">
+                        <Badge variant="outline" className="border-white/20 text-white">
+                          {currentVehicle.condition}
+                        </Badge>
+                        {currentVehicle.mileage && (
+                          <span className="text-white/60">{currentVehicle.mileage.toLocaleString()} miles</span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={() => setLocation(`/dealer/marketplace/${currentVehicle.id}`)}
+                      className="text-white border-white/20 hover:bg-white/10"
+                    >
+                      View Full Details
+                    </Button>
                   </div>
 
                   {/* Dealer Information */}

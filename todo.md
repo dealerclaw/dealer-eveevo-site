@@ -1185,3 +1185,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add service history information to auction view
 - [x] Display inspection reports on auction page
 - [x] Show VAT status and other trade details
+
+## Auction Page - View Details Button
+- [x] Add "View Details" button to LiveAuction page
+- [x] Link button to DealerMarketplaceDetails page
+- [x] Test navigation between auction and details pages
