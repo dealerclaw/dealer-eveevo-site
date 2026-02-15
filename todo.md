@@ -1465,3 +1465,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Delete all generic faults (sourceType = 'research' and not in top 11 models)
 - [x] Keep only unique model-specific faults for: Tesla Model 3/Y, Nissan Leaf, Kia EV6, Hyundai IONIQ 5, VW ID.3/4, BMW i3/i4, MG MG4, Polestar 2
 - [x] Verify database only contains 110 unique researched faults (10 per model × 11 models)
+
+
+## Bug Fixes
+
+- [x] Fix dealer settings 404 error
+- [x] Created DealerSettings component
+- [x] Added /dealer/settings route to App.tsx

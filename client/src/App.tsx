@@ -42,6 +42,7 @@ import PurchaseDetails from "./pages/dealer/PurchaseDetails";
 import Cart from "./pages/dealer/Cart";
 import Watchlist from "./pages/dealer/Watchlist";
 import EvFaultsBrowser from "./pages/EvFaultsBrowser";
+import DealerSettings from "./pages/dealer/DealerSettings";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -84,6 +85,11 @@ function Router() {
       <Route path="/dealer/ev-faults">
         <DealerAuthGuard>
           <EvFaultsBrowser />
+        </DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/settings">
+        <DealerAuthGuard>
+          <DealerSettings />
         </DealerAuthGuard>
       </Route>
       <Route path="/dealer/inventory">
