@@ -1222,3 +1222,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Check Buy Now button conditional rendering logic
 - [x] Make Buy Now button always visible on auction page
 - [x] Test Buy Now button visibility and functionality
+
+## Add Buy Now Price to Vehicle Forms
+- [x] Add buyNowPrice input field to AddVehicle form (already exists)
+- [x] Verify buyNowPrice input field in EditVehicle form (already exists)
+- [x] Test editing existing vehicles to add Buy Now prices
+- [x] Verify Buy Now button works after setting prices
