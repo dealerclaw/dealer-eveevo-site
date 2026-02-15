@@ -1127,3 +1127,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## My Wins Dashboard Issue
 - [x] Fix My Wins page not showing Buy Now purchases (fixed nested data structure access)
 - [x] Ensure Buy Now wins appear alongside auction wins
+
+## My Wins Enhancements
+- [x] Add payment status tracking with visual indicators (paid/pending commitment fees)
+- [x] Implement inspection scheduling calendar system
+- [x] Add CSV/PDF export for win history and accounting

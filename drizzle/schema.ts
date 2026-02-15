@@ -307,6 +307,15 @@ export const dealerBids = mysqlTable("dealerBids", {
   message: text("message"), // Optional message with the bid
   status: mysqlEnum("status", ["active", "outbid", "winning", "won", "lost"]).default("active").notNull(),
   
+  // Payment tracking
+  paymentStatus: mysqlEnum("paymentStatus", ["pending", "paid", "failed"]).default("pending"),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  paidAt: timestamp("paidAt"),
+  
+  // Inspection scheduling
+  inspectionScheduledAt: timestamp("inspectionScheduledAt"),
+  inspectionNotes: text("inspectionNotes"),
+  
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

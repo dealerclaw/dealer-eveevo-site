@@ -2336,3 +2336,46 @@ export async function getSimilarCars(carId: number, limit: number = 4) {
   
   return similarCars;
 }
+
+/**
+ * Update bid payment status
+ */
+export async function updateBidPaymentStatus(
+  bidId: number,
+  updates: {
+    paymentStatus?: 'pending' | 'paid' | 'failed';
+    stripePaymentIntentId?: string;
+    paidAt?: Date;
+  }
+) {
+  const db = await getDb();
+  if (!db) return null;
+
+  await db
+    .update(dealerBids)
+    .set(updates)
+    .where(eq(dealerBids.id, bidId));
+
+  return true;
+}
+
+/**
+ * Update bid inspection schedule
+ */
+export async function updateBidInspectionSchedule(
+  bidId: number,
+  updates: {
+    inspectionScheduledAt?: Date;
+    inspectionNotes?: string | null;
+  }
+) {
+  const db = await getDb();
+  if (!db) return null;
+
+  await db
+    .update(dealerBids)
+    .set(updates)
+    .where(eq(dealerBids.id, bidId));
+
+  return true;
+}

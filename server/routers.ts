@@ -127,6 +127,13 @@ export const appRouter = router({
         return await db.getDealerReviews(input.dealerId);
       }),
 
+    getDealerWinStats: publicProcedure
+      .input(z.object({ dealerId: z.number() }))
+      .query(async ({ input }) => {
+        const { getDealerWinStats } = await import('./dealerWinStats');
+        return await getDealerWinStats(input.dealerId);
+      }),
+
     submitReview: protectedProcedure
       .input(z.object({
         dealerId: z.number(),
@@ -1729,7 +1736,7 @@ export const appRouter = router({
           metadata: {
             user_id: ctx.user.id.toString(),
             dealer_id: dealer.id.toString(),
-            bid_id: input.bidId.toString(),
+            bidId: input.bidId.toString(), // Used by webhook to update payment status
             car_id: car.id.toString(),
             customer_email: ctx.user.email || '',
             customer_name: ctx.user.name || dealer.name,
@@ -1739,6 +1746,35 @@ export const appRouter = router({
         });
 
         return { checkoutUrl: session.url };
+      }),
+
+    scheduleInspection: protectedProcedure
+      .input(z.object({
+        bidId: z.number(),
+        scheduledAt: z.string(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+
+        // Verify bid belongs to this dealer
+        const bids = await db.getDealerBids(dealer.id);
+        const bid = bids.find((b: any) => b.bid.id === input.bidId);
+        
+        if (!bid) {
+          throw new Error('Bid not found');
+        }
+
+        // Update inspection schedule
+        await db.updateBidInspectionSchedule(input.bidId, {
+          inspectionScheduledAt: new Date(input.scheduledAt),
+          inspectionNotes: input.notes || null,
+        });
+
+        return { success: true };
       }),
   }),
 });

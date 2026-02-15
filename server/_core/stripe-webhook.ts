@@ -53,6 +53,10 @@ export async function handleStripeWebhook(req: Request, res: Response) {
         await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
         break;
 
+      case 'payment_intent.succeeded':
+        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+        break;
+
       default:
         console.log('[Webhook] Unhandled event type:', event.type);
     }
@@ -197,4 +201,32 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     // Payment intent will be handled separately if needed
     console.log('[Webhook] One-time payment completed');
   }
+}
+
+/**
+ * Handle payment intent succeeded (for commitment fees)
+ */
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+  console.log('[Webhook] Payment intent succeeded:', paymentIntent.id);
+
+  // Check if this is a commitment fee payment (metadata should have bidId)
+  const bidId = paymentIntent.metadata?.bidId;
+  
+  if (!bidId) {
+    console.log('[Webhook] No bidId in payment intent metadata, skipping');
+    return;
+  }
+
+  // Update bid payment status
+  await db.updateBidPaymentStatus(parseInt(bidId), {
+    paymentStatus: 'paid',
+    stripePaymentIntentId: paymentIntent.id,
+    paidAt: new Date(),
+  });
+
+  console.log('[Webhook] Updated bid payment status:', {
+    bidId,
+    paymentIntentId: paymentIntent.id,
+    amount: paymentIntent.amount / 100,
+  });
 }

@@ -3,9 +3,11 @@ import DealerLayout from "@/components/DealerLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trophy, Car, Calendar, DollarSign, User, Phone, Mail, CreditCard } from "lucide-react";
+import { Loader2, Trophy, Car, Calendar, DollarSign, User, Phone, Mail, CreditCard, Download, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import ScheduleInspectionDialog from "@/components/ScheduleInspectionDialog";
+import { exportWinsToCSV, exportWinsToPDF } from "@/lib/exportWins";
 
 export default function MyWins() {
   const [, setLocation] = useLocation();
@@ -48,9 +50,45 @@ export default function MyWins() {
               Vehicles you've successfully won in auctions
             </p>
           </div>
-          <Badge variant="secondary" className="text-lg px-4 py-2">
-            {wonAuctions.length} {wonAuctions.length === 1 ? 'Win' : 'Wins'}
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary" className="text-lg px-4 py-2">
+              {wonAuctions.length} {wonAuctions.length === 1 ? 'Win' : 'Wins'}
+            </Badge>
+            {wonAuctions.length > 0 && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    try {
+                      exportWinsToCSV(wonAuctions);
+                      toast.success('Exported to CSV');
+                    } catch (error) {
+                      toast.error('Failed to export CSV');
+                    }
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    try {
+                      exportWinsToPDF(wonAuctions);
+                      toast.success('Opening print dialog...');
+                    } catch (error: any) {
+                      toast.error(error.message || 'Failed to export PDF');
+                    }
+                  }}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export PDF
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         {wonAuctions.length === 0 ? (
@@ -87,10 +125,23 @@ export default function MyWins() {
                         <Car className="h-16 w-16" />
                       </div>
                     )}
-                    <Badge className="absolute top-4 left-4 bg-green-600 hover:bg-green-700">
-                      <Trophy className="h-3 w-3 mr-1" />
-                      Won
-                    </Badge>
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <Badge className="bg-green-600 hover:bg-green-700">
+                        <Trophy className="h-3 w-3 mr-1" />
+                        Won
+                      </Badge>
+                      {win.paymentStatus === 'paid' ? (
+                        <Badge className="bg-blue-600 hover:bg-blue-700">
+                          <CreditCard className="h-3 w-3 mr-1" />
+                          Paid
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-amber-600 hover:bg-amber-700">
+                          <CreditCard className="h-3 w-3 mr-1" />
+                          Payment Pending
+                        </Badge>
+                      )}
+                    </div>
                   </div>
 
                   {/* Vehicle Details */}
@@ -216,23 +267,42 @@ export default function MyWins() {
 
                     {/* Action Buttons */}
                     <div className="flex gap-3">
-                      <Button
-                        onClick={() => createPaymentCheckout.mutate({ bidId: win.id })}
-                        className="flex-1"
-                        disabled={createPaymentCheckout.isPending}
-                      >
-                        {createPaymentCheckout.isPending ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="h-4 w-4 mr-2" />
-                            Pay £99 Commitment Fee
-                          </>
-                        )}
-                      </Button>
+                      {win.paymentStatus === 'paid' ? (
+                        <div className="flex-1 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
+                          <p className="text-green-600 font-medium flex items-center gap-2">
+                            <CreditCard className="h-4 w-4" />
+                            ✓ Commitment fee paid on {win.paidAt ? new Date(win.paidAt).toLocaleDateString('en-GB') : 'N/A'}
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Next: Contact seller to arrange inspection
+                          </p>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => createPaymentCheckout.mutate({ bidId: win.id })}
+                          className="flex-1"
+                          disabled={createPaymentCheckout.isPending}
+                        >
+                          {createPaymentCheckout.isPending ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              Pay £99 Commitment Fee
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      <ScheduleInspectionDialog
+                        bidId={win.id}
+                        carName={`${car?.make} ${car?.model} ${car?.year}`}
+                        sellerName={car?.dealerName}
+                        sellerPhone={car?.dealerPhone}
+                        currentSchedule={win.inspectionScheduledAt}
+                      />
                       <Button
                         onClick={() => setLocation(`/cars/${win.carId}`)}
                         variant="outline"

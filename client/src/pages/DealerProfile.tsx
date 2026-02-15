@@ -25,7 +25,7 @@ export default function DealerProfile() {
   const { data: dealer, isLoading: dealerLoading } = trpc.dealers.getById.useQuery({ id: dealerId });
   const { data: cars, isLoading: carsLoading } = trpc.dealers.getCars.useQuery({ dealerId });
   const { data: reviews } = trpc.dealers.getReviews.useQuery({ dealerId });
-  const { data: winStats } = trpc.dealers.getWinStats.useQuery({ dealerId });
+  const { data: winStats } = trpc.dealers.getDealerWinStats.useQuery({ dealerId });
 
   const submitReviewMutation = trpc.dealers.submitReview.useMutation({
     onSuccess: () => {
