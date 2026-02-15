@@ -14,6 +14,7 @@ import Stripe from "stripe";
 import { PRODUCTS } from "./products";
 import { notifyOwner } from "./_core/notification";
 import { calculatePostcodeDistance } from "./postcodeDistance";
+import { storagePut } from "./storage";
 
 export const appRouter = router({
   system: systemRouter,
@@ -1365,7 +1366,6 @@ export const appRouter = router({
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');
         }
-        
         const dealer = await db.getDealerByUserId(ctx.user.id);
         if (!dealer) {
           throw new Error('Dealer not found');
@@ -1373,6 +1373,37 @@ export const appRouter = router({
         
         const { getDealerAuctionAnalytics } = await import('./auctionAnalytics');
         return await getDealerAuctionAnalytics(dealer.id, input?.timeRange || '30d');
+      }),
+
+    uploadVehicleImage: protectedProcedure
+      .input(z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64 encoded
+        mimeType: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+
+        // Generate unique file key
+        const timestamp = Date.now();
+        const randomSuffix = Math.random().toString(36).substring(7);
+        const extension = input.fileName.split('.').pop();
+        const fileKey = `dealer-${dealer.id}/vehicles/${timestamp}-${randomSuffix}.${extension}`;
+
+        // Convert base64 to buffer
+        const fileBuffer = Buffer.from(input.fileData, 'base64');
+
+        // Upload to S3
+        const { url } = await storagePut(fileKey, fileBuffer, input.mimeType);
+
+        return { url };
       }),
   }),
 

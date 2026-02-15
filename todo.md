@@ -1283,3 +1283,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Find Rebecca chatbot component in codebase
 - [x] Remove chatbot from all pages
 - [x] Clean up related imports and dependencies
+
+## Image Management Features
+- [x] Create ImageLightbox component with prev/next navigation
+- [x] Replace window.open with lightbox in DealerMarketplaceDetails photo gallery
+- [x] Add direct image upload to AddVehicle form with S3 storage
+- [x] Add direct image upload to EditVehicle form with S3 storage
+- [x] Add drag-and-drop reordering interface for images
+- [x] Add "Set as Main Image" functionality
+- [x] Test image upload, lightbox, and reordering features

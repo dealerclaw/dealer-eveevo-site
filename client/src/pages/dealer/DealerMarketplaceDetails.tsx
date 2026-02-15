@@ -10,11 +10,15 @@ import DealerLayout from "@/components/DealerLayout";
 import MakeOfferDialog from "@/components/MakeOfferDialog";
 import DeliveryCostCalculator from "@/components/DeliveryCostCalculator";
 import QuickBidPanel from "@/components/QuickBidPanel";
+import ImageLightbox from "@/components/ImageLightbox";
+import { useState } from "react";
 
 export default function DealerMarketplaceDetails() {
   const params = useParams();
   const carId = parseInt(params.id || "0");
   const [, navigate] = useLocation();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const { data: car, isLoading } = trpc.dealer.getMarketplaceVehicleDetails.useQuery({ carId });
 
@@ -68,6 +72,7 @@ export default function DealerMarketplaceDetails() {
   }
 
   return (
+    <>
     <DealerLayout>
       <div className="container max-w-6xl py-8">
         {/* Back button */}
@@ -114,7 +119,10 @@ export default function DealerMarketplaceDetails() {
                       <div
                         key={index}
                         className="aspect-video relative bg-muted rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => window.open(image, '_blank')}
+                        onClick={() => {
+                          setLightboxIndex(index);
+                          setLightboxOpen(true);
+                        }}
                       >
                         <img
                           src={image}
@@ -428,5 +436,16 @@ export default function DealerMarketplaceDetails() {
           </div>
         </div>
       </DealerLayout>
+      
+      {/* Image Lightbox */}
+      {car && car.images && car.images.length > 0 && (
+        <ImageLightbox
+          images={car.images}
+          initialIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+    </>
   );
 }
