@@ -16,7 +16,7 @@ export default function LiveAuction() {
   const [, setLocation] = useLocation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [bidAmount, setBidAmount] = useState("");
-  const [timeLeft, setTimeLeft] = useState(60); // 60 seconds per vehicle
+  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds per vehicle
 
   const { data: vehicles, isLoading, refetch } = trpc.auction.getActiveVehicles.useQuery();
   const { data: subscriptionStatus } = trpc.dealer.getSubscriptionStatus.useQuery(undefined, {
@@ -70,7 +70,7 @@ export default function LiveAuction() {
         if (prev <= 1) {
           // Move to next vehicle
           setCurrentIndex((current) => (current + 1) % vehicles.length);
-          return 60;
+          return 30;
         }
         return prev - 1;
       });
@@ -82,13 +82,13 @@ export default function LiveAuction() {
   const handlePrevious = () => {
     if (!vehicles) return;
     setCurrentIndex((current) => (current - 1 + vehicles.length) % vehicles.length);
-    setTimeLeft(60);
+    setTimeLeft(30);
   };
 
   const handleNext = () => {
     if (!vehicles) return;
     setCurrentIndex((current) => (current + 1) % vehicles.length);
-    setTimeLeft(60);
+    setTimeLeft(30);
   };
 
   const handlePlaceBid = () => {
@@ -222,12 +222,12 @@ export default function LiveAuction() {
           {/* Main Vehicle Display */}
           <div className="lg:col-span-2 space-y-6">
             <Card className="bg-black/40 border-white/10 backdrop-blur-sm overflow-hidden">
-              <div className="relative h-64 bg-black">
+              <div className="relative h-96 bg-gradient-to-br from-slate-800 to-slate-900">
                 {currentVehicle.mainImage ? (
                   <img
                     src={currentVehicle.mainImage}
                     alt={`${currentVehicle.make} ${currentVehicle.model}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-white/40">

@@ -1042,3 +1042,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add similar vehicles section showing 3-4 related vehicles
 - [x] Create backend endpoint to get similar vehicles by make/model/price
 - [x] Test all features work correctly
+
+## Fix Live Auction Display
+- [x] Change rotation time from 60 seconds to 30 seconds per car
+- [x] Fix image display to show full car without cropping (changed to object-contain with taller container)
+- [x] Test live auction displays correctly with proper timing
