@@ -458,6 +458,46 @@ export default function LiveAuction() {
                     )}
                   </Button>
 
+                  {/* Proxy Bidding Option */}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-white/20" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-black/40 px-2 text-white/60">or</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10"
+                    onClick={() => {
+                      const maxBid = prompt(`Set your maximum bid amount. The system will automatically bid for you up to this amount.\n\nCurrent bid: £${currentBid.toLocaleString()}`);
+                      if (maxBid) {
+                        const amount = parseFloat(maxBid);
+                        if (!isNaN(amount) && amount > currentBid) {
+                          trpc.auction.setProxyBid.useMutation({
+                            onSuccess: () => {
+                              toast.success(`Proxy bid set! System will auto-bid up to £${amount.toLocaleString()}`);
+                              refetch();
+                            },
+                            onError: (error: any) => {
+                              toast.error(error.message || 'Failed to set proxy bid');
+                            },
+                          }).mutate({
+                            carId: currentVehicle.id,
+                            maxBidAmount: amount,
+                          });
+                        } else {
+                          toast.error('Maximum bid must be higher than current bid');
+                        }
+                      }
+                    }}
+                  >
+                    🤖 Set Proxy Bid (Auto-Bid)
+                  </Button>
+
                   {currentVehicle.buyNowPrice && (
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">

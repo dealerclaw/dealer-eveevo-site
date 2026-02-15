@@ -1066,6 +1066,24 @@ export const appRouter = router({
         
         return await db.checkPriceDrops(dealer.id);
       }),
+
+    getAuctionAnalytics: protectedProcedure
+      .input(z.object({
+        timeRange: z.enum(['7d', '30d', '90d', 'all']).optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+        
+        const { getDealerAuctionAnalytics } = await import('./auctionAnalytics');
+        return await getDealerAuctionAnalytics(dealer.id, input?.timeRange || '30d');
+      }),
   }),
 
   // Admin router
@@ -1392,6 +1410,15 @@ export const appRouter = router({
           status: 'winning',
         });
 
+        // Process proxy bids (automatic counter-bidding)
+        try {
+          const { processProxyBids } = await import('./proxyBidding');
+          await processProxyBids(input.carId, input.bidAmount, dealer.id);
+        } catch (error) {
+          console.error('[Auction] Error processing proxy bids:', error);
+          // Don't throw - proxy bid failure shouldn't break manual bidding
+        }
+
         return { success: true, extended, newEndDate };
       }),
 
@@ -1507,6 +1534,90 @@ export const appRouter = router({
         }
 
         return { success: true, price: buyNowPrice };
+      }),
+
+    setProxyBid: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        maxBidAmount: z.number(),
+        incrementAmount: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Only dealers can set proxy bids');
+        }
+
+        if (dealer.subscriptionStatus !== 'active') {
+          throw new Error('Active subscription required to use proxy bidding');
+        }
+
+        // Get current highest bid to set initial current bid amount
+        const car = await db.getCarById(input.carId);
+        if (!car) {
+          throw new Error('Vehicle not found');
+        }
+
+        const currentBid = car.currentHighestBid ? parseFloat(car.currentHighestBid.toString()) : parseFloat(car.startingBid?.toString() || '0');
+        const increment = input.incrementAmount || 100;
+
+        if (input.maxBidAmount <= currentBid) {
+          throw new Error(`Maximum bid must be higher than current bid of £${currentBid.toLocaleString()}`);
+        }
+
+        const { setProxyBid } = await import('./proxyBidding');
+        await setProxyBid({
+          carId: input.carId,
+          dealerId: dealer.id,
+          userId: ctx.user.id,
+          maxBidAmount: input.maxBidAmount.toString(),
+          currentBidAmount: currentBid.toString(),
+          incrementAmount: increment.toString(),
+          isActive: true,
+        });
+
+        return { success: true };
+      }),
+
+    cancelProxyBid: protectedProcedure
+      .input(z.object({
+        proxyBidId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer not found');
+        }
+
+        const { cancelProxyBid } = await import('./proxyBidding');
+        await cancelProxyBid(input.proxyBidId, dealer.id);
+
+        return { success: true };
+      }),
+
+    getMyProxyBids: protectedProcedure
+      .query(async ({ ctx }) => {
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          return [];
+        }
+
+        const { getDealerProxyBids } = await import('./proxyBidding');
+        return await getDealerProxyBids(dealer.id);
+      }),
+
+    getProxyBid: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+      }))
+      .query(async ({ ctx, input }) => {
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          return null;
+        }
+
+        const { getProxyBid } = await import('./proxyBidding');
+        return await getProxyBid(input.carId, dealer.id);
       }),
   }),
 });

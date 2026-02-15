@@ -43,6 +43,11 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
       icon: Gavel,
     },
     {
+      href: "/dealer/auction-analytics",
+      label: "Auction Analytics",
+      icon: BarChart3,
+    },
+    {
       href: "/dealer/cart",
       label: "Shopping Cart",
       icon: ShoppingCart,

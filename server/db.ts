@@ -2145,9 +2145,17 @@ export async function recordAuctionOutcome(carId: number) {
         .where(eq(users.id, winningBid.userId))
         .limit(1) : null;
       
+      // Get seller dealer details
+      const sellerDealer = carData.dealerId ? await db
+        .select()
+        .from(dealers)
+        .where(eq(dealers.id, carData.dealerId))
+        .limit(1) : null;
+      
       if (winnerDealer && winnerDealer.length > 0) {
         const dealer = winnerDealer[0];
         const user = winnerUser && winnerUser.length > 0 ? winnerUser[0] : null;
+        const seller = sellerDealer && sellerDealer.length > 0 ? sellerDealer[0] : null;
         
         // Prepare notification content
         const vehicleInfo = `${carData.make} ${carData.model} ${carData.year}`;
@@ -2171,13 +2179,37 @@ Congratulations! You have won the auction for:
 Thank you for participating in EVEEVO auctions!
         `;
         
-        // Send notification to project owner (will be enhanced with email/SMS later)
+        // Send in-app notification to project owner
         await notifyOwner({
           title: notificationTitle,
           content: notificationContent,
         });
         
-        console.log(`[Auction] Winner notification sent for car ${carId} to dealer ${dealer.name}`);
+        // Send email notification if dealer has email
+        if (dealer.email) {
+          const { sendEmail, generateAuctionWinnerEmail } = await import('./email');
+          const emailHtml = generateAuctionWinnerEmail({
+            dealerName: dealer.name,
+            vehicleInfo,
+            vin: carData.vin || 'N/A',
+            winningBid: parseFloat(finalPrice!),
+            auctionEndDate: new Date(carData.auctionEndDate!),
+            sellerName: seller?.name || 'EVEEVO Seller',
+            sellerContact: seller?.email || seller?.phone || 'Contact via platform',
+          });
+          
+          const emailSent = await sendEmail({
+            to: dealer.email,
+            subject: `🏆 You Won: ${vehicleInfo} - £${parseFloat(finalPrice!).toLocaleString()}`,
+            html: emailHtml,
+          });
+          
+          if (emailSent) {
+            console.log(`[Auction] Email notification sent to ${dealer.email}`);
+          }
+        }
+        
+        console.log(`[Auction] Winner notifications sent for car ${carId} to dealer ${dealer.name}`);
       }
     } catch (error) {
       console.error(`[Auction] Failed to send winner notification for car ${carId}:`, error);

@@ -316,6 +316,29 @@ export type DealerBid = typeof dealerBids.$inferSelect;
 export type InsertDealerBid = typeof dealerBids.$inferInsert;
 
 /**
+ * Proxy Bids table - for automatic bidding up to a maximum amount
+ */
+export const proxyBids = mysqlTable("proxyBids", {
+  id: int("id").autoincrement().primaryKey(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  dealerId: int("dealerId").references(() => dealers.id).notNull(),
+  userId: int("userId").references(() => users.id).notNull(),
+  
+  // Proxy bid settings
+  maxBidAmount: decimal("maxBidAmount", { precision: 10, scale: 2 }).notNull(), // Maximum amount willing to bid
+  currentBidAmount: decimal("currentBidAmount", { precision: 10, scale: 2 }).notNull(), // Current actual bid placed
+  incrementAmount: decimal("incrementAmount", { precision: 10, scale: 2 }).default("100.00"), // Auto-increment amount
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProxyBid = typeof proxyBids.$inferSelect;
+export type InsertProxyBid = typeof proxyBids.$inferInsert;
+
+/**
  * Dealer Offers table - for dealer-to-dealer vehicle bidding
  */
 export const dealerOffers = mysqlTable("dealerOffers", {
