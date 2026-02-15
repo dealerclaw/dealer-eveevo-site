@@ -113,6 +113,9 @@ export const cars = mysqlTable("cars", {
   // Inspection reports (S3 URLs to PDF files)
   inspectionReports: json("inspectionReports").$type<Array<{url: string, name: string, type: string, uploadedAt: string}>>(),
   
+  // Condition notes for dealer inventory
+  conditionNotes: text("conditionNotes"),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

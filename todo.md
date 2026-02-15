@@ -1169,3 +1169,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Implement price drop notifications for shortlisted vehicles
 - [x] Add inspection report upload notifications
 - [x] Create shortlist sharing functionality with email links
+
+## Condition Notes Field
+- [ ] Add condition notes textarea field to EditVehicle form
+- [ ] Ensure conditionNotes field exists in cars schema
+- [ ] Display condition notes in vehicle detail pages
+
+## Condition Notes Field
+- [x] Add condition notes textarea field to EditVehicle form
+- [x] Ensure conditionNotes field exists in cars schema
+- [x] Display condition notes in vehicle detail pages

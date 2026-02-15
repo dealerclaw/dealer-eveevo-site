@@ -185,18 +185,21 @@ export default function DealerMarketplaceDetails() {
 
                 <Separator />
 
-                {/* Faults & condition notes */}
+                {/* Condition notes */}
                 <div>
                   <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4" />
                     Condition Notes
                   </h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• No major faults reported</li>
-                    <li>• Minor wear consistent with age and mileage</li>
-                    <li>• All safety systems operational</li>
-                    <li>• Battery health: 95%+</li>
-                  </ul>
+                  {car.conditionNotes ? (
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {car.conditionNotes}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">
+                      No condition notes provided by seller
+                    </p>
+                  )}
                 </div>
 
                 <Separator />

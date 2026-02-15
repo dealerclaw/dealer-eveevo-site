@@ -51,6 +51,7 @@ export default function EditVehicle() {
     startingBid: "",
     reservePrice: "",
     buyNowPrice: "",
+    conditionNotes: "",
   });
 
   const { data: vehicle, isLoading: vehicleLoading } = trpc.cars.getById.useQuery({ id: vehicleId });
@@ -96,6 +97,7 @@ export default function EditVehicle() {
         startingBid: vehicle.startingBid?.toString() || "",
         reservePrice: vehicle.reservePrice?.toString() || "",
         buyNowPrice: vehicle.buyNowPrice?.toString() || "",
+        conditionNotes: vehicle.conditionNotes || "",
       });
     }
   }, [vehicle]);
@@ -221,6 +223,7 @@ export default function EditVehicle() {
     if (formData.color) submitData.color = formData.color;
     if (formData.chargingTime) submitData.chargingTime = formData.chargingTime;
     if (formData.acceleration) submitData.acceleration = formData.acceleration;
+    if (formData.conditionNotes) submitData.conditionNotes = formData.conditionNotes;
 
     // Parse features
     if (formData.features) {
@@ -617,6 +620,20 @@ export default function EditVehicle() {
                   placeholder="Autopilot, Premium Audio, Glass Roof, Heated Seats"
                   rows={2}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="conditionNotes">Condition Notes</Label>
+                <Textarea
+                  id="conditionNotes"
+                  value={formData.conditionNotes}
+                  onChange={(e) => handleInputChange("conditionNotes", e.target.value)}
+                  placeholder="Document any cosmetic issues, mechanical notes, service history details, or other condition-related information..."
+                  rows={4}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Detailed condition notes help buyers make informed decisions
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

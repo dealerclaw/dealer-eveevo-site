@@ -476,6 +476,7 @@ export const appRouter = router({
         vin: z.string().optional(),
         registrationNumber: z.string().optional(),
         isAvailable: z.boolean().optional(),
+        conditionNotes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
