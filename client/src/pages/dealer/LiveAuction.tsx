@@ -186,14 +186,14 @@ export default function LiveAuction() {
   }, [searchQuery, selectedMake, selectedCondition, maxPrice, maxMileage]);
 
   const handlePrevious = () => {
-    if (!vehicles) return;
-    setCurrentIndex((current) => (current - 1 + vehicles.length) % vehicles.length);
+    if (!filteredVehicles || filteredVehicles.length === 0) return;
+    setCurrentIndex((current) => (current - 1 + filteredVehicles.length) % filteredVehicles.length);
     setTimeLeft(30);
   };
 
   const handleNext = () => {
-    if (!vehicles) return;
-    setCurrentIndex((current) => (current + 1) % vehicles.length);
+    if (!filteredVehicles || filteredVehicles.length === 0) return;
+    setCurrentIndex((current) => (current + 1) % filteredVehicles.length);
     setTimeLeft(30);
   };
 

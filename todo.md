@@ -1132,3 +1132,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add payment status tracking with visual indicators (paid/pending commitment fees)
 - [x] Implement inspection scheduling calendar system
 - [x] Add CSV/PDF export for win history and accounting
+
+## Auction Page Filter Bug
+- [x] Fix filter functionality not working on auction page (fixed navigation buttons to use filteredVehicles)
+- [x] Ensure Apply Filters button properly applies selected filters
