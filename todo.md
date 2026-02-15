@@ -1267,3 +1267,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add search input field to dealer admin page
 - [x] Implement client-side filtering by name, email, company
 - [x] Test search functionality with multiple dealers
+
+## Fix Buy Now Price Display on Auction Page
+- [x] Show actual Buy Now price on vehicle image overlay (not "Not Available")
+- [x] Show actual Buy Now price on Buy Now button
+- [x] Verify buyNowPrice is being loaded from database
+- [x] Test Buy Now price display with auction vehicles

@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, make, model, year, CAST(buyNowPrice AS CHAR) as buyNowPrice_text, CAST(reservePrice AS CHAR) as reservePrice_text, CAST(price AS CHAR) as price_text FROM cars WHERE isAuction = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, CAST(buyNowPrice AS CHAR) as buyNowPrice_text, CAST(reservePrice AS CHAR) as reservePrice_text, CAST(price AS CHAR) as price_text FROM cars WHERE isAuction = 1;",
+  "rows": [
+    {
+      "id": "150009",
+      "make": "VOLKSWAGEN",
+      "model": "ID.4",
+      "year": "2023",
+      "buyNowPrice_text": "NULL",
+      "reservePrice_text": "27000.00",
+      "price_text": "25590.00"
+    },
+    {
+      "id": "150051",
+      "make": "CUPRA",
+      "model": "Born",
+      "year": "2024",
+      "buyNowPrice_text": "NULL",
+      "reservePrice_text": "26000.00",
+      "price_text": "31040.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tbuyNowPrice_text\treservePrice_text\tprice_text\n150009\tVOLKSWAGEN\tID.4\t2023\tNULL\t27000.00\t25590.00\n150051\tCUPRA\tBorn\t2024\tNULL\t26000.00\t31040.00\n",
+  "stderr": "",
+  "execution_time_ms": 469
+}

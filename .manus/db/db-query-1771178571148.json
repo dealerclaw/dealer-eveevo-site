@@ -1,0 +1,38 @@
+{
+  "query": "SELECT c.id, c.make, c.model, CAST(c.buyNowPrice AS CHAR) as buyNow, CAST(c.reservePrice AS CHAR) as reserve FROM cars c WHERE c.isAuction = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT c.id, c.make, c.model, CAST(c.buyNowPrice AS CHAR) as buyNow, CAST(c.reservePrice AS CHAR) as reserve FROM cars c WHERE c.isAuction = 1;",
+  "rows": [
+    {
+      "id": "150009",
+      "make": "VOLKSWAGEN",
+      "model": "ID.4",
+      "buyNow": "28000.00",
+      "reserve": "27000.00"
+    },
+    {
+      "id": "150051",
+      "make": "CUPRA",
+      "model": "Born",
+      "buyNow": "27000.00",
+      "reserve": "26000.00"
+    },
+    {
+      "id": "150063",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "buyNow": "31998.00",
+      "reserve": "30000.00"
+    },
+    {
+      "id": "151007",
+      "make": "TESLA",
+      "model": "Model Y",
+      "buyNow": "26000.00",
+      "reserve": "25000.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tbuyNow\treserve\n150009\tVOLKSWAGEN\tID.4\t28000.00\t27000.00\n150051\tCUPRA\tBorn\t27000.00\t26000.00\n150063\tSKODA\tEnyaq\t31998.00\t30000.00\n151007\tTESLA\tModel Y\t26000.00\t25000.00\n",
+  "stderr": "",
+  "execution_time_ms": 427
+}

@@ -1,0 +1,30 @@
+{
+  "query": "SELECT id, make, model, year, isAuction, buyNowPrice, reservePrice, price FROM cars WHERE isAuction = 1 LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, isAuction, buyNowPrice, reservePrice, price FROM cars WHERE isAuction = 1 LIMIT 5;",
+  "rows": [
+    {
+      "id": "150009",
+      "make": "VOLKSWAGEN",
+      "model": "ID.4",
+      "year": "2023",
+      "isAuction": "1",
+      "buyNowPrice": "NULL",
+      "reservePrice": "27000.00",
+      "price": "25590.00"
+    },
+    {
+      "id": "150051",
+      "make": "CUPRA",
+      "model": "Born",
+      "year": "2024",
+      "isAuction": "1",
+      "buyNowPrice": "NULL",
+      "reservePrice": "26000.00",
+      "price": "31040.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tisAuction\tbuyNowPrice\treservePrice\tprice\n150009\tVOLKSWAGEN\tID.4\t2023\t1\tNULL\t27000.00\t25590.00\n150051\tCUPRA\tBorn\t2024\t1\tNULL\t26000.00\t31040.00\n",
+  "stderr": "",
+  "execution_time_ms": 459
+}

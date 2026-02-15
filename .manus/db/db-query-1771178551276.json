@@ -1,0 +1,46 @@
+{
+  "query": "SELECT c.id, c.make, c.model, c.year, d.name as dealer_name, c.buyNowPrice, c.reservePrice FROM cars c LEFT JOIN dealers d ON c.dealerId = d.id WHERE c.isAuction = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT c.id, c.make, c.model, c.year, d.name as dealer_name, c.buyNowPrice, c.reservePrice FROM cars c LEFT JOIN dealers d ON c.dealerId = d.id WHERE c.isAuction = 1;",
+  "rows": [
+    {
+      "id": "151007",
+      "make": "TESLA",
+      "model": "Model Y",
+      "year": "2022",
+      "dealer_name": "Arnold Clark",
+      "buyNowPrice": "NULL",
+      "reservePrice": "25000.00"
+    },
+    {
+      "id": "150063",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024",
+      "dealer_name": "Arnold Clark",
+      "buyNowPrice": "31998.00",
+      "reservePrice": "30000.00"
+    },
+    {
+      "id": "150051",
+      "make": "CUPRA",
+      "model": "Born",
+      "year": "2024",
+      "dealer_name": "Vindis Group",
+      "buyNowPrice": "NULL",
+      "reservePrice": "26000.00"
+    },
+    {
+      "id": "150009",
+      "make": "VOLKSWAGEN",
+      "model": "ID.4",
+      "year": "2023",
+      "dealer_name": "Vindis Group",
+      "buyNowPrice": "NULL",
+      "reservePrice": "27000.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tdealer_name\tbuyNowPrice\treservePrice\n151007\tTESLA\tModel Y\t2022\tArnold Clark\tNULL\t25000.00\n150063\tSKODA\tEnyaq\t2024\tArnold Clark\t31998.00\t30000.00\n150051\tCUPRA\tBorn\t2024\tVindis Group\tNULL\t26000.00\n150009\tVOLKSWAGEN\tID.4\t2023\tVindis Group\tNULL\t27000.00\n",
+  "stderr": "",
+  "execution_time_ms": 434
+}
