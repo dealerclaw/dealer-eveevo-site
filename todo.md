@@ -1102,3 +1102,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Change payment from full amount to £99 commitment fee
 - [x] Update payment description to clarify it's a non-refundable commitment fee
 - [x] Update My Wins UI to show commitment fee vs remaining balance
+
+## Live Auction Page Improvements
+- [x] Add comprehensive filter controls (make, model, price, mileage, condition)
+- [x] Add search functionality for auction vehicles
+- [x] Implement 30-second auto-rotation carousel feature
+- [x] Display dealer information in auction listings (name, location, verification badge)

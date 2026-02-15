@@ -1096,6 +1096,8 @@ export async function getActiveAuctionVehicles() {
       description: cars.description,
       chargingTime: cars.chargingTime,
       dealerName: dealers.name,
+      dealerCity: dealers.city,
+      dealerVerified: dealers.isVerified,
     })
     .from(cars)
     .leftJoin(dealers, eq(cars.dealerId, dealers.id))

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +18,13 @@ export default function LiveAuction() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [bidAmount, setBidAmount] = useState("");
   const [timeLeft, setTimeLeft] = useState(30); // 30 seconds per vehicle
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMake, setSelectedMake] = useState("");
+  const [selectedCondition, setSelectedCondition] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [maxMileage, setMaxMileage] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [autoRotate, setAutoRotate] = useState(true);
 
   const { data: vehicles, isLoading, refetch } = trpc.auction.getActiveVehicles.useQuery();
   const { data: subscriptionStatus } = trpc.dealer.getSubscriptionStatus.useQuery(undefined, {
@@ -68,15 +75,59 @@ export default function LiveAuction() {
     },
   });
 
-  // Auto-rotate carousel every 60 seconds
+  // Filter vehicles based on search and filter criteria
+  const filteredVehicles = useMemo(() => {
+    if (!vehicles) return [];
+    
+    return vehicles.filter(vehicle => {
+      // Search query filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch = 
+          vehicle.make?.toLowerCase().includes(query) ||
+          vehicle.model?.toLowerCase().includes(query) ||
+          vehicle.year?.toString().includes(query) ||
+          vehicle.dealerName?.toLowerCase().includes(query);
+        if (!matchesSearch) return false;
+      }
+      
+      // Make filter
+      if (selectedMake && vehicle.make !== selectedMake) return false;
+      
+      // Condition filter
+      if (selectedCondition && vehicle.condition !== selectedCondition) return false;
+      
+      // Price filter
+      if (maxPrice) {
+        const currentBid = vehicle.currentHighestBid 
+          ? parseFloat(vehicle.currentHighestBid.toString())
+          : parseFloat(vehicle.startingBid?.toString() || '0');
+        if (currentBid > parseFloat(maxPrice)) return false;
+      }
+      
+      // Mileage filter
+      if (maxMileage && vehicle.mileage && vehicle.mileage > parseInt(maxMileage)) return false;
+      
+      return true;
+    });
+  }, [vehicles, searchQuery, selectedMake, selectedCondition, maxPrice, maxMileage]);
+
+  // Get unique makes for filter dropdown
+  const uniqueMakes = useMemo(() => {
+    if (!vehicles) return [];
+    const makes = vehicles.map(v => v.make).filter(Boolean);
+    return Array.from(new Set(makes)).sort();
+  }, [vehicles]);
+
+  // Auto-rotate carousel every 30 seconds
   useEffect(() => {
-    if (!vehicles || vehicles.length === 0) return;
+    if (!filteredVehicles || filteredVehicles.length === 0 || !autoRotate) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           // Move to next vehicle
-          setCurrentIndex((current) => (current + 1) % vehicles.length);
+          setCurrentIndex((current) => (current + 1) % filteredVehicles.length);
           return 30;
         }
         return prev - 1;
@@ -84,7 +135,13 @@ export default function LiveAuction() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [vehicles]);
+  }, [filteredVehicles, autoRotate]);
+
+  // Reset index when filters change
+  useEffect(() => {
+    setCurrentIndex(0);
+    setTimeLeft(30);
+  }, [searchQuery, selectedMake, selectedCondition, maxPrice, maxMileage]);
 
   const handlePrevious = () => {
     if (!vehicles) return;
@@ -112,7 +169,7 @@ export default function LiveAuction() {
       return;
     }
 
-    const currentVehicle = vehicles?.[currentIndex];
+    const currentVehicle = filteredVehicles?.[currentIndex];
     if (!currentVehicle) return;
 
     const amount = parseFloat(bidAmount);
@@ -134,7 +191,7 @@ export default function LiveAuction() {
       return;
     }
 
-    const currentVehicle = vehicles?.[currentIndex];
+    const currentVehicle = filteredVehicles?.[currentIndex];
     if (!currentVehicle) return;
 
     if (!currentVehicle.buyNowPrice) {
@@ -216,10 +273,112 @@ export default function LiveAuction() {
               <p className="text-sm text-white/60">Dealer-to-Dealer Wholesale Marketplace</p>
             </div>
           </div>
-          <Badge variant="secondary" className="text-lg px-4 py-2">
-            <Clock className="w-4 h-4 mr-2" />
-            Next in {timeLeft}s
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAutoRotate(!autoRotate)}
+              className="text-white border-white/20 hover:bg-white/10"
+            >
+              {autoRotate ? 'Pause' : 'Play'} Auto-Rotate
+            </Button>
+            <Badge variant="secondary" className="text-lg px-4 py-2">
+              <Clock className="w-4 h-4 mr-2" />
+              {autoRotate ? `Next in ${timeLeft}s` : 'Paused'}
+            </Badge>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filter Bar */}
+      <div className="border-b border-white/10 bg-black/10 backdrop-blur-sm">
+        <div className="container py-4 space-y-4">
+          <div className="flex gap-3">
+            <Input
+              placeholder="Search by make, model, year, or dealer..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+            />
+            <Button
+              variant="outline"
+              onClick={() => setShowFilters(!showFilters)}
+              className="text-white border-white/20 hover:bg-white/10"
+            >
+              {showFilters ? 'Hide' : 'Show'} Filters
+            </Button>
+          </div>
+
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div>
+                <Label className="text-white/80 text-sm">Make</Label>
+                <select
+                  value={selectedMake}
+                  onChange={(e) => setSelectedMake(e.target.value)}
+                  className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
+                >
+                  <option value="">All Makes</option>
+                  {uniqueMakes.map(make => (
+                    <option key={make} value={make}>{make}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label className="text-white/80 text-sm">Condition</Label>
+                <select
+                  value={selectedCondition}
+                  onChange={(e) => setSelectedCondition(e.target.value)}
+                  className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
+                >
+                  <option value="">All Conditions</option>
+                  <option value="New">New</option>
+                  <option value="Used">Used</option>
+                  <option value="Certified Pre-Owned">Certified Pre-Owned</option>
+                </select>
+              </div>
+              <div>
+                <Label className="text-white/80 text-sm">Max Price (£)</Label>
+                <Input
+                  type="number"
+                  placeholder="Any"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                />
+              </div>
+              <div>
+                <Label className="text-white/80 text-sm">Max Mileage</Label>
+                <Input
+                  type="number"
+                  placeholder="Any"
+                  value={maxMileage}
+                  onChange={(e) => setMaxMileage(e.target.value)}
+                  className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between text-sm text-white/60">
+            <span>Showing {currentIndex + 1} of {filteredVehicles.length} vehicles</span>
+            {(searchQuery || selectedMake || selectedCondition || maxPrice || maxMileage) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedMake("");
+                  setSelectedCondition("");
+                  setMaxPrice("");
+                  setMaxMileage("");
+                }}
+                className="text-white/60 hover:text-white hover:bg-white/10"
+              >
+                Clear all filters
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -279,6 +438,38 @@ export default function LiveAuction() {
                       <span className="text-white/60">{currentVehicle.mileage.toLocaleString()} miles</span>
                     )}
                   </div>
+
+                  {/* Dealer Information */}
+                  {currentVehicle.dealerName && (
+                    <div className="mt-3 p-3 bg-white/5 border border-white/10 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-white/50 mb-1">Sold by</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-lg font-semibold text-white">{currentVehicle.dealerName}</p>
+                            {currentVehicle.dealerVerified && (
+                              <Badge variant="default" className="bg-green-600 text-xs">
+                                Verified
+                              </Badge>
+                            )}
+                          </div>
+                          {currentVehicle.dealerCity && (
+                            <p className="text-sm text-white/60 mt-1">{currentVehicle.dealerCity}</p>
+                          )}
+                        </div>
+                        {currentVehicle.dealerId && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setLocation(`/dealers/${currentVehicle.dealerId}`)}
+                            className="text-white border-white/20 hover:bg-white/10"
+                          >
+                            View Profile
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 py-4 border-y border-white/10">
