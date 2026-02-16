@@ -1570,3 +1570,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add admin trigger button to run health check manually
 - [ ] Add email notification for blue-zone vehicles (future enhancement)
 - [ ] Create scheduled job to run daily health checks (future enhancement)
+
+
+## Promote User to Admin
+
+- [x] Update anthony.m.perry@gmaio.com role to 'admin' in users table
+- [x] User promoted successfully
