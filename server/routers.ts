@@ -1721,6 +1721,83 @@ export const appRouter = router({
 
         return await db.getEvFaultAverageRating(input.faultId);
       }),
+
+    pushToDealerNetwork: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        mode: z.enum(['marketplace', 'auction']),
+        minimumPrice: z.number().optional(), // For marketplace
+        reservePrice: z.number().optional(), // For auction
+        buyNowPrice: z.number().optional(), // For auction
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');  
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        // Check subscription status
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+          throw new Error('Active subscription required to access dealer network');
+        }
+
+        // Get the car and verify ownership
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new Error('Database connection failed');
+
+        const { cars } = await import('../drizzle/schema');
+        const { eq } = await import('drizzle-orm');
+
+        const car = await dbInstance
+          .select()
+          .from(cars)
+          .where(eq(cars.id, input.carId))
+          .limit(1);
+
+        if (!car[0]) {
+          throw new Error('Car not found');
+        }
+
+        if (car[0].dealerId !== dealer.id) {
+          throw new Error('Unauthorized: You can only push your own vehicles');
+        }
+
+        // Update car to dealer network
+        const updateData: any = {
+          marketplace: 'dealer_only' as const,
+          updatedAt: new Date(),
+        };
+
+        if (input.mode === 'auction') {
+          // Set up 48-hour auction
+          const now = new Date();
+          const endDate = new Date(now.getTime() + 48 * 60 * 60 * 1000); // 48 hours
+
+          updateData.isAuction = true;
+          updateData.auctionStartDate = now;
+          updateData.auctionEndDate = endDate;
+          updateData.reservePrice = input.reservePrice?.toString() || car[0].price;
+          updateData.buyNowPrice = input.buyNowPrice?.toString() || car[0].price;
+          updateData.startingBid = (Number(car[0].price) * 0.7).toFixed(2); // Start at 70% of price
+        } else {
+          // Marketplace mode
+          updateData.isAuction = false;
+          if (input.minimumPrice) {
+            updateData.price = input.minimumPrice.toString();
+          }
+        }
+
+        await dbInstance
+          .update(cars)
+          .set(updateData)
+          .where(eq(cars.id, input.carId));
+
+        return { success: true, mode: input.mode };
+      }),
   }),
 
   // Admin router

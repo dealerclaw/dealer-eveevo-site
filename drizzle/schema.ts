@@ -117,6 +117,13 @@ export const cars = mysqlTable("cars", {
   // Condition notes for dealer inventory
   conditionNotes: text("conditionNotes"),
   
+  // Inventory health tracking
+  inventoryHealthRating: mysqlEnum("inventoryHealthRating", ["green", "amber", "blue"]).default("green"),
+  originalPrice: decimal("originalPrice", { precision: 10, scale: 2 }), // Track original listing price
+  priceChangePercentage: decimal("priceChangePercentage", { precision: 5, scale: 2 }), // % price change
+  daysOnMarket: int("daysOnMarket").default(0), // Calculated field
+  lastHealthCheck: timestamp("lastHealthCheck"),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

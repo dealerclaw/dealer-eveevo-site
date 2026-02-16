@@ -176,6 +176,13 @@
       "when": 1771195444833,
       "tag": "0024_brown_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1771254575285,
+      "tag": "0025_new_nehzno",
+      "breakpoints": true
     }
   ]
 }

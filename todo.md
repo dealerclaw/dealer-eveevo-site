@@ -1472,3 +1472,72 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix dealer settings 404 error
 - [x] Created DealerSettings component
 - [x] Added /dealer/settings route to App.tsx
+
+
+## Inventory Health Rating System
+
+- [x] Add inventoryHealthRating enum to cars table (green, amber, blue)
+- [x] Add originalPrice field to track price changes
+- [x] Add priceChangePercentage calculated field
+- [x] Add daysOnMarket field
+- [x] Add lastHealthCheck timestamp
+- [x] Database migration completed
+- [ ] Create calculateInventoryHealth function in db.ts
+- [ ] Add tRPC procedure to get inventory health stats
+- [ ] Add tRPC procedure to update inventory health ratings (cron job)
+- [ ] Build UI badge component for health ratings
+- [ ] Add "Move to Marketplace" prompt for blue-rated vehicles
+- [ ] Add "Move to Auction" prompt for blue-rated vehicles
+- [ ] Display health ratings on My Inventory page
+- [ ] Add filter by health rating on My Inventory page
+- [ ] Test rating calculation logic
+
+
+## Push to Dealer Network Feature
+
+- [x] Create pushToDealerNetwork tRPC procedure
+- [x] Add marketplace type parameter (dealer_only)
+- [x] Add auction mode parameter (true/false)
+- [x] Set 48-hour auction duration automatically
+- [x] Validate minimum price requirement
+- [ ] Build PushToDealerNetworkDialog component
+- [ ] Add quick marketplace/auction selection
+- [ ] Pre-fill minimum price (80% of current price)
+- [ ] Add "Push to Dealer Network" button to My Inventory
+- [ ] Show visual indicator for vehicles already on dealer network
+- [ ] Test one-click push flow
+
+
+## OneAuto Data Import
+
+- [ ] Analyze OneAuto export spreadsheet structure
+- [ ] Extract days on market column
+- [ ] Extract price drop/change data
+- [ ] Extract VIN or registration for matching
+- [ ] Create import script to match vehicles by VIN/registration/make-model-year
+- [ ] Update daysOnMarket field in cars table
+- [ ] Update originalPrice and priceChangePercentage fields
+- [ ] Calculate inventory health rating based on real data
+- [ ] Test data matching accuracy
+
+## Admin Inventory Health Dashboard
+
+- [ ] Create AdminInventoryHealth page component
+- [ ] Add tRPC procedure to get all inventory with health ratings
+- [ ] Build health rating filter (green/amber/blue)
+- [ ] Build dealer filter dropdown
+- [ ] Build days on market sort
+- [ ] Add "Contact Dealer" button with email template
+- [ ] Add health distribution chart
+- [ ] Add route /admin/inventory-health
+
+## Dealer Inventory Health Dashboard
+
+- [ ] Create DealerInventoryHealth page component
+- [ ] Add tRPC procedure to get dealer's own inventory with health ratings
+- [ ] Build health rating badges (green/amber/blue)
+- [ ] Add "Push to Dealer Network" button on amber/blue vehicles
+- [ ] Add health trend chart
+- [ ] Add prompts for vehicles needing action
+- [ ] Add route /dealer/inventory-health
+- [ ] Add navigation link to dealer sidebar
