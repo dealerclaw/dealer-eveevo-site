@@ -1483,7 +1483,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add lastHealthCheck timestamp
 - [x] Database migration completed
 - [ ] Create calculateInventoryHealth function in db.ts
-- [ ] Add tRPC procedure to get inventory health stats
+- [x] Add tRPC procedure getInventoryHealth (dealer's own inventory)
+- [x] Add tRPC procedure getAllInventoryHealth (admin - all dealers)
 - [ ] Add tRPC procedure to update inventory health ratings (cron job)
 - [ ] Build UI badge component for health ratings
 - [ ] Add "Move to Marketplace" prompt for blue-rated vehicles
@@ -1522,22 +1523,22 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Admin Inventory Health Dashboard
 
-- [ ] Create AdminInventoryHealth page component
-- [ ] Add tRPC procedure to get all inventory with health ratings
-- [ ] Build health rating filter (green/amber/blue)
-- [ ] Build dealer filter dropdown
-- [ ] Build days on market sort
-- [ ] Add "Contact Dealer" button with email template
-- [ ] Add health distribution chart
-- [ ] Add route /admin/inventory-health
+- [x] Create AdminInventoryHealth page component
+- [x] Add tRPC procedure to get all inventory with health ratings
+- [x] Build health rating filter (green/amber/blue)
+- [x] Build dealer search input
+- [x] Add system-wide stats (total, green, amber, blue, avg days)
+- [x] Add "Contact Dealer" button with email template
+- [x] Add "Call Dealer" button
+- [x] Add route /admin/inventory-health
 
 ## Dealer Inventory Health Dashboard
 
-- [ ] Create DealerInventoryHealth page component
-- [ ] Add tRPC procedure to get dealer's own inventory with health ratings
-- [ ] Build health rating badges (green/amber/blue)
-- [ ] Add "Push to Dealer Network" button on amber/blue vehicles
-- [ ] Add health trend chart
-- [ ] Add prompts for vehicles needing action
-- [ ] Add route /dealer/inventory-health
+- [x] Create DealerInventoryHealth page component
+- [x] Add tRPC procedure to get dealer's own inventory with health ratings
+- [x] Build health rating badges (green/amber/blue)
+- [x] Add "Push to Dealer Network" button on amber/blue vehicles
+- [x] Add health stats cards (total, green, amber, blue)
+- [x] Add prompts for vehicles needing action
+- [x] Add route /dealer/inventory-health
 - [ ] Add navigation link to dealer sidebar

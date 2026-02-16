@@ -1798,6 +1798,112 @@ export const appRouter = router({
 
         return { success: true, mode: input.mode };
       }),
+
+    getInventoryHealth: protectedProcedure
+      .input(z.object({
+        healthFilter: z.enum(['all', 'green', 'amber', 'blue']).optional(),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+
+        const dealer = await db.getDealerByUserId(ctx.user.id);
+        if (!dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new Error('Database connection failed');
+
+        const { cars } = await import('../drizzle/schema');
+        const { eq, and, sql } = await import('drizzle-orm');
+
+        // Calculate days on market and health rating
+        const conditions = [eq(cars.dealerId, dealer.id)];
+        
+        if (input?.healthFilter && input.healthFilter !== 'all') {
+          conditions.push(eq(cars.inventoryHealthRating, input.healthFilter));
+        }
+
+        const results = await dbInstance
+          .select({
+            id: cars.id,
+            make: cars.make,
+            model: cars.model,
+            year: cars.year,
+            price: cars.price,
+            originalPrice: cars.originalPrice,
+            priceChangePercentage: cars.priceChangePercentage,
+            daysOnMarket: sql<number>`DATEDIFF(NOW(), ${cars.createdAt})`,
+            inventoryHealthRating: cars.inventoryHealthRating,
+            mainImage: cars.mainImage,
+            marketplace: cars.marketplace,
+            isAuction: cars.isAuction,
+            createdAt: cars.createdAt,
+          })
+          .from(cars)
+          .where(and(...conditions));
+
+        return results;
+      }),
+
+    getAllInventoryHealth: protectedProcedure
+      .input(z.object({
+        healthFilter: z.enum(['all', 'green', 'amber', 'blue']).optional(),
+        dealerId: z.number().optional(),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new Error('Database connection failed');
+
+        const { cars, dealers } = await import('../drizzle/schema');
+        const { eq, and, sql } = await import('drizzle-orm');
+
+        // Get all inventory with dealer info
+        let query = dbInstance
+          .select({
+            id: cars.id,
+            make: cars.make,
+            model: cars.model,
+            year: cars.year,
+            price: cars.price,
+            originalPrice: cars.originalPrice,
+            priceChangePercentage: cars.priceChangePercentage,
+            daysOnMarket: sql<number>`DATEDIFF(NOW(), ${cars.createdAt})`,
+            inventoryHealthRating: cars.inventoryHealthRating,
+            mainImage: cars.mainImage,
+            marketplace: cars.marketplace,
+            isAuction: cars.isAuction,
+            createdAt: cars.createdAt,
+            dealerId: cars.dealerId,
+            dealerName: dealers.name,
+            dealerEmail: dealers.email,
+            dealerPhone: dealers.phone,
+          })
+          .from(cars)
+          .leftJoin(dealers, eq(cars.dealerId, dealers.id));
+
+        const conditions = [];
+        if (input?.healthFilter && input.healthFilter !== 'all') {
+          conditions.push(eq(cars.inventoryHealthRating, input.healthFilter));
+        }
+        if (input?.dealerId) {
+          conditions.push(eq(cars.dealerId, input.dealerId));
+        }
+
+        if (conditions.length > 0) {
+          query = query.where(and(...conditions)) as any;
+        }
+
+        const results = await query;
+
+        return results;
+      }),
   }),
 
   // Admin router

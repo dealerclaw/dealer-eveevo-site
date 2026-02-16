@@ -23,6 +23,7 @@ import DealerCalendar from "./pages/dealer/DealerCalendar";
 import DealerAuthGuard from "./components/DealerAuthGuard";
 import AdminApplications from "./pages/AdminApplications";
 import AdminDealers from "./pages/admin/AdminDealers";
+import AdminInventoryHealth from "./pages/admin/AdminInventoryHealth";
 import BecomeADealer from "./pages/BecomeADealer";
 import MyReservations from "./pages/MyReservations";
 import FinanceCheck from "./pages/FinanceCheck";
@@ -43,6 +44,7 @@ import Cart from "./pages/dealer/Cart";
 import Watchlist from "./pages/dealer/Watchlist";
 import EvFaultsBrowser from "./pages/EvFaultsBrowser";
 import DealerSettings from "./pages/dealer/DealerSettings";
+import DealerInventoryHealth from "./pages/dealer/DealerInventoryHealth";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -53,6 +55,7 @@ function Router() {
       <Route path={"/admin/sync"} component={AdminSync} />
       <Route path={'/admin/applications'} component={AdminApplications} />
       <Route path={'/admin/dealers'} component={AdminDealers} />
+      <Route path={'/admin/inventory-health'} component={AdminInventoryHealth} />
       <Route path={'/cars/:id'} component={CarDetail} />
       <Route path="/lifestyle-search" component={LifestyleSearch} />
       <Route path="/compare" component={Compare} />
@@ -88,9 +91,10 @@ function Router() {
         </DealerAuthGuard>
       </Route>
       <Route path="/dealer/settings">
-        <DealerAuthGuard>
-          <DealerSettings />
-        </DealerAuthGuard>
+        <DealerAuthGuard><DealerSettings /></DealerAuthGuard>
+      </Route>
+      <Route path="/dealer/inventory-health">
+        <DealerAuthGuard><DealerInventoryHealth /></DealerAuthGuard>
       </Route>
       <Route path="/dealer/inventory">
         <DealerAuthGuard>
