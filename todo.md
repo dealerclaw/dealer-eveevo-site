@@ -1542,3 +1542,31 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add prompts for vehicles needing action
 - [x] Add route /dealer/inventory-health
 - [ ] Add navigation link to dealer sidebar
+
+
+## Navigation Links
+
+- [x] Add "Inventory Health" link to dealer sidebar
+- [x] Add "Inventory Health" link to admin menu
+- [x] Create AdminLayout component with sidebar navigation
+
+## OneAuto Data Import Tool
+
+- [x] Create AdminOneAutoImport page component
+- [x] Add file upload input for Excel/CSV
+- [x] Create importOneAutoData tRPC procedure
+- [x] Parse spreadsheet and extract: VIN, registration, days on market, price changes
+- [x] Match vehicles by VIN or registration
+- [x] Update daysOnMarket, originalPrice, priceChangePercentage fields
+- [x] Calculate and update inventoryHealthRating
+- [x] Show import results (matched, unmatched, updated)
+- [x] Add route /admin/oneauto-import
+- [x] Install xlsx package for Excel parsing
+
+## Automated Health Checks
+
+- [x] Create recalculateAllInventoryHealth tRPC procedure
+- [x] Calculate health ratings based on days on market and price changes
+- [x] Add admin trigger button to run health check manually
+- [ ] Add email notification for blue-zone vehicles (future enhancement)
+- [ ] Create scheduled job to run daily health checks (future enhancement)

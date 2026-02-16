@@ -1904,6 +1904,177 @@ export const appRouter = router({
 
         return results;
       }),
+
+    importOneAutoData: protectedProcedure
+      .input(z.object({
+        fileData: z.string(), // base64 encoded file
+        fileName: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer or Admin access required');
+        }
+
+        const dealer = ctx.user.role === 'dealer' ? await db.getDealerByUserId(ctx.user.id) : null;
+        if (ctx.user.role === 'dealer' && !dealer) {
+          throw new Error('Dealer profile not found');
+        }
+
+        // Decode base64 file data
+        const buffer = Buffer.from(input.fileData, 'base64');
+        
+        // Parse Excel/CSV file
+        const XLSX = await import('xlsx');
+        const workbook = XLSX.read(buffer, { type: 'buffer' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(worksheet);
+
+        let matched = 0;
+        let updated = 0;
+        let unmatched = 0;
+        const errors: string[] = [];
+
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new Error('Database connection failed');
+
+        const { cars } = await import('../drizzle/schema');
+        const { eq, or } = await import('drizzle-orm');
+
+        // Process each row
+        for (const row of data as any[]) {
+          try {
+            // Try to find matching fields in the row
+            const vin = row['VIN'] || row['vin'] || row['Vin'];
+            const reg = row['Registration'] || row['Reg'] || row['reg'] || row['registration'];
+            const daysOnMarket = parseInt(row['Days on Market'] || row['DaysOnMarket'] || row['days_on_market'] || '0');
+            const originalPrice = parseFloat(row['Original Price'] || row['OriginalPrice'] || row['original_price'] || '0');
+            const currentPrice = parseFloat(row['Current Price'] || row['CurrentPrice'] || row['current_price'] || row['Price'] || row['price'] || '0');
+
+            if (!vin && !reg) {
+              unmatched++;
+              continue;
+            }
+
+            // Find car by VIN or registration
+            const conditions = [];
+            if (vin) conditions.push(eq(cars.vin, vin));
+            if (reg) conditions.push(eq(cars.registrationNumber, reg));
+
+            const [car] = await dbInstance
+              .select()
+              .from(cars)
+              .where(or(...conditions))
+              .limit(1);
+
+            if (!car) {
+              unmatched++;
+              continue;
+            }
+
+            matched++;
+
+            // Calculate price change percentage
+            let priceChangePercentage = null;
+            if (originalPrice > 0 && currentPrice > 0) {
+              priceChangePercentage = ((currentPrice - originalPrice) / originalPrice * 100).toFixed(2);
+            }
+
+            // Calculate health rating
+            let healthRating: 'green' | 'amber' | 'blue' = 'green';
+            if (daysOnMarket >= 45 || (priceChangePercentage && parseFloat(priceChangePercentage) <= -10)) {
+              healthRating = 'blue';
+            } else if (daysOnMarket >= 31 || (priceChangePercentage && parseFloat(priceChangePercentage) <= -5)) {
+              healthRating = 'amber';
+            }
+
+            // Update car
+            await dbInstance
+              .update(cars)
+              .set({
+                originalPrice: originalPrice > 0 ? originalPrice.toString() : car.originalPrice,
+                priceChangePercentage: priceChangePercentage,
+                inventoryHealthRating: healthRating,
+                lastHealthCheck: new Date(),
+              })
+              .where(eq(cars.id, car.id));
+
+            updated++;
+          } catch (error: any) {
+            errors.push(`Error processing row: ${error.message}`);
+          }
+        }
+
+        return {
+          matched,
+          updated,
+          unmatched,
+          errors: errors.slice(0, 10), // Return first 10 errors only
+        };
+      }),
+
+    recalculateAllInventoryHealth: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new Error('Database connection failed');
+
+        const { cars } = await import('../drizzle/schema');
+        const { sql } = await import('drizzle-orm');
+
+        // Get all cars with days on market
+        const allCars = await dbInstance
+          .select({
+            id: cars.id,
+            daysOnMarket: sql<number>`DATEDIFF(NOW(), ${cars.createdAt})`,
+            originalPrice: cars.originalPrice,
+            price: cars.price,
+            priceChangePercentage: cars.priceChangePercentage,
+          })
+          .from(cars);
+
+        let updated = 0;
+
+        for (const car of allCars) {
+          // Calculate price change if we have both prices
+          let priceChangePercentage = car.priceChangePercentage;
+          if (car.originalPrice && car.price) {
+            const original = parseFloat(car.originalPrice);
+            const current = parseFloat(car.price);
+            if (original > 0) {
+              priceChangePercentage = ((current - original) / original * 100).toFixed(2);
+            }
+          }
+
+          // Calculate health rating
+          let healthRating: 'green' | 'amber' | 'blue' = 'green';
+          const days = car.daysOnMarket || 0;
+          const priceChange = priceChangePercentage ? parseFloat(priceChangePercentage) : 0;
+
+          if (days >= 45 || priceChange <= -10) {
+            healthRating = 'blue';
+          } else if (days >= 31 || priceChange <= -5) {
+            healthRating = 'amber';
+          }
+
+          // Update car
+          await dbInstance
+            .update(cars)
+            .set({
+              priceChangePercentage,
+              inventoryHealthRating: healthRating,
+              lastHealthCheck: new Date(),
+            })
+            .where(sql`${cars.id} = ${car.id}`);
+
+          updated++;
+        }
+
+        return { updated };
+      }),
   }),
 
   // Admin router

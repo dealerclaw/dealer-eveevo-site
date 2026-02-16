@@ -7,10 +7,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { AlertCircle, TrendingDown, Clock, CheckCircle2, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
+import AdminLayout from "@/components/AdminLayout";
 
 export default function AdminInventoryHealth() {
   const [healthFilter, setHealthFilter] = useState<"all" | "green" | "amber" | "blue">("all");
   const [searchDealer, setSearchDealer] = useState("");
+
+  const recalculateHealth = trpc.dealer.recalculateAllInventoryHealth.useMutation({
+    onSuccess: (data: any) => {
+      toast.success(`Health ratings updated: ${data.updated} vehicles`);
+      window.location.reload();
+    },
+    onError: (error: any) => {
+      toast.error(error.message);
+    },
+  });
 
   const { data: inventory, isLoading } = trpc.dealer.getAllInventoryHealth.useQuery({ 
     healthFilter: healthFilter === "all" ? undefined : healthFilter 
@@ -60,12 +71,22 @@ export default function AdminInventoryHealth() {
   };
 
   return (
+    <AdminLayout>
     <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">System-Wide Inventory Health</h1>
-        <p className="text-muted-foreground">
-          Monitor all dealer inventory and identify vehicles needing attention
-        </p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">System-Wide Inventory Health</h1>
+          <p className="text-muted-foreground">
+            Monitor all dealer inventory and identify vehicles needing attention
+          </p>
+        </div>
+        <Button 
+          onClick={() => recalculateHealth.mutate()}
+          disabled={recalculateHealth.isPending}
+          variant="outline"
+        >
+          {recalculateHealth.isPending ? "Recalculating..." : "Recalculate Health Ratings"}
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -246,5 +267,6 @@ export default function AdminInventoryHealth() {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }
