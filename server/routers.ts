@@ -1835,7 +1835,7 @@ export const appRouter = router({
             price: cars.price,
             originalPrice: cars.originalPrice,
             priceChangePercentage: cars.priceChangePercentage,
-            daysOnMarket: sql<number>`DATEDIFF(NOW(), ${cars.createdAt})`,
+            daysOnMarket: cars.daysOnMarket,
             inventoryHealthRating: cars.inventoryHealthRating,
             mainImage: cars.mainImage,
             marketplace: cars.marketplace,
@@ -1874,7 +1874,7 @@ export const appRouter = router({
             price: cars.price,
             originalPrice: cars.originalPrice,
             priceChangePercentage: cars.priceChangePercentage,
-            daysOnMarket: sql<number>`DATEDIFF(NOW(), ${cars.createdAt})`,
+            daysOnMarket: cars.daysOnMarket,
             inventoryHealthRating: cars.inventoryHealthRating,
             mainImage: cars.mainImage,
             marketplace: cars.marketplace,
@@ -1947,7 +1947,8 @@ export const appRouter = router({
             // Try to find matching fields in the row
             const vin = row['VIN'] || row['vin'] || row['Vin'];
             const reg = row['Registration'] || row['Reg'] || row['reg'] || row['registration'];
-            const daysOnMarket = parseInt(row['Days on Market'] || row['DaysOnMarket'] || row['days_on_market'] || '0');
+            const daysOnMarket = parseInt(row['days_on_market'] || row['Days on Market'] || row['DaysOnMarket'] || '0');
+            const priceChangeFromSheet = row['price_change_percentage'] || row['Price Change %'] || row['PriceChange'];
             const originalPrice = parseFloat(row['Original Price'] || row['OriginalPrice'] || row['original_price'] || '0');
             const currentPrice = parseFloat(row['Current Price'] || row['CurrentPrice'] || row['current_price'] || row['Price'] || row['price'] || '0');
 
@@ -1974,9 +1975,11 @@ export const appRouter = router({
 
             matched++;
 
-            // Calculate price change percentage
+            // Use price change from sheet if available, otherwise calculate
             let priceChangePercentage = null;
-            if (originalPrice > 0 && currentPrice > 0) {
+            if (priceChangeFromSheet) {
+              priceChangePercentage = parseFloat(priceChangeFromSheet).toFixed(2);
+            } else if (originalPrice > 0 && currentPrice > 0) {
               priceChangePercentage = ((currentPrice - originalPrice) / originalPrice * 100).toFixed(2);
             }
 
@@ -1992,6 +1995,7 @@ export const appRouter = router({
             await dbInstance
               .update(cars)
               .set({
+                daysOnMarket: daysOnMarket,
                 originalPrice: originalPrice > 0 ? originalPrice.toString() : car.originalPrice,
                 priceChangePercentage: priceChangePercentage,
                 inventoryHealthRating: healthRating,
@@ -2029,7 +2033,7 @@ export const appRouter = router({
         const allCars = await dbInstance
           .select({
             id: cars.id,
-            daysOnMarket: sql<number>`DATEDIFF(NOW(), ${cars.createdAt})`,
+            daysOnMarket: cars.daysOnMarket,
             originalPrice: cars.originalPrice,
             price: cars.price,
             priceChangePercentage: cars.priceChangePercentage,
