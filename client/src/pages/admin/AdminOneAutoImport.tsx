@@ -44,12 +44,31 @@ export default function AdminOneAutoImport() {
     // Read file as base64
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const base64 = e.target?.result as string;
+      const result = e.target?.result;
+      if (!result || typeof result !== 'string') {
+        toast.error("Failed to read file");
+        setImporting(false);
+        return;
+      }
+      
+      const base64Data = result.split(',')[1]; // Remove data:...;base64, prefix
+      if (!base64Data) {
+        toast.error("Invalid file format");
+        setImporting(false);
+        return;
+      }
+      
       importData.mutate({
-        fileData: base64.split(',')[1], // Remove data:...;base64, prefix
+        fileData: base64Data,
         fileName: file.name,
       });
     };
+    
+    reader.onerror = () => {
+      toast.error("Error reading file");
+      setImporting(false);
+    };
+    
     reader.readAsDataURL(file);
   };
 
