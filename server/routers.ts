@@ -1852,6 +1852,8 @@ export const appRouter = router({
       .input(z.object({
         healthFilter: z.enum(['all', 'green', 'amber', 'blue']).optional(),
         dealerId: z.number().optional(),
+        page: z.number().default(1),
+        pageSize: z.number().default(50),
       }).optional())
       .query(async ({ ctx, input }) => {
         if (ctx.user.role !== 'admin') {
@@ -1900,9 +1902,30 @@ export const appRouter = router({
           query = query.where(and(...conditions)) as any;
         }
 
+        // Get total count before pagination
+        const totalCount = await dbInstance
+          .select({ count: sql<number>`count(*)` })
+          .from(cars)
+          .leftJoin(dealers, eq(cars.dealerId, dealers.id))
+          .where(conditions.length > 0 ? and(...conditions) : undefined)
+          .then(r => Number(r[0]?.count || 0));
+
+        // Apply pagination
+        const page = input?.page || 1;
+        const pageSize = input?.pageSize || 50;
+        const offset = (page - 1) * pageSize;
+
+        query = query.limit(pageSize).offset(offset) as any;
+
         const results = await query;
 
-        return results;
+        return {
+          items: results,
+          totalCount,
+          page,
+          pageSize,
+          totalPages: Math.ceil(totalCount / pageSize),
+        };
       }),
 
     importOneAutoData: protectedProcedure

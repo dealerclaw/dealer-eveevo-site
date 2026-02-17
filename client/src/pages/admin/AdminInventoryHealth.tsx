@@ -12,6 +12,8 @@ import AdminLayout from "@/components/AdminLayout";
 export default function AdminInventoryHealth() {
   const [healthFilter, setHealthFilter] = useState<"all" | "green" | "amber" | "blue">("all");
   const [searchDealer, setSearchDealer] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
 
   const recalculateHealth = trpc.dealer.recalculateAllInventoryHealth.useMutation({
     onSuccess: (data: any) => {
@@ -23,9 +25,15 @@ export default function AdminInventoryHealth() {
     },
   });
 
-  const { data: inventory, isLoading } = trpc.dealer.getAllInventoryHealth.useQuery({ 
-    healthFilter: healthFilter === "all" ? undefined : healthFilter 
+  const { data, isLoading } = trpc.dealer.getAllInventoryHealth.useQuery({ 
+    healthFilter: healthFilter === "all" ? undefined : healthFilter,
+    page,
+    pageSize,
   });
+
+  const inventory = data?.items || [];
+  const totalCount = data?.totalCount || 0;
+  const totalPages = data?.totalPages || 1;
 
   const getHealthBadge = (rating: string | null, daysOnMarket: number) => {
     const actualRating = rating || (daysOnMarket > 45 ? "blue" : daysOnMarket > 30 ? "amber" : "green");
@@ -54,7 +62,7 @@ export default function AdminInventoryHealth() {
   });
 
   const stats = {
-    total: inventory?.length || 0,
+    total: totalCount,
     green: inventory?.filter((car: any) => {
       const rating = car.inventoryHealthRating || (car.daysOnMarket > 45 ? "blue" : car.daysOnMarket > 30 ? "amber" : "green");
       return rating === "green";
@@ -264,6 +272,48 @@ export default function AdminInventoryHealth() {
               </Card>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {!isLoading && filteredInventory && filteredInventory.length > 0 && (
+        <div className="mt-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
+              Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, totalCount)} of {totalCount} vehicles
+            </span>
+            <Select value={pageSize.toString()} onValueChange={(v) => { setPageSize(Number(v)); setPage(1); }}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="50">50 per page</SelectItem>
+                <SelectItem value="100">100 per page</SelectItem>
+                <SelectItem value="200">200 per page</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </Button>
+            <span className="text-sm px-4">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       )}
     </div>

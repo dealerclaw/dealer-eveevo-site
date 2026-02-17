@@ -40,35 +40,46 @@ export default function AdminOneAutoImport() {
     }
 
     setImporting(true);
+    console.log('Starting file read, file:', file.name, 'size:', file.size);
     
     // Read file as base64
     const reader = new FileReader();
     reader.onload = async (e) => {
+      console.log('FileReader onload triggered');
       const result = e.target?.result;
+      console.log('Result type:', typeof result, 'Result length:', result ? (typeof result === 'string' ? result.length : 'not string') : 'null');
+      
       if (!result || typeof result !== 'string') {
+        console.error('Failed to read file - result is not a string');
         toast.error("Failed to read file");
         setImporting(false);
         return;
       }
       
       const base64Data = result.split(',')[1]; // Remove data:...;base64, prefix
+      console.log('Base64 data extracted, length:', base64Data ? base64Data.length : 'undefined');
+      
       if (!base64Data) {
+        console.error('Invalid file format - no base64 data after split');
         toast.error("Invalid file format");
         setImporting(false);
         return;
       }
       
+      console.log('Calling importData.mutate with fileName:', file.name);
       importData.mutate({
         fileData: base64Data,
         fileName: file.name,
       });
     };
     
-    reader.onerror = () => {
+    reader.onerror = (error) => {
+      console.error('FileReader error:', error);
       toast.error("Error reading file");
       setImporting(false);
     };
     
+    console.log('Calling reader.readAsDataURL');
     reader.readAsDataURL(file);
   };
 
