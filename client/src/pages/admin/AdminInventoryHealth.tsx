@@ -237,6 +237,16 @@ export default function AdminInventoryHealth() {
                         {car.marketplace === "dealer_only" && (
                           <Badge variant="outline">On Dealer Network</Badge>
                         )}
+                        {car.oneAutoUrl && (
+                          <a 
+                            href={car.oneAutoUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline flex items-center gap-1"
+                          >
+                            View on OneAuto →
+                          </a>
+                        )}
                       </div>
 
                       {(actualRating === "amber" || actualRating === "blue") && car.marketplace !== "dealer_only" && (

@@ -1,0 +1,1 @@
+ALTER TABLE `cars` ADD `oneAutoUrl` varchar(500);

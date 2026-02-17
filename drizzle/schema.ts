@@ -123,6 +123,7 @@ export const cars = mysqlTable("cars", {
   priceChangePercentage: decimal("priceChangePercentage", { precision: 5, scale: 2 }), // % price change
   daysOnMarket: int("daysOnMarket").default(0), // Calculated field
   lastHealthCheck: timestamp("lastHealthCheck"),
+  oneAutoUrl: varchar("oneAutoUrl", { length: 500 }), // Link to OneAuto listing
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

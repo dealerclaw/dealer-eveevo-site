@@ -49,6 +49,7 @@ async function importOneAutoData() {
         const currentPrice = parseFloat((row as any)['advertised_price_gbp'] || '0');
         const daysOnMarket = parseInt((row as any)['days_on_market'] || '0');
         const priceChangeFromSheet = (row as any)['price_change_percentage'];
+        const oneAutoUrl = (row as any)['vehicle_details_page_url'];
         
         // We don't have original price in this export
         const originalPrice = 0;
@@ -109,6 +110,7 @@ async function importOneAutoData() {
             priceChangePercentage: priceChangePercentage,
             inventoryHealthRating: healthRating,
             lastHealthCheck: new Date(),
+            oneAutoUrl: oneAutoUrl || null,
           })
           .where(eq(cars.id, car.id));
         

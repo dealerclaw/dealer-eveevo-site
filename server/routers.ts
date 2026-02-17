@@ -1886,6 +1886,7 @@ export const appRouter = router({
             dealerName: dealers.name,
             dealerEmail: dealers.email,
             dealerPhone: dealers.phone,
+            oneAutoUrl: cars.oneAutoUrl,
           })
           .from(cars)
           .leftJoin(dealers, eq(cars.dealerId, dealers.id));

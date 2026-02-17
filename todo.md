@@ -1581,3 +1581,5 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add pagination to admin inventory health dashboard (currently loading all 29,479 vehicles at once)
 - [x] Add page size selector (50/100/200 per page)
 - [x] Add total count display
+- [ ] Add clickable links to vehicle detail pages in admin inventory health dashboard
+- [x] Add OneAuto listing URL to admin inventory health dashboard
