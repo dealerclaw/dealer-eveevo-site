@@ -332,106 +332,15 @@ export default function LiveAuction() {
         </div>
       </div>
 
-      {/* Search and Filter Bar */}
-      <div className="border-b border-white/10 bg-black/10 backdrop-blur-sm">
-        <div className="container py-4 space-y-4">
-          <div className="flex gap-3">
-            <Input
-              placeholder="Search by make, model, year, or dealer..."
-              value={tempSearchQuery}
-              onChange={(e) => setTempSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && applyFilters()}
-              className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
-            />
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="text-white border-white/20 hover:bg-white/10"
-            >
-              {showFilters ? 'Hide' : 'Show'} Filters
-            </Button>
-            <Button
-              onClick={applyFilters}
-              className="bg-primary hover:bg-primary/90 text-white"
-            >
-              Apply Filters
-            </Button>
-          </div>
 
-          {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              <div>
-                <Label className="text-white/80 text-sm">Make</Label>
-                <select
-                  value={tempSelectedMake}
-                  onChange={(e) => setTempSelectedMake(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
-                >
-                  <option value="">All Makes</option>
-                  {uniqueMakes.map(make => (
-                    <option key={make} value={make}>{make}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <Label className="text-white/80 text-sm">Condition</Label>
-                <select
-                  value={tempSelectedCondition}
-                  onChange={(e) => setTempSelectedCondition(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
-                >
-                  <option value="">All Conditions</option>
-                  <option value="New">New</option>
-                  <option value="Used">Used</option>
-                  <option value="Certified Pre-Owned">Certified Pre-Owned</option>
-                </select>
-              </div>
-              <div>
-                <Label className="text-white/80 text-sm">Max Price (£)</Label>
-                <Input
-                  type="number"
-                  placeholder="Any"
-                  value={tempMaxPrice}
-                  onChange={(e) => setTempMaxPrice(e.target.value)}
-                  className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
-                />
-              </div>
-              <div>
-                <Label className="text-white/80 text-sm">Max Mileage</Label>
-                <Input
-                  type="number"
-                  placeholder="Any"
-                  value={tempMaxMileage}
-                  onChange={(e) => setTempMaxMileage(e.target.value)}
-                  className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between text-sm text-white/60">
-            <span>Showing {currentIndex + 1} of {filteredVehicles.length} vehicles</span>
-            {(searchQuery || selectedMake || selectedCondition || maxPrice || maxMileage) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="text-white/60 hover:text-white hover:bg-white/10"
-              >
-                Clear all filters
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Main Auction Display */}
-      <div className="container py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="container px-4 py-6 md:py-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Main Vehicle Display */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 lg:space-y-6">
             <Card className="bg-black/40 border-white/10 backdrop-blur-sm overflow-hidden">
-              <div className="relative h-96 bg-gradient-to-br from-slate-800 to-slate-900">
+              <div className="relative h-64 md:h-80 lg:h-96 bg-gradient-to-br from-slate-800 to-slate-900">
                 {currentVehicle.mainImage ? (
                   <img
                     src={currentVehicle.mainImage}
@@ -450,11 +359,11 @@ export default function LiveAuction() {
                 </div>
                 
                 {/* Reserve Price & Buy Now Price Banner */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent py-6 px-6">
-                  <div className="flex items-center justify-between">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent py-3 px-3 md:py-6 md:px-6">
+                  <div className="flex items-center justify-between gap-2">
                     <div>
                       <p className="text-xs text-white/60 mb-1">Reserve Price</p>
-                      <p className="text-3xl font-bold text-yellow-400">
+                      <p className="text-xl md:text-3xl font-bold text-yellow-400">
                         £{currentVehicle.reservePrice 
                           ? parseFloat(currentVehicle.reservePrice.toString()).toLocaleString()
                           : 'Not Set'}
@@ -462,8 +371,8 @@ export default function LiveAuction() {
                     </div>
                     {currentVehicle.buyNowPrice && (
                       <div className="text-right">
-                        <p className="text-xs text-white/60 mb-1">Buy Now Price</p>
-                        <p className="text-3xl font-bold text-green-400">
+                        <p className="text-xs text-white/60 mb-1">Buy Now</p>
+                        <p className="text-xl md:text-3xl font-bold text-green-400">
                           £{parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}
                         </p>
                       </div>
@@ -490,11 +399,11 @@ export default function LiveAuction() {
                 </Button>
               </div>
 
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-4 md:p-6 space-y-3 md:space-y-4">
                 <div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                     <div>
-                      <h2 className="text-3xl font-bold text-white">
+                      <h2 className="text-2xl md:text-3xl font-bold text-white">
                         {currentVehicle.year} {currentVehicle.make} {currentVehicle.model}
                       </h2>
                       <div className="flex items-center gap-3 mt-2">
@@ -508,9 +417,9 @@ export default function LiveAuction() {
                     </div>
                     <Button
                       variant="outline"
-                      size="lg"
+                      size="default"
                       onClick={() => setLocation(`/dealer/marketplace/${currentVehicle.id}`)}
-                      className="text-white border-white/20 hover:bg-white/10"
+                      className="text-white border-white/20 hover:bg-white/10 w-full md:w-auto"
                     >
                       View Full Details
                     </Button>
@@ -549,7 +458,7 @@ export default function LiveAuction() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 py-4 border-y border-white/10">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 py-3 md:py-4 border-y border-white/10">
                   {currentVehicle.realRange && (
                     <div>
                       <p className="text-sm text-white/60">Real Range</p>
@@ -695,22 +604,22 @@ export default function LiveAuction() {
           </div>
 
           {/* Bidding Panel */}
-          <div className="space-y-6">
+          <div className="space-y-4 lg:space-y-6">
             <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardContent className="p-6 space-y-6">
-                <div className="text-center py-4 border-b border-white/10">
-                  <p className="text-sm text-white/60 mb-2">Current Highest Bid</p>
-                  <p className="text-4xl font-bold text-primary">
+              <CardContent className="p-4 md:p-6 space-y-4 md:space-y-6">
+                <div className="text-center py-3 md:py-4 border-b border-white/10">
+                  <p className="text-xs md:text-sm text-white/60 mb-2">Current Highest Bid</p>
+                  <p className="text-3xl md:text-4xl font-bold text-primary">
                     £{currentBid.toLocaleString()}
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   {!user ? (
-                    <div className="text-center py-8 space-y-4">
-                      <p className="text-white/80 text-lg">Login to participate in this auction</p>
+                    <div className="text-center py-6 md:py-8 space-y-3 md:space-y-4">
+                      <p className="text-white/80 text-base md:text-lg">Login to participate in this auction</p>
                       <Button
-                        size="lg"
+                        size="default"
                         className="w-full"
                         onClick={() => window.location.href = getLoginUrl()}
                       >

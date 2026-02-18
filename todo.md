@@ -1586,3 +1586,5 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [ ] Move important buttons to left side of dealer dashboard (currently go off screen when scrolling)
 - [x] Fix greyed out Buy Now button in auction pages
 - [x] Make live auction page publicly accessible (viewable without dealer login)
+- [x] Remove filter section from auction page
+- [x] Optimize auction page layout for mobile viewing and sharing
