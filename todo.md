@@ -1583,3 +1583,5 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add total count display
 - [ ] Add clickable links to vehicle detail pages in admin inventory health dashboard
 - [x] Add OneAuto listing URL to admin inventory health dashboard
+- [ ] Move important buttons to left side of dealer dashboard (currently go off screen when scrolling)
+- [x] Fix greyed out Buy Now button in auction pages
