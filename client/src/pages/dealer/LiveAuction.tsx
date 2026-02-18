@@ -706,6 +706,19 @@ export default function LiveAuction() {
                 </div>
 
                 <div className="space-y-4">
+                  {!user ? (
+                    <div className="text-center py-8 space-y-4">
+                      <p className="text-white/80 text-lg">Login to participate in this auction</p>
+                      <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={() => window.location.href = getLoginUrl()}
+                      >
+                        Login as Dealer to Bid
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
                   <div>
                     <Label htmlFor="bidAmount" className="text-white">Your Bid Amount</Label>
                     <div className="flex gap-2 mt-2">
@@ -845,10 +858,7 @@ export default function LiveAuction() {
                     )}
                   </Button>
 
-                  {!user && (
-                    <p className="text-xs text-center text-white/60">
-                      You must be logged in as a dealer to place bids
-                    </p>
+                  </>
                   )}
                 </div>
 

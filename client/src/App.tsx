@@ -138,11 +138,7 @@ function Router() {
           <DealerCalendar />
         </DealerAuthGuard>
       </Route>
-      <Route path="/dealer/live-auction">
-        <DealerAuthGuard>
-          <LiveAuction />
-        </DealerAuthGuard>
-      </Route>
+      <Route path="/dealer/live-auction" component={LiveAuction} />
       <Route path="/dealer/my-auctions">
         <DealerAuthGuard>
           <MyAuctions />
