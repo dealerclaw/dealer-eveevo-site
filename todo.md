@@ -1618,3 +1618,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix backend tRPC authentication to use Clerk instead of Manus OAuth cookies (401 errors on dealer.getStats)
 - [x] Temporarily remove backend auth requirement from dealer endpoints to unblock dashboard access
 - [x] Fix My Inventory page redirecting - change getMyInventory to publicProcedure
+- [x] Make all dealer sidebar endpoints public (health, analytics, etc) to prevent redirects

@@ -588,8 +588,12 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    getInquiries: protectedProcedure
+    getInquiries: publicProcedure
       .query(async ({ ctx }) => {
+        // Temporary: Return empty array if not authenticated
+        if (!ctx.user) {
+          return [];
+        }
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');
         }
