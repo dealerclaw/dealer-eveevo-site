@@ -121,7 +121,8 @@ export default function SignUpWithRole() {
           routing="path"
           path="/sign-up"
           signInUrl="/sign-in"
-          afterSignUpUrl="/"
+          fallbackRedirectUrl="/"
+          forceRedirectUrl="/"
           unsafeMetadata={{
             role: selectedRole,
             accountType: selectedRole

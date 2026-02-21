@@ -22,9 +22,9 @@ export async function handleClerkWebhook(req: Request, res: Response) {
     return res.status(400).json({ error: 'Missing svix headers' });
   }
 
-  // Get the body
-  const payload = req.body;
-  const body = JSON.stringify(payload);
+  // Get the body - req.body is a Buffer from express.raw()
+  const body = req.body.toString();
+  const payload = JSON.parse(body);
 
   // Create a new Svix instance with your webhook secret
   const wh = new Webhook(CLERK_WEBHOOK_SECRET);
@@ -48,7 +48,7 @@ export async function handleClerkWebhook(req: Request, res: Response) {
   console.log(`[Clerk Webhook] Received event: ${eventType}`);
 
   if (eventType === 'user.created' || eventType === 'user.updated') {
-    const { id, email_addresses, first_name, last_name, unsafe_metadata } = evt.data;
+    const { id, email_addresses, first_name, last_name, unsafe_metadata } = payload.data;
 
     const email = email_addresses?.[0]?.email_address;
     const name = [first_name, last_name].filter(Boolean).join(' ') || email?.split('@')[0] || 'User';
