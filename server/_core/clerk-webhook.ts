@@ -52,8 +52,15 @@ export async function handleClerkWebhook(req: Request, res: Response) {
 
     const email = email_addresses?.[0]?.email_address;
     const name = [first_name, last_name].filter(Boolean).join(' ') || email?.split('@')[0] || 'User';
-    const role = unsafe_metadata?.role || 'user';
-    const accountType = unsafe_metadata?.accountType || role;
+    
+    // Map role: 'consumer' -> 'user', 'dealer' -> 'dealer', default 'user'
+    let role = unsafe_metadata?.role || 'user';
+    if (role === 'consumer') role = 'user';
+    
+    // Map accountType: 'consumer' -> 'individual', 'dealer' -> 'business', default 'individual'
+    let accountType = unsafe_metadata?.accountType || 'individual';
+    if (accountType === 'consumer') accountType = 'individual';
+    if (accountType === 'dealer') accountType = 'business';
 
     if (!email) {
       console.error('[Clerk Webhook] No email found in user data');

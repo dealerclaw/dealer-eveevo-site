@@ -124,8 +124,8 @@ export default function SignUpWithRole() {
           fallbackRedirectUrl="/"
           forceRedirectUrl="/"
           unsafeMetadata={{
-            role: selectedRole,
-            accountType: selectedRole
+            role: selectedRole === 'consumer' ? 'user' : 'dealer',
+            accountType: selectedRole === 'consumer' ? 'individual' : 'business'
           }}
         />
       </div>

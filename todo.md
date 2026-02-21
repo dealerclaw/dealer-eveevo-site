@@ -1611,3 +1611,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [ ] Update protected routes to check Clerk authentication state
 - [ ] Test Google OAuth sign-in flow
 - [x] Fix 404 error after Clerk authentication - users redirected to non-existent page after one-time code verification
+- [x] Fix 400 error during Google OAuth sign-up as dealer (sorayaperrymusic@gmail.com)
