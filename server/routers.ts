@@ -2141,6 +2141,27 @@ export const appRouter = router({
         return await adminDb.getDealerCarsAdmin(input.dealerId);
       }),
 
+    promoteToAdmin: protectedProcedure
+      .input(z.object({
+        email: z.string().email(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        
+        // Find user by email
+        const user = await db.getUserByEmail(input.email);
+        if (!user) {
+          throw new Error(`User with email ${input.email} not found. They must log in at least once before being promoted to admin.`);
+        }
+        
+        // Update user role to admin
+        await db.updateUserRole(user.id, 'admin');
+        
+        return { success: true, message: `User ${input.email} has been promoted to admin` };
+      }),
+
     impersonate: protectedProcedure
       .input(z.object({
         dealerId: z.number(),

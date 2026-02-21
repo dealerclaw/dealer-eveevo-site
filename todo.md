@@ -1588,3 +1588,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Make live auction page publicly accessible (viewable without dealer login)
 - [x] Remove filter section from auction page
 - [x] Optimize auction page layout for mobile viewing and sharing
+- [x] Add darran.perry@btinternet.com as second admin account
