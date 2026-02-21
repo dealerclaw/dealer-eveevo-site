@@ -1619,3 +1619,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Temporarily remove backend auth requirement from dealer endpoints to unblock dashboard access
 - [x] Fix My Inventory page redirecting - change getMyInventory to publicProcedure
 - [x] Make all dealer sidebar endpoints public (health, analytics, etc) to prevent redirects
+- [x] Fix subscription page redirecting to Manus after a few minutes

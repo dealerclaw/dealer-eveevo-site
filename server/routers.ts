@@ -688,8 +688,12 @@ export const appRouter = router({
         return { checkoutUrl: session.url };
       }),
 
-    getSubscriptionStatus: protectedProcedure
+    getSubscriptionStatus: publicProcedure
       .query(async ({ ctx }) => {
+        // Temporary: Return null if not authenticated
+        if (!ctx.user) {
+          return null;
+        }
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');
         }

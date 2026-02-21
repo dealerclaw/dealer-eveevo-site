@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Check, Loader2, Crown, TrendingUp, Users, Shield, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { useLocation } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
 
 export default function Subscription() {
@@ -52,10 +52,12 @@ export default function Subscription() {
     },
   });
 
+  const [, setLocation] = useLocation();
+
   const handleSubscribe = () => {
     if (!user) {
       toast.error("Please log in to subscribe");
-      window.location.href = getLoginUrl();
+      setLocation("/sign-in");
       return;
     }
 
