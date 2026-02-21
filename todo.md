@@ -1620,3 +1620,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix My Inventory page redirecting - change getMyInventory to publicProcedure
 - [x] Make all dealer sidebar endpoints public (health, analytics, etc) to prevent redirects
 - [x] Fix subscription page redirecting to Manus after a few minutes
+- [x] Fix 403 error on dealer subscription page - make subscription endpoints public

@@ -626,11 +626,15 @@ export const appRouter = router({
       }),
 
     // Subscription management
-    createSubscription: protectedProcedure
+    createSubscription: publicProcedure
       .input(z.object({
         referralCode: z.string().optional(),
       }).optional())
       .mutation(async ({ ctx, input }) => {
+        // Temporary: Require authentication but don't use protectedProcedure
+        if (!ctx.user) {
+          throw new Error('Please log in to subscribe');
+        }
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');
         }
