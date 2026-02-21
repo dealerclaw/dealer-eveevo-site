@@ -416,12 +416,16 @@ export const appRouter = router({
         return await db.getDealerStats(ctx.user.id);
       }),
 
-    getMyInventory: protectedProcedure
+    getMyInventory: publicProcedure
       .input(z.object({
         limit: z.number().optional(),
         offset: z.number().optional(),
       }).optional())
       .query(async ({ ctx, input }) => {
+        // Temporary: Return empty array if not authenticated
+        if (!ctx.user) {
+          return [];
+        }
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');
         }
