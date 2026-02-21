@@ -9,11 +9,9 @@ export default function SignIn() {
           <p className="text-gray-600">Sign in to access your account</p>
         </div>
         <ClerkSignIn 
-          routing="path"
-          path="/sign-in"
+          routing="hash"
           signUpUrl="/sign-up"
-          fallbackRedirectUrl="/"
-          forceRedirectUrl="/"
+          afterSignInUrl="/"
         />
       </div>
     </div>

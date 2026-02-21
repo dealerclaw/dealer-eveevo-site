@@ -1612,3 +1612,5 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [ ] Test Google OAuth sign-in flow
 - [x] Fix 404 error after Clerk authentication - users redirected to non-existent page after one-time code verification
 - [x] Fix 400 error during Google OAuth sign-up as dealer (sorayaperrymusic@gmail.com)
+- [ ] Fix persistent 400 error during Google OAuth - likely Clerk redirect URL configuration issue
+- [x] Fix 404 error on /sign-up/sso-callback after OAuth completes - changed to hash routing

@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, email, name, role, accountType, loginMethod, createdAt FROM users WHERE email LIKE '%soraya%' OR email LIKE '%perry%' ORDER BY createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, email, name, role, accountType, loginMethod, createdAt FROM users WHERE email LIKE '%soraya%' OR email LIKE '%perry%' ORDER BY createdAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "2520001",
+      "email": "anthony.perry@eveevo.com",
+      "name": "Anthony Perry",
+      "role": "dealer",
+      "accountType": "business",
+      "loginMethod": "clerk",
+      "createdAt": "2026-02-21 16:59:10"
+    },
+    {
+      "id": "2490110",
+      "email": "darran.perry@btinternet.com",
+      "name": "Darran Perry",
+      "role": "admin",
+      "accountType": "individual",
+      "loginMethod": "oauth",
+      "createdAt": "2026-02-21 14:44:51"
+    },
+    {
+      "id": "2310202",
+      "email": "sorayaperrymusic@gmail.com",
+      "name": "sorayaperrymusic",
+      "role": "user",
+      "accountType": "individual",
+      "loginMethod": "email",
+      "createdAt": "2026-02-18 08:26:50"
+    },
+    {
+      "id": "420012",
+      "email": "anthony.m.perry@gmail.com",
+      "name": "Anthony Perry",
+      "role": "admin",
+      "accountType": "individual",
+      "loginMethod": "NULL",
+      "createdAt": "2026-02-11 14:25:11"
+    },
+    {
+      "id": "1",
+      "email": "anthony.m.perry@gmail.com",
+      "name": "Anthony Perry",
+      "role": "admin",
+      "accountType": "individual",
+      "loginMethod": "google",
+      "createdAt": "2026-02-09 22:04:07"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tname\trole\taccountType\tloginMethod\tcreatedAt\n2520001\tanthony.perry@eveevo.com\tAnthony Perry\tdealer\tbusiness\tclerk\t2026-02-21 16:59:10\n2490110\tdarran.perry@btinternet.com\tDarran Perry\tadmin\tindividual\toauth\t2026-02-21 14:44:51\n2310202\tsorayaperrymusic@gmail.com\tsorayaperrymusic\tuser\tindividual\temail\t2026-02-18 08:26:50\n420012\tanthony.m.perry@gmail.com\tAnthony Perry\tadmin\tindividual\tNULL\t2026-02-11 14:25:11\n1\tanthony.m.perry@gmail.com\tAnthony Perry\tadmin\tindividual\tgoogle\t2026-02-09 22:04:07\n",
+  "stderr": "",
+  "execution_time_ms": 419
+}

@@ -118,11 +118,9 @@ export default function SignUpWithRole() {
           </Button>
         </div>
         <SignUp 
-          routing="path"
-          path="/sign-up"
+          routing="hash"
           signInUrl="/sign-in"
-          fallbackRedirectUrl="/"
-          forceRedirectUrl="/"
+          afterSignUpUrl="/"
           unsafeMetadata={{
             role: selectedRole === 'consumer' ? 'user' : 'dealer',
             accountType: selectedRole === 'consumer' ? 'individual' : 'business'
