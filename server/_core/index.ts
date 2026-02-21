@@ -37,6 +37,10 @@ async function startServer() {
   const { handleStripeWebhook } = await import('./stripe-webhook');
   app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
   
+  // Clerk webhook MUST be registered before body parsers
+  const { handleClerkWebhook } = await import('./clerk-webhook');
+  app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), handleClerkWebhook);
+  
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "200mb" }));
   app.use(express.urlencoded({ limit: "200mb", extended: true }));

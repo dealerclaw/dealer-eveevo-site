@@ -1595,10 +1595,14 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Set up Clerk account and get API keys
 - [x] Add Clerk environment variables (publishable key, secret key)
 - [x] Wrap app with ClerkProvider
-- [ ] Create custom signup flow with role selection (Consumer/Dealer)
+- [x] Create custom signup flow with role selection (Consumer/Dealer)
+- [x] Add role selection UI to signup page
+- [x] Store user role in Clerk metadata
+- [x] Create Clerk webhook endpoint for user.created event
+- [x] Sync Clerk users to MySQL database via webhook
 - [ ] Update authentication context to use Clerk
-- [ ] Enable Google OAuth in Clerk dashboard
+- [x] Enable Google OAuth in Clerk dashboard
 - [ ] Enable Apple Sign In in Clerk dashboard
-- [ ] Test email/password signup and login
+- [ ] Test email/password signup with role selection
 - [ ] Test Google OAuth flow
-- [ ] Test Apple Sign In flow
+- [ ] Test webhook user sync
