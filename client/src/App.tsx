@@ -46,12 +46,16 @@ import Watchlist from "./pages/dealer/Watchlist";
 import EvFaultsBrowser from "./pages/EvFaultsBrowser";
 import DealerSettings from "./pages/dealer/DealerSettings";
 import DealerInventoryHealth from "./pages/dealer/DealerInventoryHealth";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
+        <Route path="/" component={Home} />
+      <Route path="/sign-in" component={SignIn} />
+      <Route path="/sign-up" component={SignUp} />
       <Route path={"/browse"} component={Browse} />
       <Route path={"/admin/sync"} component={AdminSync} />
       <Route path={'/admin/applications'} component={AdminApplications} />

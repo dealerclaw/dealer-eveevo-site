@@ -1589,3 +1589,16 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Remove filter section from auction page
 - [x] Optimize auction page layout for mobile viewing and sharing
 - [x] Add darran.perry@btinternet.com as second admin account
+
+## Clerk Authentication Integration
+- [x] Install @clerk/clerk-react package
+- [x] Set up Clerk account and get API keys
+- [x] Add Clerk environment variables (publishable key, secret key)
+- [x] Wrap app with ClerkProvider
+- [ ] Create custom signup flow with role selection (Consumer/Dealer)
+- [ ] Update authentication context to use Clerk
+- [ ] Enable Google OAuth in Clerk dashboard
+- [ ] Enable Apple Sign In in Clerk dashboard
+- [ ] Test email/password signup and login
+- [ ] Test Google OAuth flow
+- [ ] Test Apple Sign In flow

@@ -5,10 +5,15 @@ import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean,
  */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
+  openId: varchar("openId", { length: 64 }).unique(), // Made nullable for email/password users
   name: text("name"),
-  email: varchar("email", { length: 320 }),
-  loginMethod: varchar("loginMethod", { length: 64 }),
+  email: varchar("email", { length: 320 }).notNull().unique(), // Made required and unique
+  loginMethod: varchar("loginMethod", { length: 64 }), // 'email', 'google', 'apple', 'manus'
+  passwordHash: varchar("passwordHash", { length: 255 }), // For email/password auth
+  emailVerified: boolean("emailVerified").default(false),
+  verificationToken: varchar("verificationToken", { length: 255 }),
+  resetPasswordToken: varchar("resetPasswordToken", { length: 255 }),
+  resetPasswordExpires: timestamp("resetPasswordExpires"),
   role: mysqlEnum("role", ["user", "admin", "dealer"]).default("user").notNull(),
   accountType: mysqlEnum("accountType", ["individual", "business"]).default("individual"),
   phone: varchar("phone", { length: 20 }),
