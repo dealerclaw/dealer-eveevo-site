@@ -1606,3 +1606,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [ ] Test email/password signup with role selection
 - [ ] Test Google OAuth flow
 - [ ] Test webhook user sync
+- [x] Fix authentication context to use Clerk instead of Manus OAuth
+- [x] Update useAuth hook to use Clerk's useUser
+- [ ] Update protected routes to check Clerk authentication state
+- [ ] Test Google OAuth sign-in flow
