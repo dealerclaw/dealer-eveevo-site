@@ -26,7 +26,7 @@ export async function createContext(
       return { req: opts.req, res: opts.res, user: null };
     }
 
-    console.log('[Auth Context] Verifying Clerk session token');
+    console.log('[Auth Context] Verifying Clerk session token:', sessionToken.substring(0, 20) + '...');
 
     // Verify Clerk JWT token using jose
     let sessionClaims;
@@ -51,9 +51,27 @@ export async function createContext(
       return { req: opts.req, res: opts.res, user: null };
     }
 
+    console.log('[Auth Context] JWT verified successfully, user ID:', sessionClaims.sub);
+    
+    // Try to get user from database first (faster and more reliable)
+    user = await db.getUserByOpenId(sessionClaims.sub);
+    
+    if (user) {
+      console.log('[Auth Context] User found in database:', user.email, 'role:', user.role);
+      return { req: opts.req, res: opts.res, user };
+    }
+    
+    console.log('[Auth Context] User not in database, fetching from Clerk API');
+    
     // Get Clerk user using backend SDK
     const client = createClerkClient({ secretKey: ENV.clerkSecretKey });
-    const clerkUser = await client.users.getUser(sessionClaims.sub);
+    let clerkUser;
+    try {
+      clerkUser = await client.users.getUser(sessionClaims.sub);
+    } catch (error) {
+      console.log('[Auth Context] Failed to fetch user from Clerk:', error instanceof Error ? error.message : 'Unknown error');
+      return { req: opts.req, res: opts.res, user: null };
+    }
     
     if (!clerkUser) {
       console.log('[Auth Context] Clerk user not found');
@@ -81,7 +99,9 @@ export async function createContext(
     user = await db.getUserByOpenId(clerkUser.id);
     
     if (user) {
-      console.log('[Auth Context] User authenticated:', user.email, 'role:', user.role);
+      console.log('[Auth Context] User synced to database:', user.email, 'role:', user.role);
+    } else {
+      console.log('[Auth Context] Failed to sync user to database');
     }
   } catch (error) {
     // Authentication is optional for public procedures.

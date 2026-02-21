@@ -1621,3 +1621,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Make all dealer sidebar endpoints public (health, analytics, etc) to prevent redirects
 - [x] Fix subscription page redirecting to Manus after a few minutes
 - [x] Fix 403 error on dealer subscription page - make subscription endpoints public
+- [x] Fix backend not recognizing Clerk authentication - subscription says "please login" despite being logged in
