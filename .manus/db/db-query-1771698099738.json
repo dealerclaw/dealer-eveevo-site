@@ -1,0 +1,16 @@
+{
+  "query": "SELECT email, name, role, accountType FROM users WHERE email = 'sorayaperrymusic@gmail.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT email, name, role, accountType FROM users WHERE email = 'sorayaperrymusic@gmail.com';",
+  "rows": [
+    {
+      "email": "sorayaperrymusic@gmail.com",
+      "name": "sorayamusic",
+      "role": "user",
+      "accountType": "individual"
+    }
+  ],
+  "messages": [],
+  "stdout": "email\tname\trole\taccountType\nsorayaperrymusic@gmail.com\tsorayamusic\tuser\tindividual\n",
+  "stderr": "",
+  "execution_time_ms": 358
+}

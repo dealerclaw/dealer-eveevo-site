@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
+import cookieParser from "cookie-parser";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -40,6 +41,9 @@ async function startServer() {
   // Clerk webhook MUST be registered before body parsers
   const { handleClerkWebhook } = await import('./clerk-webhook');
   app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), handleClerkWebhook);
+  
+  // Configure cookie parser (must be before tRPC)
+  app.use(cookieParser());
   
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "200mb" }));

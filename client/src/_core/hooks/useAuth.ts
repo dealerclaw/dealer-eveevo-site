@@ -17,8 +17,12 @@ export function useAuth(options?: UseAuthOptions) {
   const user = useMemo(() => {
     if (!clerkUser || !isSignedIn) return null;
     
-    const role = (clerkUser.unsafeMetadata?.role as string) || 'user';
-    const accountType = (clerkUser.unsafeMetadata?.accountType as string) || role;
+    const rawRole = (clerkUser.unsafeMetadata?.role as string) || 'user';
+    const rawAccountType = (clerkUser.unsafeMetadata?.accountType as string) || 'individual';
+    
+    // Map Clerk metadata to database enum values
+    const role = rawRole === 'dealer' ? 'dealer' : rawRole === 'admin' ? 'admin' : 'user';
+    const accountType = rawAccountType === 'business' ? 'business' : 'individual';
     
     return {
       id: 0, // Will be set by backend
@@ -26,7 +30,7 @@ export function useAuth(options?: UseAuthOptions) {
       name: clerkUser.fullName || clerkUser.primaryEmailAddress?.emailAddress?.split('@')[0] || 'User',
       email: clerkUser.primaryEmailAddress?.emailAddress || '',
       role: role as 'user' | 'dealer' | 'admin',
-      accountType: accountType as 'user' | 'dealer',
+      accountType: accountType as 'individual' | 'business',
       phone: clerkUser.primaryPhoneNumber?.phoneNumber || null,
       createdAt: new Date(clerkUser.createdAt),
       updatedAt: new Date(clerkUser.updatedAt),

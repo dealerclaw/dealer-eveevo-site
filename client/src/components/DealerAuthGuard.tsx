@@ -11,18 +11,24 @@ export default function DealerAuthGuard({ children }: DealerAuthGuardProps) {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
+    console.log('[DealerAuthGuard] Auth state:', { loading, isAuthenticated, user, role: user?.role });
+    
     // Wait for auth to finish loading
     if (loading) return;
 
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
+      console.log('[DealerAuthGuard] Not authenticated, redirecting to sign-in');
       setLocation("/sign-in");
       return;
     }
 
     // Redirect to become-a-dealer page if not a dealer
     if (user && user.role !== "dealer" && user.role !== "admin") {
+      console.log('[DealerAuthGuard] User is not dealer/admin, redirecting to become-a-dealer. Role:', user.role);
       setLocation("/become-a-dealer");
+    } else {
+      console.log('[DealerAuthGuard] User has dealer/admin access');
     }
   }, [isAuthenticated, user, setLocation, loading]);
 
