@@ -1614,3 +1614,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix 400 error during Google OAuth sign-up as dealer (sorayaperrymusic@gmail.com)
 - [ ] Fix persistent 400 error during Google OAuth - likely Clerk redirect URL configuration issue
 - [x] Fix 404 error on /sign-up/sso-callback after OAuth completes - changed to hash routing
+- [x] Replace all Manus OAuth references with Clerk authentication throughout the app

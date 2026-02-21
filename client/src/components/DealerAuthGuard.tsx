@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 
 interface DealerAuthGuardProps {
   children: React.ReactNode;
@@ -17,7 +16,7 @@ export default function DealerAuthGuard({ children }: DealerAuthGuardProps) {
 
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
-      window.location.href = getLoginUrl();
+      setLocation("/sign-in");
       return;
     }
 

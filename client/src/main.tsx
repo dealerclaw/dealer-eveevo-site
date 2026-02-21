@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import { ClerkProvider } from '@clerk/clerk-react';
 import App from "./App";
-import { getLoginUrl } from "./const";
+
 import "./index.css";
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -25,7 +25,7 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   if (!isUnauthorized) return;
 
-  window.location.href = getLoginUrl();
+  window.location.href = "/sign-in";
 };
 
 queryClient.getQueryCache().subscribe(event => {

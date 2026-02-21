@@ -1,0 +1,19 @@
+{
+  "query": "SELECT id, email, name, role, accountType, loginMethod, createdAt FROM users WHERE email = 'sorayaperrymusic@gmail.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, email, name, role, accountType, loginMethod, createdAt FROM users WHERE email = 'sorayaperrymusic@gmail.com';",
+  "rows": [
+    {
+      "id": "2310202",
+      "email": "sorayaperrymusic@gmail.com",
+      "name": "sorayaperrymusic",
+      "role": "user",
+      "accountType": "individual",
+      "loginMethod": "email",
+      "createdAt": "2026-02-18 08:26:50"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tname\trole\taccountType\tloginMethod\tcreatedAt\n2310202\tsorayaperrymusic@gmail.com\tsorayaperrymusic\tuser\tindividual\temail\t2026-02-18 08:26:50\n",
+  "stderr": "",
+  "execution_time_ms": 349
+}
