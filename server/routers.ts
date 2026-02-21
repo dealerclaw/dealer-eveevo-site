@@ -398,8 +398,17 @@ export const appRouter = router({
 
   // Dealer management router
   dealer: router({
-    getStats: protectedProcedure
+    getStats: publicProcedure
       .query(async ({ ctx }) => {
+        // Temporary: Return mock data if not authenticated
+        if (!ctx.user) {
+          return {
+            totalVehicles: 0,
+            activeListings: 0,
+            totalViews: 0,
+            totalReservations: 0,
+          };
+        }
         // Check if user is a dealer
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');

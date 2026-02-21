@@ -1,6 +1,7 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
 import { createClerkClient } from "@clerk/express";
+import { jwtVerify, createRemoteJWKSet } from "jose";
 import { ENV } from "./env";
 import * as db from "../db";
 
@@ -27,16 +28,31 @@ export async function createContext(
 
     console.log('[Auth Context] Verifying Clerk session token');
 
-    // Verify Clerk session token and get user
-    const client = createClerkClient({ secretKey: ENV.clerkSecretKey });
-    const sessionClaims = await client.verifyToken(sessionToken);
+    // Verify Clerk JWT token using jose
+    let sessionClaims;
+    try {
+      // Get Clerk's JWKS URL from the token issuer
+      const JWKS = createRemoteJWKSet(
+        new URL('https://social-ant-80.clerk.accounts.dev/.well-known/jwks.json')
+      );
+      
+      const { payload } = await jwtVerify(sessionToken, JWKS, {
+        issuer: 'https://social-ant-80.clerk.accounts.dev',
+      });
+      
+      sessionClaims = payload;
+    } catch (error) {
+      console.log('[Auth Context] Token verification failed:', error instanceof Error ? error.message : 'Unknown error');
+      return { req: opts.req, res: opts.res, user: null };
+    }
     
     if (!sessionClaims || !sessionClaims.sub) {
       console.log('[Auth Context] Invalid Clerk session: No user ID');
       return { req: opts.req, res: opts.res, user: null };
     }
 
-    // Get Clerk user
+    // Get Clerk user using backend SDK
+    const client = createClerkClient({ secretKey: ENV.clerkSecretKey });
     const clerkUser = await client.users.getUser(sessionClaims.sub);
     
     if (!clerkUser) {

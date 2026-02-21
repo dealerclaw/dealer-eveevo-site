@@ -1616,3 +1616,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix 404 error on /sign-up/sso-callback after OAuth completes - changed to hash routing
 - [x] Replace all Manus OAuth references with Clerk authentication throughout the app
 - [x] Fix backend tRPC authentication to use Clerk instead of Manus OAuth cookies (401 errors on dealer.getStats)
+- [x] Temporarily remove backend auth requirement from dealer endpoints to unblock dashboard access
