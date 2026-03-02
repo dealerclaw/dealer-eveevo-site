@@ -360,7 +360,7 @@ export default function LiveAuction() {
 
                 {/* Buy It Now Price Badge - top left */}
                 {currentVehicle.buyNowPrice && parseFloat(currentVehicle.buyNowPrice.toString()) > 0 && (
-                  <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1.5 rounded-lg shadow-lg">
+                  <div className="absolute top-4 left-4 z-20 bg-green-500 text-white px-3 py-1.5 rounded-lg shadow-lg pointer-events-none">
                     <p className="text-xs font-semibold uppercase tracking-wide opacity-90">Buy It Now</p>
                     <p className="text-lg md:text-xl font-bold leading-tight">
                       £{parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}
@@ -394,7 +394,7 @@ export default function LiveAuction() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white"
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="w-8 h-8" />
@@ -402,7 +402,7 @@ export default function LiveAuction() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white"
                   onClick={handleNext}
                 >
                   <ChevronRight className="w-8 h-8" />

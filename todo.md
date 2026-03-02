@@ -1652,3 +1652,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add Buy It Now price badge to Next Up preview card in Live Auction
 - [x] Add Buy It Now Active badge in MyAuctions table
 - [x] Auto-end auction when Buy It Now purchase completes (mark car unavailable, notify seller)
+
+## Buy It Now Badge Fix (Mar 2026)
+- [x] Fix Buy It Now price badge not showing on car image in auction view
