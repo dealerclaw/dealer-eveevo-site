@@ -1,0 +1,37 @@
+{
+  "query": "SELECT id, make, model, year, buyNowPrice, isAuction, isAvailable FROM cars WHERE isAuction = 1 AND isAvailable = 1 AND auctionEndDate > NOW() LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, buyNowPrice, isAuction, isAvailable FROM cars WHERE isAuction = 1 AND isAvailable = 1 AND auctionEndDate > NOW() LIMIT 10;",
+  "rows": [
+    {
+      "id": "150015",
+      "make": "POLESTAR",
+      "model": "2",
+      "year": "2022",
+      "buyNowPrice": "NULL",
+      "isAuction": "1",
+      "isAvailable": "1"
+    },
+    {
+      "id": "150029",
+      "make": "FORD",
+      "model": "Explorer",
+      "year": "2025",
+      "buyNowPrice": "NULL",
+      "isAuction": "1",
+      "isAvailable": "1"
+    },
+    {
+      "id": "150032",
+      "make": "MERCEDES-BENZ",
+      "model": "EQC",
+      "year": "2021",
+      "buyNowPrice": "NULL",
+      "isAuction": "1",
+      "isAvailable": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tbuyNowPrice\tisAuction\tisAvailable\n150015\tPOLESTAR\t2\t2022\tNULL\t1\t1\n150029\tFORD\tExplorer\t2025\tNULL\t1\t1\n150032\tMERCEDES-BENZ\tEQC\t2021\tNULL\t1\t1\n",
+  "stderr": "",
+  "execution_time_ms": 465
+}

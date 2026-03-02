@@ -357,6 +357,16 @@ export default function LiveAuction() {
                 <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg">
                   {currentVehicle.auctionEndDate && formatTimeRemaining(currentVehicle.auctionEndDate)}
                 </div>
+
+                {/* Buy It Now Price Badge - top left */}
+                {currentVehicle.buyNowPrice && parseFloat(currentVehicle.buyNowPrice.toString()) > 0 && (
+                  <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1.5 rounded-lg shadow-lg">
+                    <p className="text-xs font-semibold uppercase tracking-wide opacity-90">Buy It Now</p>
+                    <p className="text-lg md:text-xl font-bold leading-tight">
+                      £{parseFloat(currentVehicle.buyNowPrice.toString()).toLocaleString()}
+                    </p>
+                  </div>
+                )}
                 
                 {/* Reserve Price & Buy Now Price Banner */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/80 to-transparent py-3 px-3 md:py-6 md:px-6">
@@ -369,7 +379,7 @@ export default function LiveAuction() {
                           : 'Not Set'}
                       </p>
                     </div>
-                    {currentVehicle.buyNowPrice && (
+                    {currentVehicle.buyNowPrice && parseFloat(currentVehicle.buyNowPrice.toString()) > 0 && (
                       <div className="text-right">
                         <p className="text-xs text-white/60 mb-1">Buy Now</p>
                         <p className="text-xl md:text-3xl font-bold text-green-400">

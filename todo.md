@@ -1644,3 +1644,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update adminProcedure to check ctx.adminUser for impersonation scenarios
 - [x] Rewrite ImpersonationBanner to show when admin is impersonating a dealer
 - [x] Add adminUser context field to TrpcContext type
+
+## Buy It Now Price Badge on Auction Images
+- [x] Show Buy It Now price badge overlaid on car image in auction view (as it used to)
