@@ -155,7 +155,8 @@ export default function MyAuctions() {
           </CardHeader>
           <CardContent>
             {myAuctions && myAuctions.length > 0 ? (
-              <Table>
+              <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[700px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Vehicle</TableHead>
@@ -241,6 +242,7 @@ export default function MyAuctions() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             ) : (
               <div className="text-center py-12">
                 <Gavel className="h-12 w-12 mx-auto text-muted-foreground mb-4" />

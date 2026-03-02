@@ -1,17 +1,17 @@
 import { Link, useLocation } from "wouter";
 import Header from "./Header";
 import ImpersonationBanner from "./ImpersonationBanner";
-import { LayoutDashboard, Package, Plus, Store, BarChart3, Upload, Calendar, Gavel, Crown, ShoppingCart, Heart, Trophy, Bookmark, Wrench, Activity } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Store, BarChart3, Upload, Calendar, Gavel, Crown, ShoppingCart, Heart, Trophy, Bookmark, Wrench, Activity, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface DealerLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DealerLayout({ children }: DealerLayoutProps) {
-  const [location] = useLocation();
-
-  const navItems = [
+const navItems = [
     {
       href: "/dealer/dashboard",
       label: "Dashboard",
@@ -99,40 +99,72 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
     },
   ];
 
+function NavLinks({ location, onClose }: { location: string; onClose?: () => void }) {
+  return (
+    <div className="space-y-1">
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        const isActive = location === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onClose}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              isActive
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <Icon className="h-4 w-4 shrink-0" />
+            {item.label}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function DealerLayout({ children }: DealerLayoutProps) {
+  const [location] = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <ImpersonationBanner />
       <Header />
-      
+
       <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 border-r bg-card min-h-[calc(100vh-64px)] p-4">
-          <div className="space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location === item.href;
-              
-              return (
-                <Link 
-                  key={item.href} 
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block w-64 shrink-0 border-r bg-card min-h-[calc(100vh-64px)] p-4 sticky top-16 self-start max-h-[calc(100vh-64px)] overflow-y-auto">
+          <NavLinks location={location} />
         </aside>
 
+        {/* Mobile Sidebar via Sheet */}
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="lg:hidden fixed bottom-4 right-4 z-50 rounded-full shadow-lg h-12 w-12 bg-primary text-primary-foreground border-primary hover:bg-primary/90"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-72 p-4 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-semibold text-sm">Dealer Menu</span>
+              <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <NavLinks location={location} onClose={() => setMobileOpen(false)} />
+          </SheetContent>
+        </Sheet>
+
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 min-w-0 p-4 lg:p-6 pb-20 lg:pb-6">
           {children}
         </main>
       </div>

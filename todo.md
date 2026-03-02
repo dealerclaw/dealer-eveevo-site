@@ -1667,3 +1667,25 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Promote rebecca.jackson@eveevo.co.uk to admin role
 - [x] Promote rebecca@rebeccaracer.com to admin role
 - [x] Fix expired auction end dates so Buy It Now vehicles appear in live auction
+
+## Mobile Responsiveness (Mar 2026)
+- [ ] Fix navigation header - mobile hamburger menu
+- [ ] Fix Home page - hero, feature cards, search sections
+- [ ] Fix Browse/Vehicle listing page - filters sidebar, car grid
+- [ ] Fix Vehicle Detail page - image gallery, specs, finance section
+- [ ] Fix Dealers page - dealer cards grid
+- [ ] Fix Finance page - calculator layout
+- [ ] Fix Compare page - comparison table
+- [ ] Fix LiveAuction page - image, bidding panel, vehicle list
+- [ ] Fix MyAuctions page - table to card view on mobile
+- [ ] Fix DealerMarketplace page - filters, car grid
+- [ ] Fix DealerLayout sidebar - collapse to bottom nav on mobile
+- [ ] Fix Admin pages - tables to card view on mobile
+
+## Mobile Responsiveness (Mar 2026)
+- [x] Make Header mobile-friendly - hide desktop auth buttons on mobile, add Sign In/Sign Up to Sheet menu
+- [x] Make DealerLayout sidebar collapsible on mobile with Sheet drawer
+- [x] Add mobile filter toggle to Browse page (show/hide filters)
+- [x] Make MyAuctions table horizontally scrollable on mobile (overflow-x-auto)
+- [x] Make MyInventory table horizontally scrollable on mobile (overflow-x-auto)
+- [x] Make AdminDealers table horizontally scrollable on mobile (overflow-x-auto)

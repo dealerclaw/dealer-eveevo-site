@@ -84,7 +84,7 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" asChild className="hidden md:inline-flex">
                 <Link href="/favorites">
                   <Heart className="h-5 w-5" />
                 </Link>
@@ -148,7 +148,7 @@ export default function Header() {
               </DropdownMenu>
             </>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <Button variant="ghost" asChild>
                 <Link href="/sign-in">Sign In</Link>
               </Button>
@@ -165,7 +165,7 @@ export default function Header() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+              <SheetContent side="right">
               <nav className="flex flex-col space-y-4 mt-8">
                 <Link href="/browse" className="text-lg font-medium hover:text-primary">
                   Browse Vehicles
@@ -179,6 +179,17 @@ export default function Header() {
                 <Link href="/compare" className="text-lg font-medium hover:text-primary">
                   Compare
                 </Link>
+                {!isAuthenticated && (
+                  <>
+                    <hr className="my-2" />
+                    <Link href="/sign-in" className="text-lg font-medium hover:text-primary">
+                      Sign In
+                    </Link>
+                    <Link href="/sign-up" className="text-lg font-medium text-primary">
+                      Sign Up
+                    </Link>
+                  </>
+                )}
                 {isAuthenticated && (
                   <>
                     <hr className="my-4" />

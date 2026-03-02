@@ -232,7 +232,8 @@ export default function MyInventory() {
           </CardHeader>
           <CardContent>
             {inventory && inventory.length > 0 ? (
-              <Table>
+              <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-[750px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Vehicle</TableHead>
@@ -348,6 +349,7 @@ export default function MyInventory() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">No vehicles in your inventory yet</p>

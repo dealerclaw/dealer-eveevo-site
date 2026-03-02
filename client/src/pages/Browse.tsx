@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus, Images, Store } from "lucide-react";
+import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus, Images, Store, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import RecentlyViewed from "@/components/RecentlyViewed";
@@ -272,6 +272,9 @@ export default function Browse() {
     toast.success(`Loaded search: ${search.name}`);
   };
 
+  // Mobile filter panel toggle
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
@@ -293,9 +296,21 @@ export default function Browse() {
           {/* Recently Viewed Section */}
           <RecentlyViewed />
 
+          {/* Mobile Filter Toggle */}
+          <div className="lg:hidden mb-4">
+            <Button
+              variant="outline"
+              className="w-full flex items-center gap-2"
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              {showMobileFilters ? "Hide Filters" : "Show Filters"}
+            </Button>
+          </div>
+
           <div className="grid lg:grid-cols-4 gap-6">
             {/* Filters Sidebar */}
-            <aside className="lg:col-span-1">
+            <aside className={`lg:col-span-1 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
               <Card className="sticky top-20">
                 <CardHeader>
                   <CardTitle className="flex items-center">
