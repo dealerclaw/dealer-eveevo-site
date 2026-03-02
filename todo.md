@@ -1658,3 +1658,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Buy It Now Button Bug (Mar 2026)
 - [x] Fix Buy It Now button showing as unavailable despite buyNowPrice being set
+
+## Buy It Now - Ongoing Debug (Mar 2026)
+- [x] Debug and fix Buy It Now badge still not showing on auction car image
+- [x] Debug and fix Buy It Now button still not working in auction view
+
+## Admin Promotions & Auction Fix (Mar 2026)
+- [x] Promote rebecca.jackson@eveevo.co.uk to admin role
+- [x] Promote rebecca@rebeccaracer.com to admin role
+- [x] Fix expired auction end dates so Buy It Now vehicles appear in live auction

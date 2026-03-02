@@ -14,6 +14,14 @@ export type TrpcContext = {
 
 const IMPERSONATION_COOKIE = 'eveevo_impersonate';
 
+// Admin email allowlist — these accounts always get admin role regardless of Clerk metadata
+const ADMIN_EMAIL_ALLOWLIST = [
+  'anthony.perry@eveevo.com',
+  'anthony.m.perry@gmail.com',
+  'rebecca.jackson@eveevo.co.uk',
+  'rebecca@rebeccaracer.com',
+];
+
 export async function createContext(
   opts: CreateExpressContextOptions
 ): Promise<TrpcContext> {
@@ -72,11 +80,13 @@ export async function createContext(
       // Get role and accountType from Clerk metadata
       const rawRole = (clerkUser.unsafeMetadata?.role as string) || 'user';
       const rawAccountType = (clerkUser.unsafeMetadata?.accountType as string) || 'individual';
-      const role = rawRole === 'dealer' ? 'dealer' : rawRole === 'admin' ? 'admin' : 'user';
-      const accountType = rawAccountType === 'business' ? 'business' : 'individual';
+      const email = clerkUser.primaryEmailAddress?.emailAddress || '';
+      // Admin allowlist overrides Clerk metadata
+      const isAdminEmail = ADMIN_EMAIL_ALLOWLIST.includes(email.toLowerCase());
+      const role = isAdminEmail ? 'admin' : (rawRole === 'dealer' ? 'dealer' : rawRole === 'admin' ? 'admin' : 'user');
+      const accountType = isAdminEmail ? 'business' : (rawAccountType === 'business' ? 'business' : 'individual');
 
       // Sync or get user from database
-      const email = clerkUser.primaryEmailAddress?.emailAddress || '';
       await db.upsertUser({
         openId: clerkUser.id,
         name: clerkUser.fullName || email.split('@')[0] || 'User',
