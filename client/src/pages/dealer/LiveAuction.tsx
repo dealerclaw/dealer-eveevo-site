@@ -236,7 +236,14 @@ export default function LiveAuction() {
     const currentVehicle = filteredVehicles?.[currentIndex];
     if (!currentVehicle) return;
 
-    if (!currentVehicle.buyNowPrice) {
+    // Check subscription
+    if (!subscriptionStatus || subscriptionStatus.status !== 'active') {
+      toast.error("Active subscription required to use Buy It Now");
+      setLocation("/dealer/subscription");
+      return;
+    }
+
+    if (!currentVehicle.buyNowPrice || parseFloat(currentVehicle.buyNowPrice.toString()) <= 0) {
       toast.error("Buy Now is not available for this vehicle");
       return;
     }
@@ -287,8 +294,8 @@ export default function LiveAuction() {
     );
   }
 
-  const currentVehicle = vehicles[currentIndex];
-  const nextVehicle = vehicles[(currentIndex + 1) % vehicles.length];
+  const currentVehicle = filteredVehicles[currentIndex] ?? vehicles[currentIndex];
+  const nextVehicle = filteredVehicles[(currentIndex + 1) % filteredVehicles.length] ?? vehicles[(currentIndex + 1) % vehicles.length];
   const currentBid = currentVehicle.currentHighestBid 
     ? parseFloat(currentVehicle.currentHighestBid.toString())
     : parseFloat(currentVehicle.startingBid?.toString() || '0');
@@ -773,7 +780,7 @@ export default function LiveAuction() {
                     variant="secondary"
                     className="w-full bg-green-600 hover:bg-green-700 text-white border-0"
                     onClick={handleBuyNow}
-                    disabled={buyNowMutation.isPending || !currentVehicle.buyNowPrice}
+                    disabled={buyNowMutation.isPending || !currentVehicle.buyNowPrice || parseFloat(currentVehicle.buyNowPrice?.toString() ?? '0') <= 0}
                   >
                     {buyNowMutation.isPending ? (
                       <>

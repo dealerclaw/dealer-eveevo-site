@@ -1655,3 +1655,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Buy It Now Badge Fix (Mar 2026)
 - [x] Fix Buy It Now price badge not showing on car image in auction view
+
+## Buy It Now Button Bug (Mar 2026)
+- [x] Fix Buy It Now button showing as unavailable despite buyNowPrice being set
