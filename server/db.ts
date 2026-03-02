@@ -1289,6 +1289,46 @@ export async function buyNowAuction(carId: number, dealerId: number, userId: num
 }
 
 /**
+ * Restore an auction that was ended by a Buy It Now that was never paid
+ * Called when a Stripe checkout session expires without payment
+ */
+export async function restoreAuction(carId: number, newEndDate: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(cars)
+    .set({
+      isAuction: true,
+      auctionEndDate: newEndDate,
+      isAvailable: true,
+    })
+    .where(eq(cars.id, carId));
+
+  // Mark the Buy It Now winning bid as lost (since payment was not completed)
+  await db
+    .update(dealerBids)
+    .set({ status: 'lost' })
+    .where(
+      and(
+        eq(dealerBids.carId, carId),
+        eq(dealerBids.status, 'won')
+      )
+    );
+
+  // Restore other bids to active status
+  await db
+    .update(dealerBids)
+    .set({ status: 'active' })
+    .where(
+      and(
+        eq(dealerBids.carId, carId),
+        eq(dealerBids.status, 'lost')
+      )
+    );
+}
+
+/**
  * Get subscription analytics for a dealer
  */
 export async function getSubscriptionAnalytics(dealerId: number) {
@@ -2015,6 +2055,8 @@ export async function getDealerAuctions(dealerId: number) {
       year: cars.year,
       price: cars.price,
       reservePrice: cars.reservePrice,
+      startingBid: cars.startingBid,
+      buyNowPrice: cars.buyNowPrice,
       auctionStartDate: cars.auctionStartDate,
       auctionEndDate: cars.auctionEndDate,
       mainImage: cars.mainImage,

@@ -589,22 +589,36 @@ export default function LiveAuction() {
               <Card className="bg-black/20 border-white/10 backdrop-blur-sm">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="text-sm font-semibold text-white/60 uppercase">Next Up:</div>
+                    <div className="text-sm font-semibold text-white/60 uppercase shrink-0">Next Up:</div>
                     <div className="flex-1 flex items-center gap-4">
                       {nextVehicle.mainImage && (
-                        <img
-                          src={nextVehicle.mainImage}
-                          alt={`${nextVehicle.make} ${nextVehicle.model}`}
-                          className="w-20 h-14 object-cover rounded"
-                        />
+                        <div className="relative shrink-0">
+                          <img
+                            src={nextVehicle.mainImage}
+                            alt={`${nextVehicle.make} ${nextVehicle.model}`}
+                            className="w-20 h-14 object-cover rounded"
+                          />
+                          {nextVehicle.buyNowPrice && parseFloat(nextVehicle.buyNowPrice.toString()) > 0 && (
+                            <div className="absolute -top-1.5 -right-1.5 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-md leading-tight">
+                              BIN
+                            </div>
+                          )}
+                        </div>
                       )}
-                      <div>
-                        <p className="font-semibold text-white">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-white truncate">
                           {nextVehicle.year} {nextVehicle.make} {nextVehicle.model}
                         </p>
-                        <p className="text-sm text-white/60">
-                          Starting bid: £{parseFloat(nextVehicle.startingBid?.toString() || '0').toLocaleString()}
-                        </p>
+                        <div className="flex items-center gap-3 mt-0.5">
+                          <p className="text-sm text-white/60">
+                            Starting: £{parseFloat(nextVehicle.startingBid?.toString() || '0').toLocaleString()}
+                          </p>
+                          {nextVehicle.buyNowPrice && parseFloat(nextVehicle.buyNowPrice.toString()) > 0 && (
+                            <p className="text-sm font-semibold text-green-400">
+                              Buy Now: £{parseFloat(nextVehicle.buyNowPrice.toString()).toLocaleString()}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

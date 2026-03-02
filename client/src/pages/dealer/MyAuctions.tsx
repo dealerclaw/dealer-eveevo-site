@@ -160,6 +160,7 @@ export default function MyAuctions() {
                   <TableRow>
                     <TableHead>Vehicle</TableHead>
                     <TableHead>Reserve Price</TableHead>
+                    <TableHead>Buy It Now</TableHead>
                     <TableHead>Current Bid</TableHead>
                     <TableHead>Total Bids</TableHead>
                     <TableHead>Time Remaining</TableHead>
@@ -175,6 +176,16 @@ export default function MyAuctions() {
                       </TableCell>
                       <TableCell>
                         £{parseFloat(auction.reservePrice || "0").toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        {auction.buyNowPrice && parseFloat(auction.buyNowPrice) > 0 ? (
+                          <Badge className="bg-green-600 hover:bg-green-700 text-white gap-1">
+                            <span className="text-xs">BIN</span>
+                            £{parseFloat(auction.buyNowPrice).toLocaleString()}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">—</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         {auction.currentHighestBid ? (
@@ -194,12 +205,17 @@ export default function MyAuctions() {
                         )}
                       </TableCell>
                       <TableCell>
-                        {auction.currentHighestBid && 
-                         parseFloat(auction.currentHighestBid) >= parseFloat(auction.reservePrice || "0") ? (
-                          <Badge variant="default">Reserve Met</Badge>
-                        ) : (
-                          <Badge variant="secondary">Below Reserve</Badge>
-                        )}
+                        <div className="flex flex-col gap-1">
+                          {auction.currentHighestBid && 
+                           parseFloat(auction.currentHighestBid) >= parseFloat(auction.reservePrice || "0") ? (
+                            <Badge variant="default">Reserve Met</Badge>
+                          ) : (
+                            <Badge variant="secondary">Below Reserve</Badge>
+                          )}
+                          {auction.buyNowPrice && parseFloat(auction.buyNowPrice) > 0 && (
+                            <Badge className="bg-green-600/20 text-green-700 border border-green-600/30 text-xs">Buy Now Active</Badge>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">

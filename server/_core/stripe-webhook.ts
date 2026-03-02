@@ -53,6 +53,10 @@ export async function handleStripeWebhook(req: Request, res: Response) {
         await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
         break;
 
+      case 'checkout.session.expired':
+        await handleCheckoutExpired(event.data.object as Stripe.Checkout.Session);
+        break;
+
       case 'payment_intent.succeeded':
         await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
@@ -196,10 +200,55 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
   }
 
-  // Handle one-time payment (e.g., vehicle reservation)
-  if (session.mode === 'payment') {
-    // Payment intent will be handled separately if needed
-    console.log('[Webhook] One-time payment completed');
+  // Handle Buy It Now commitment fee payment
+  if (session.mode === 'payment' && session.metadata?.purchase_type === 'buy_now') {
+    const carId = session.metadata?.car_id ? parseInt(session.metadata.car_id) : null;
+    const dealerId = session.metadata?.dealer_id ? parseInt(session.metadata.dealer_id) : null;
+    const purchasePrice = session.metadata?.purchase_price ? parseFloat(session.metadata.purchase_price) : null;
+    const buyerName = session.metadata?.customer_name || 'Unknown';
+    const buyerEmail = session.metadata?.customer_email || 'N/A';
+
+    console.log('[Webhook] Buy Now commitment fee paid:', { carId, dealerId, purchasePrice });
+
+    if (carId && dealerId && purchasePrice) {
+      // Car is already marked as sold (done at time of Buy Now click)
+      // Just send confirmation notifications
+      const car = await db.getCarById(carId);
+      if (car) {
+        // Notify owner/admin
+        await notifyOwner({
+          title: `Buy Now Payment Confirmed: ${car.make} ${car.model} ${car.year}`,
+          content: `£99 commitment fee received for ${car.make} ${car.model} ${car.year}.\n\nBuyer: ${buyerName} (${buyerEmail})\nPurchase Price: £${purchasePrice.toLocaleString()}\nBalance Due: £${(purchasePrice - 99).toLocaleString()}\n\nStripe Session: ${session.id}`,
+        });
+
+        console.log('[Webhook] Buy Now payment confirmed for car:', carId);
+      }
+    }
+  }
+}
+
+/**
+ * Handle checkout session expired — restore auction if Buy It Now payment was not completed
+ */
+async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
+  console.log('[Webhook] Checkout expired:', session.id);
+
+  // Only restore auction if this was a Buy It Now commitment fee that was never paid
+  if (session.mode === 'payment' && session.metadata?.purchase_type === 'buy_now') {
+    const carId = session.metadata?.car_id ? parseInt(session.metadata.car_id) : null;
+
+    if (!carId) {
+      console.warn('[Webhook] No car_id in expired Buy Now session');
+      return;
+    }
+
+    console.log('[Webhook] Restoring auction for car:', carId, '(Buy Now checkout expired without payment)');
+
+    // Restore the auction — set it back to active with a new 48-hour window
+    const newEndDate = new Date(Date.now() + 48 * 60 * 60 * 1000);
+    await db.restoreAuction(carId, newEndDate);
+
+    console.log('[Webhook] Auction restored for car:', carId, 'new end date:', newEndDate);
   }
 }
 
