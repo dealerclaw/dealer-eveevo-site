@@ -83,7 +83,7 @@ export async function handleClerkWebhook(req: Request, res: Response) {
           .set({
             name,
             role: role as 'user' | 'dealer' | 'admin',
-            accountType: accountType as 'user' | 'dealer',
+            accountType: accountType as 'individual' | 'business',
             lastSignedIn: new Date(),
             updatedAt: new Date(),
           })
@@ -97,7 +97,7 @@ export async function handleClerkWebhook(req: Request, res: Response) {
           email,
           name,
           role: role as 'user' | 'dealer' | 'admin',
-          accountType: accountType as 'user' | 'dealer',
+          accountType: accountType as 'individual' | 'business',
           loginMethod: 'clerk',
           emailVerified: true, // Clerk handles email verification
           createdAt: new Date(),

@@ -23,7 +23,10 @@ export const appRouter = router({
   finance: financeRouter,
   
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(opts => ({
+      user: opts.ctx.user,
+      adminUser: opts.ctx.adminUser,
+    })),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
@@ -403,10 +406,14 @@ export const appRouter = router({
         // Temporary: Return mock data if not authenticated
         if (!ctx.user) {
           return {
-            totalVehicles: 0,
-            activeListings: 0,
+            totalListings: 0,
+            availableListings: 0,
             totalViews: 0,
-            totalReservations: 0,
+            totalInquiries: 0,
+            newInquiries: 0,
+            recentInquiries: [],
+            topListings: [],
+            auctionPurchases: [],
           };
         }
         // Check if user is a dealer
@@ -632,9 +639,12 @@ export const appRouter = router({
       }).optional())
       .mutation(async ({ ctx, input }) => {
         // Temporary: Require authentication but don't use protectedProcedure
+        console.log('[createSubscription] ctx.user:', ctx.user);
         if (!ctx.user) {
+          console.log('[createSubscription] No user in context, rejecting');
           throw new Error('Please log in to subscribe');
         }
+        console.log('[createSubscription] User authenticated:', ctx.user.email, 'role:', ctx.user.role);
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
           throw new Error('Unauthorized: Dealer access required');
         }
@@ -2192,7 +2202,9 @@ export const appRouter = router({
         dealerId: z.number(),
       }))
       .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== 'admin') {
+        // Check actual admin (ctx.adminUser when impersonating, ctx.user otherwise)
+        const actualUser = ctx.adminUser ?? ctx.user;
+        if (actualUser.role !== 'admin') {
           throw new Error('Unauthorized: Admin access required');
         }
         
@@ -2202,39 +2214,36 @@ export const appRouter = router({
           throw new Error('Dealer not found');
         }
 
-        // Ensure dealer has a firebaseId (openId)
-        if (!dealer.firebaseId) {
-          throw new Error(`Dealer "${dealer.name}" does not have a linked user account (firebaseId is missing)`);
+        // Find the dealer's user account (try openId first, then email)
+        let dealerUser = null;
+        if (dealer.firebaseId) {
+          dealerUser = await db.getUserByOpenId(dealer.firebaseId) ?? null;
         }
-
-        // Get dealer's user info
-        const dealerUser = await db.getUserByOpenId(dealer.firebaseId);
+        if (!dealerUser && dealer.email) {
+          dealerUser = await db.getUserByEmail(dealer.email) ?? null;
+        }
         if (!dealerUser) {
-          throw new Error(`User account not found for dealer "${dealer.name}" (firebaseId: ${dealer.firebaseId}). The user may have been deleted.`);
+          throw new Error(`User account not found for dealer "${dealer.name}". The dealer may not have a linked user account yet.`);
         }
 
-        // Create session token using SDK (compatible with auth verification)
-        const sessionToken = await sdk.createSessionToken(dealerUser.openId, {
-          name: dealerUser.name || dealer.name,
-          expiresInMs: ONE_YEAR_MS,
-        });
-
+        // Set impersonation cookie with the dealer's user ID
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        console.log('[Impersonate] Setting cookie with options:', cookieOptions);
-        console.log('[Impersonate] Session token:', sessionToken.substring(0, 20) + '...');
-        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
-        console.log('[Impersonate] Cookie set for dealer:', dealer.name, 'openId:', dealerUser.openId);
+        ctx.res.cookie('eveevo_impersonate', dealerUser.id.toString(), {
+          ...cookieOptions,
+          maxAge: ONE_YEAR_MS,
+          httpOnly: true,
+        });
+        console.log('[Impersonate] Impersonating dealer:', dealer.name, 'userId:', dealerUser.id);
 
         return { success: true, dealerName: dealer.name };
       }),
 
     exitImpersonation: protectedProcedure
       .mutation(async ({ ctx }) => {
-        // For now, just clear the session and redirect to login
-        // User will need to log in again as admin
+        // Clear the impersonation cookie
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-
+        ctx.res.clearCookie('eveevo_impersonate', cookieOptions);
+        console.log('[Impersonate] Exited impersonation');
         return { success: true };
       }),
 

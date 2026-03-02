@@ -25,7 +25,7 @@ export default function ShareShortlistDialog({ shortlistIds }: ShareShortlistDia
   const [recipientEmail, setRecipientEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const shareShortlistMutation = trpc.dealer.shareShortlist.useMutation({
+  const shareShortlistMutation = trpc.auction.shareShortlist.useMutation({
     onSuccess: () => {
       toast.success("Shortlist shared successfully!");
       setOpen(false);

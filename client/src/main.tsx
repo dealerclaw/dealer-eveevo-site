@@ -5,6 +5,7 @@ import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import { ClerkProvider, useAuth } from '@clerk/clerk-react';
+import { useRef, useState } from "react";
 import App from "./App";
 
 import "./index.css";
@@ -44,46 +45,55 @@ queryClient.getMutationCache().subscribe(event => {
   }
 });
 
-// Create tRPC client factory that can access Clerk session
-function createTRPCClient() {
-  return trpc.createClient({
-    links: [
-      httpBatchLink({
-        url: "/api/trpc",
-        transformer: superjson,
-        headers: async () => {
-          // Get Clerk session token
-          try {
-            const token = await (window as any).__clerk?.session?.getToken();
-            if (token) {
-              return {
-                authorization: `Bearer ${token}`,
-              };
+// Inner component that has access to Clerk's useAuth hook
+// Uses a ref so the tRPC client always calls the latest getToken
+function AppWithTRPC() {
+  const { getToken } = useAuth();
+  // Keep a ref to the latest getToken so the stable tRPC client can use it
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
+
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: "/api/trpc",
+          transformer: superjson,
+          headers: async () => {
+            try {
+              const token = await getTokenRef.current();
+              if (token) {
+                return {
+                  authorization: `Bearer ${token}`,
+                };
+              }
+            } catch (e) {
+              console.warn('[tRPC] Failed to get Clerk token:', e);
             }
-          } catch (e) {
-            console.warn('[tRPC] Failed to get Clerk token:', e);
-          }
-          return {};
-        },
-        fetch(input, init) {
-          return globalThis.fetch(input, {
-            ...(init ?? {}),
-            credentials: "include",
-          });
-        },
-      }),
-    ],
-  });
-}
+            return {};
+          },
+          fetch(input, init) {
+            return globalThis.fetch(input, {
+              ...(init ?? {}),
+              credentials: "include",
+            });
+          },
+        }),
+      ],
+    })
+  );
 
-const trpcClient = createTRPCClient();
-
-createRoot(document.getElementById("root")!).render(
-  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+  return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     </trpc.Provider>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+    <AppWithTRPC />
   </ClerkProvider>
 );

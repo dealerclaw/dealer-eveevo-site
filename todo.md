@@ -1622,3 +1622,25 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix subscription page redirecting to Manus after a few minutes
 - [x] Fix 403 error on dealer subscription page - make subscription endpoints public
 - [x] Fix backend not recognizing Clerk authentication - subscription says "please login" despite being logged in
+- [ ] Fix subscription page still showing "login to subscribe" despite being logged in
+- [x] Update anthony.perry@eveevo.com to admin role in database (Clerk metadata needs manual update)
+- [x] Update anthony.m.perry@gmail.com to admin role with dealer access in database (Clerk metadata needs manual update)
+- [x] Update anthony.perry@eveevo.com to full admin + business role matching anthony.m.perry@gmail.com (Clerk metadata needs manual update)
+- [ ] Add admin impersonation feature - view site as any dealer or consumer
+- [ ] Build admin impersonation UI panel with user search and role switching
+- [ ] Update frontend auth context to respect impersonation state
+
+## Session: Fix Auth, TypeScript Errors, Admin Impersonation (Mar 2026)
+- [x] Fix TypeScript error in ShareShortlistDialog (wrong router path dealer→auction)
+- [x] Fix TypeScript error in useAuth.ts (Date constructor with null values)
+- [x] Fix Clerk backend authentication - tRPC client now sends Authorization header using useAuth hook ref pattern
+- [x] Update context.ts to use @clerk/express verifyToken instead of manual JWKS
+- [x] Add getUserById function to db.ts
+- [x] Update auth.me endpoint to return { user, adminUser } for impersonation detection
+- [x] Update useAuth hook to fetch backend auth state and expose isImpersonating/adminUser
+- [x] Fix DealerMarketplace.tsx to use new auth.me response format
+- [x] Update admin impersonation to use cookie-based approach (eveevo_impersonate cookie)
+- [x] Update exitImpersonation to clear the impersonation cookie
+- [x] Update adminProcedure to check ctx.adminUser for impersonation scenarios
+- [x] Rewrite ImpersonationBanner to show when admin is impersonating a dealer
+- [x] Add adminUser context field to TrpcContext type

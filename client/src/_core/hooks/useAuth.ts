@@ -13,8 +13,14 @@ export function useAuth(options?: UseAuthOptions) {
   const { signOut } = useClerk();
   const utils = trpc.useUtils();
 
+  // Query backend for impersonation state (only when signed in)
+  const { data: authMeData } = trpc.auth.me.useQuery(undefined, {
+    enabled: isSignedIn === true,
+    staleTime: 30_000,
+  });
+
   // Map Clerk user to our user format
-  const user = useMemo(() => {
+  const clerkMappedUser = useMemo(() => {
     if (!clerkUser || !isSignedIn) return null;
     
     const rawRole = (clerkUser.unsafeMetadata?.role as string) || 'user';
@@ -32,11 +38,25 @@ export function useAuth(options?: UseAuthOptions) {
       role: role as 'user' | 'dealer' | 'admin',
       accountType: accountType as 'individual' | 'business',
       phone: clerkUser.primaryPhoneNumber?.phoneNumber || null,
-      createdAt: new Date(clerkUser.createdAt),
-      updatedAt: new Date(clerkUser.updatedAt),
+      createdAt: new Date(clerkUser.createdAt ?? Date.now()),
+      updatedAt: new Date(clerkUser.updatedAt ?? Date.now()),
       lastSignedIn: new Date(),
     };
   }, [clerkUser, isSignedIn]);
+
+  // Use backend user data when available (includes DB id and impersonation state)
+  const user = useMemo(() => {
+    if (!isSignedIn) return null;
+    // When impersonating, backend returns the impersonated user as `user`
+    if (authMeData?.user) {
+      return authMeData.user;
+    }
+    return clerkMappedUser;
+  }, [isSignedIn, authMeData, clerkMappedUser]);
+
+  // The real admin user when impersonating
+  const adminUser = authMeData?.adminUser ?? null;
+  const isImpersonating = adminUser !== null;
 
   const logout = async () => {
     await signOut();
@@ -51,9 +71,11 @@ export function useAuth(options?: UseAuthOptions) {
       user,
       loading: !isLoaded,
       error: null,
-      isAuthenticated: isSignedIn && user !== null,
+      isAuthenticated: isSignedIn === true && user !== null,
+      isImpersonating,
+      adminUser,
     };
-  }, [user, isLoaded, isSignedIn]);
+  }, [user, isLoaded, isSignedIn, isImpersonating, adminUser]);
 
   useEffect(() => {
     if (!redirectOnUnauthenticated) return;
@@ -67,7 +89,7 @@ export function useAuth(options?: UseAuthOptions) {
 
   return {
     ...state,
-    refresh: () => {}, // Clerk handles refresh automatically
+    refresh: () => utils.auth.me.invalidate(),
     logout,
   };
 }

@@ -9,7 +9,8 @@ import { useLocation } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
 
 export default function DealerMarketplace() {
-  const { data: user } = trpc.auth.me.useQuery();
+  const { data: authData } = trpc.auth.me.useQuery();
+  const user = authData?.user;
   const [, navigate] = useLocation();
 
   // Get subscription status
