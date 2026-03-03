@@ -1689,3 +1689,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Make MyAuctions table horizontally scrollable on mobile (overflow-x-auto)
 - [x] Make MyInventory table horizontally scrollable on mobile (overflow-x-auto)
 - [x] Make AdminDealers table horizontally scrollable on mobile (overflow-x-auto)
+
+## Mobile UX Improvements (Mar 2026)
+- [x] Add mobile bottom navigation bar to dealer dashboard (Dashboard, Inventory, Auction, Wins, Settings)
+- [x] Add touch swipe support to CarDetail image gallery

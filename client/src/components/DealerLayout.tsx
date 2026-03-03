@@ -1,7 +1,11 @@
 import { Link, useLocation } from "wouter";
 import Header from "./Header";
 import ImpersonationBanner from "./ImpersonationBanner";
-import { LayoutDashboard, Package, Plus, Store, BarChart3, Upload, Calendar, Gavel, Crown, ShoppingCart, Heart, Trophy, Bookmark, Wrench, Activity, Menu, X } from "lucide-react";
+import {
+  LayoutDashboard, Package, Plus, Store, BarChart3, Upload,
+  Calendar, Gavel, Crown, ShoppingCart, Heart, Trophy,
+  Bookmark, Wrench, Activity, Menu, X, MoreHorizontal
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,92 +16,33 @@ interface DealerLayoutProps {
 }
 
 const navItems = [
-    {
-      href: "/dealer/dashboard",
-      label: "Dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      href: "/dealer/inventory",
-      label: "My Inventory",
-      icon: Package,
-    },
-    {
-      href: "/dealer/add-vehicle",
-      label: "Add Vehicle",
-      icon: Plus,
-    },
-    {
-      href: "/dealer/marketplace",
-      label: "Dealer Marketplace",
-      icon: Store,
-    },
-    {
-      href: "/dealer/live-auction",
-      label: "Live Auction",
-      icon: Gavel,
-    },
-    {
-      href: "/dealer/my-auctions",
-      label: "My Auctions",
-      icon: Gavel,
-    },
-    {
-      href: "/dealer/auction-analytics",
-      label: "Auction Analytics",
-      icon: BarChart3,
-    },
-    {
-      href: "/dealer/my-wins",
-      label: "My Wins",
-      icon: Trophy,
-    },
-    {
-      href: "/dealer/shortlist",
-      label: "My Shortlist",
-      icon: Bookmark,
-    },
-    {
-      href: "/dealer/cart",
-      label: "Shopping Cart",
-      icon: ShoppingCart,
-    },
-    {
-      href: "/dealer/watchlist",
-      label: "Watchlist",
-      icon: Heart,
-    },
-    {
-      href: "/dealer/analytics",
-      label: "Analytics",
-      icon: BarChart3,
-    },
-    {
-      href: "/dealer/ev-faults",
-      label: "EV Faults Database",
-      icon: Wrench,
-    },
-    {
-      href: "/dealer/inventory-health",
-      label: "Inventory Health",
-      icon: Activity,
-    },
-    {
-      href: "/dealer/bulk-upload",
-      label: "Bulk Upload",
-      icon: Upload,
-    },
-    {
-      href: "/dealer/test-drives",
-      label: "Test Drives",
-      icon: Calendar,
-    },
-    {
-      href: "/dealer/subscription",
-      label: "Subscribe",
-      icon: Crown,
-    },
-  ];
+  { href: "/dealer/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dealer/inventory", label: "My Inventory", icon: Package },
+  { href: "/dealer/add-vehicle", label: "Add Vehicle", icon: Plus },
+  { href: "/dealer/marketplace", label: "Dealer Marketplace", icon: Store },
+  { href: "/dealer/live-auction", label: "Live Auction", icon: Gavel },
+  { href: "/dealer/my-auctions", label: "My Auctions", icon: Gavel },
+  { href: "/dealer/auction-analytics", label: "Auction Analytics", icon: BarChart3 },
+  { href: "/dealer/my-wins", label: "My Wins", icon: Trophy },
+  { href: "/dealer/shortlist", label: "My Shortlist", icon: Bookmark },
+  { href: "/dealer/cart", label: "Shopping Cart", icon: ShoppingCart },
+  { href: "/dealer/watchlist", label: "Watchlist", icon: Heart },
+  { href: "/dealer/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/dealer/ev-faults", label: "EV Faults Database", icon: Wrench },
+  { href: "/dealer/inventory-health", label: "Inventory Health", icon: Activity },
+  { href: "/dealer/bulk-upload", label: "Bulk Upload", icon: Upload },
+  { href: "/dealer/test-drives", label: "Test Drives", icon: Calendar },
+  { href: "/dealer/subscription", label: "Subscribe", icon: Crown },
+];
+
+// The 5 most important items shown in the bottom bar
+const bottomNavItems = [
+  { href: "/dealer/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dealer/inventory", label: "Inventory", icon: Package },
+  { href: "/dealer/live-auction", label: "Auction", icon: Gavel },
+  { href: "/dealer/my-wins", label: "Wins", icon: Trophy },
+  { href: "/dealer/subscription", label: "Subscribe", icon: Crown },
+];
 
 function NavLinks({ location, onClose }: { location: string; onClose?: () => void }) {
   return (
@@ -141,16 +86,46 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
           <NavLinks location={location} />
         </aside>
 
-        {/* Mobile Sidebar via Sheet */}
+        {/* Main Content — extra bottom padding on mobile for the bottom nav bar */}
+        <main className="flex-1 min-w-0 p-4 lg:p-6 pb-24 lg:pb-6">
+          {children}
+        </main>
+      </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex items-stretch h-16 shadow-lg">
+        {bottomNavItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors",
+                isActive
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Icon className={cn("h-5 w-5", isActive && "stroke-[2.5]")} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+
+        {/* "More" button opens the full Sheet menu */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="lg:hidden fixed bottom-4 right-4 z-50 rounded-full shadow-lg h-12 w-12 bg-primary text-primary-foreground border-primary hover:bg-primary/90"
+            <button
+              className={cn(
+                "flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors",
+                "text-muted-foreground hover:text-foreground"
+              )}
             >
-              <Menu className="h-5 w-5" />
-            </Button>
+              <MoreHorizontal className="h-5 w-5" />
+              <span>More</span>
+            </button>
           </SheetTrigger>
           <SheetContent side="left" className="w-72 p-4 overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
@@ -162,12 +137,7 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
             <NavLinks location={location} onClose={() => setMobileOpen(false)} />
           </SheetContent>
         </Sheet>
-
-        {/* Main Content */}
-        <main className="flex-1 min-w-0 p-4 lg:p-6 pb-20 lg:pb-6">
-          {children}
-        </main>
-      </div>
+      </nav>
     </div>
   );
 }
