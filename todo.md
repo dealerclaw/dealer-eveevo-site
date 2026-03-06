@@ -1739,3 +1739,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Dealer My Account 404 (Mar 2026)
 - [x] Fix 404 error when new dealer clicks "My Account" in the dealer portal — added /account redirect to /account/settings
+
+## Missing Routes Audit (Mar 2026)
+- [x] Fix /favorites 404 — created Favorites page and registered route in App.tsx
+- [x] Audit all header dropdown links — /favorites was the only missing route

@@ -25,6 +25,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Account pages
 const AccountSettings = lazy(() => import("./pages/AccountSettings"));
+const Favorites = lazy(() => import("./pages/Favorites"));
 
 // Admin pages
 const AdminSync = lazy(() => import("./pages/AdminSync"));
@@ -258,6 +259,7 @@ function Router() {
         </Route>
         <Route path="/account/settings" component={AccountSettings} />
         <Route path="/account">{() => <Redirect to="/account/settings" />}</Route>
+        <Route path="/favorites" component={Favorites} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
