@@ -1746,3 +1746,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Heart/Favourite Button Bug (Mar 2026)
 - [x] Fix heart button on vehicle cards — wired to trpc.favorites.add/remove on Browse and CarDetail pages, shows red fill when favourited
+
+## Sign-In Return URL Fix (Mar 2026)
+- [x] After sign-in, redirect user back to the original page they were trying to visit (not homepage) — DealerAuthGuard passes returnTo param, SignIn reads it and redirects back

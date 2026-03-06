@@ -1,6 +1,12 @@
 import { SignIn as ClerkSignIn } from '@clerk/clerk-react';
+import { useSearch } from 'wouter';
 
 export default function SignIn() {
+  const search = useSearch();
+  const params = new URLSearchParams(search);
+  const returnTo = params.get('returnTo');
+  const afterSignInUrl = returnTo ? decodeURIComponent(returnTo) : '/';
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50 px-4">
       <div className="w-full max-w-md">
@@ -9,10 +15,10 @@ export default function SignIn() {
           <p className="text-gray-600">Sign in to access your account</p>
         </div>
         <ClerkSignIn
-          routing="path"
-          path="/sign-in"
+          routing="virtual"
           signUpUrl="/sign-up"
-          afterSignInUrl="/"
+          afterSignInUrl={afterSignInUrl}
+          afterSignUpUrl={afterSignInUrl}
         />
       </div>
     </div>

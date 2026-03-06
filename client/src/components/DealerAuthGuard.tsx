@@ -19,7 +19,8 @@ export default function DealerAuthGuard({ children }: DealerAuthGuardProps) {
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
       console.log('[DealerAuthGuard] Not authenticated, redirecting to sign-in');
-      setLocation("/sign-in");
+      const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+      setLocation(`/sign-in?returnTo=${returnTo}`);
       return;
     }
 
