@@ -28,6 +28,17 @@ export default function AdminDealers() {
   const [showCarsDialog, setShowCarsDialog] = useState(false);
   const [impersonatingDealerId, setImpersonatingDealerId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Paywall feature flag
+  const { data: paywallData, refetch: refetchPaywall } = trpc.admin.getPaywallStatus.useQuery();
+  const paywallEnabled = paywallData?.paywallEnabled ?? false;
+  const setPaywallMutation = trpc.admin.setPaywallStatus.useMutation({
+    onSuccess: (data: { success: boolean; paywallEnabled: boolean }) => {
+      toast.success(data.paywallEnabled ? 'Paywall enabled — dealers must subscribe to access premium features' : 'Paywall disabled — all dealers can access all features for free');
+      refetchPaywall();
+    },
+    onError: (err: { message?: string }) => toast.error(err.message || 'Failed to update paywall setting'),
+  });
   
   const impersonateMutation = trpc.admin.impersonate.useMutation({
     onMutate: (variables) => {
@@ -98,6 +109,44 @@ export default function AdminDealers() {
             View and manage all dealers on the platform
           </p>
         </div>
+
+        {/* Paywall Feature Toggle */}
+        <Card className="mb-6 border-2 border-dashed">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span>💳</span> Dealer Subscription Paywall
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  {paywallEnabled
+                    ? 'Paywall is ON — dealers must have an active subscription to access the marketplace, auctions, EV faults database, and dealer network.'
+                    : 'Paywall is OFF — all dealers can access all features for free. Enable this when you are ready to monetise.'}
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-3 ml-4">
+                <span className={`text-sm font-medium ${paywallEnabled ? 'text-destructive' : 'text-green-600'}`}>
+                  {paywallEnabled ? 'Enabled' : 'Disabled'}
+                </span>
+                <button
+                  role="switch"
+                  aria-checked={paywallEnabled}
+                  onClick={() => setPaywallMutation.mutate({ enabled: !paywallEnabled })}
+                  disabled={setPaywallMutation.isPending}
+                  className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                    paywallEnabled ? 'bg-destructive' : 'bg-green-500'
+                  } ${setPaywallMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform ${
+                      paywallEnabled ? 'translate-x-8' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
 
         <Card>
           <CardHeader>

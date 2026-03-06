@@ -1709,3 +1709,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Sign-Up Page Fix (Mar 2026)
 - [x] Remove "Change role" link from dealer sign-up page — show clean Clerk sign-up form
+
+## Sign-Up Form Rendering Bug (Mar 2026)
+- [x] Fix Clerk SignUp form not rendering (shows title/subtitle but no form fields or buttons) — resolved by adding dealer.eveevo.co.uk to Clerk allowed subdomains
+
+## Dealer-to-Dealer Paywall Removal (Mar 2026)
+- [x] Audit all paywall enforcement points in the codebase
+- [x] Add siteSettings table with paywall_enabled flag (default: off)
+- [x] Add admin toggle UI in AdminDealers page to enable/disable paywall
+- [x] Remove paywall checks from frontend and backend, wire to feature flag
+- [x] Add public siteSettings.getPaywallStatus tRPC endpoint for frontend

@@ -16,10 +16,15 @@ export default function DealerMarketplace() {
   // Get subscription status
   const { data: subscription, isLoading: loadingSubscription } = trpc.dealer.getSubscriptionStatus.useQuery();
 
-  // Get dealer marketplace listings
+  // Get paywall feature flag
+  const { data: paywallData } = trpc.siteSettings.getPaywallStatus.useQuery();
+  const paywallEnabled = paywallData?.paywallEnabled ?? true; // default to enabled until loaded
+
+  // Get dealer marketplace listings (accessible if paywall off OR subscription active)
+  const canAccessMarketplace = !paywallEnabled || subscription?.status === 'active';
   const { data: cars, isLoading: loadingCars, refetch } = trpc.dealer.getDealerMarketplace.useQuery(
     { limit: 100 },
-    { enabled: subscription?.status === 'active' }
+    { enabled: canAccessMarketplace }
   );
 
   // Create subscription mutation
@@ -92,8 +97,8 @@ export default function DealerMarketplace() {
     );
   }
 
-  // Show subscription prompt if not subscribed
-  if (subscription?.status !== 'active') {
+  // Show subscription prompt only if paywall is enabled and not subscribed
+  if (paywallEnabled && subscription?.status !== 'active') {
     return (
       <DealerLayout>
         <div className="container max-w-4xl py-12">

@@ -636,3 +636,16 @@ export const evFaultViews = mysqlTable("evFaultViews", {
 
 export type EvFaultView = typeof evFaultViews.$inferSelect;
 export type InsertEvFaultView = typeof evFaultViews.$inferInsert;
+
+/**
+ * Site Settings - global admin-controlled feature flags and configuration
+ */
+export const siteSettings = mysqlTable("siteSettings", {
+  id: int("id").autoincrement().primaryKey(),
+  key: varchar("key", { length: 128 }).notNull().unique(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SiteSetting = typeof siteSettings.$inferSelect;
+export type InsertSiteSetting = typeof siteSettings.$inferInsert;

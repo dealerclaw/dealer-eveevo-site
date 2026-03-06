@@ -66,6 +66,8 @@ export default function LiveAuction() {
   const { data: subscriptionStatus } = trpc.dealer.getSubscriptionStatus.useQuery(undefined, {
     enabled: !!user,
   });
+  const { data: paywallData } = trpc.siteSettings.getPaywallStatus.useQuery();
+  const paywallEnabled = paywallData?.paywallEnabled ?? true;
   const placeBidMutation = trpc.auction.placeBid.useMutation({
     onSuccess: (data) => {
       if (data.extended) {
@@ -205,7 +207,7 @@ export default function LiveAuction() {
     }
 
     // Check if dealer has active subscription
-    if (!subscriptionStatus || subscriptionStatus.status !== 'active') {
+    if (paywallEnabled && (!subscriptionStatus || subscriptionStatus.status !== 'active')) {
       toast.error("Active subscription required to place bids");
       setLocation("/dealer/subscription");
       return;
@@ -237,7 +239,7 @@ export default function LiveAuction() {
     if (!currentVehicle) return;
 
     // Check subscription
-    if (!subscriptionStatus || subscriptionStatus.status !== 'active') {
+    if (paywallEnabled && (!subscriptionStatus || subscriptionStatus.status !== 'active')) {
       toast.error("Active subscription required to use Buy It Now");
       setLocation("/dealer/subscription");
       return;

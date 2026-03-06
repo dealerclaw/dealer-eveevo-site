@@ -47,7 +47,8 @@ import {
   type EvFaultRating,
   type InsertEvFaultRating,
   type EvFaultView,
-  type InsertEvFaultView
+  type InsertEvFaultView,
+  siteSettings
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -2971,4 +2972,25 @@ export async function trackEvFaultView(faultId: number, dealerId?: number) {
     // Don't throw - view tracking shouldn't break the app
     return { success: false };
   }
+}
+
+//// ---------------------------------------------------------------------------
+// Site Settings helpers
+// ---------------------------------------------------------------------------
+export async function getSiteSetting(key: string): Promise<string | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+  return rows.length > 0 ? rows[0].value : null;
+}
+export async function setSiteSetting(key: string, value: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(siteSettings)
+    .values({ key, value })
+    .onDuplicateKeyUpdate({ set: { value } });
+}
+export async function isPaywallEnabled(): Promise<boolean> {
+  const val = await getSiteSetting('paywall_enabled');
+  return val === 'true';
 }

@@ -85,6 +85,15 @@ export const appRouter = router({
       }),
   }),
 
+  // Site settings (public read)
+  siteSettings: router({
+    getPaywallStatus: publicProcedure
+      .query(async () => {
+        const enabled = await db.isPaywallEnabled();
+        return { paywallEnabled: enabled };
+      }),
+  }),
+
   // Dealers router
   dealers: router({
     list: publicProcedure
@@ -858,7 +867,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
         
-        if (dealer.subscriptionStatus !== 'active') {
+        if (dealer.subscriptionStatus !== 'active' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access dealer marketplace');
         }
         
@@ -1489,7 +1498,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1514,7 +1523,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1534,7 +1543,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1582,7 +1591,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to contribute to EV faults database');
         }
 
@@ -1624,7 +1633,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to contribute to EV faults database');
         }
 
@@ -1646,7 +1655,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1665,7 +1674,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1688,7 +1697,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to rate faults');
         }
 
@@ -1712,7 +1721,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1731,7 +1740,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1750,7 +1759,7 @@ export const appRouter = router({
           throw new Error('Dealer profile not found');
         }
 
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access EV faults database');
         }
 
@@ -1776,7 +1785,7 @@ export const appRouter = router({
         }
 
         // Check subscription status
-        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin') {
+        if (dealer.subscriptionStatus !== 'active' && ctx.user.role !== 'admin' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access dealer network');
         }
 
@@ -2318,9 +2327,24 @@ export const appRouter = router({
         
         return { success: true };
       }),
-  }),
 
-  // Test Drive Bookings router
+    // Feature flags
+    getPaywallStatus: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'admin') throw new Error('Unauthorized: Admin access required');
+        const enabled = await db.isPaywallEnabled();
+        return { paywallEnabled: enabled };
+      }),
+
+    setPaywallStatus: protectedProcedure
+      .input(z.object({ enabled: z.boolean() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') throw new Error('Unauthorized: Admin access required');
+        await db.setSiteSetting('paywall_enabled', input.enabled ? 'true' : 'false');
+        return { success: true, paywallEnabled: input.enabled };
+      }),
+  }),
+  // Test Drive Bookings routerr
   testDrive: router({
     create: protectedProcedure
       .input(z.object({
@@ -2422,7 +2446,7 @@ export const appRouter = router({
         }
 
         // Check if dealer has active subscription
-        if (dealer.subscriptionStatus !== 'active') {
+        if (dealer.subscriptionStatus !== 'active' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to place bids');
         }
 
@@ -2554,7 +2578,7 @@ export const appRouter = router({
         }
 
         // Check if dealer has active subscription
-        if (dealer.subscriptionStatus !== 'active') {
+        if (dealer.subscriptionStatus !== 'active' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to purchase');
         }
 
@@ -2658,7 +2682,7 @@ export const appRouter = router({
           throw new Error('Only dealers can set proxy bids');
         }
 
-        if (dealer.subscriptionStatus !== 'active') {
+        if (dealer.subscriptionStatus !== 'active' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to use proxy bidding');
         }
 
@@ -2908,7 +2932,7 @@ export const appRouter = router({
           html: htmlContent,
         });
 
-        return { success: true };
+          return { success: true };
       }),
   }),
 });
