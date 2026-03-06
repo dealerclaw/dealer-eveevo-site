@@ -1735,4 +1735,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Create missing dealer record for realgrrtfitness (user IDs 2550001, 2640003) — created dealer ID 150001
 
 ## Sign-Up OTP Redirect Bug (Mar 2026)
-- [ ] Fix sign-up flow: after entering one-time email code, user is redirected back to role selection page instead of dealer dashboard
+- [x] Fix sign-up flow: after entering one-time email code, user is redirected back to role selection page instead of dealer dashboard — fixed by switching Clerk routing to virtual mode
+
+## Dealer My Account 404 (Mar 2026)
+- [x] Fix 404 error when new dealer clicks "My Account" in the dealer portal — added /account redirect to /account/settings
