@@ -1733,3 +1733,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Auto-create dealer record on first login for all users with dealer role (currently they get role but no dealer profile)
 - [x] Fix marketplace/dashboard to gracefully handle missing dealer record instead of crashing
 - [x] Create missing dealer record for realgrrtfitness (user IDs 2550001, 2640003) — created dealer ID 150001
+
+## Sign-Up OTP Redirect Bug (Mar 2026)
+- [ ] Fix sign-up flow: after entering one-time email code, user is redirected back to role selection page instead of dealer dashboard

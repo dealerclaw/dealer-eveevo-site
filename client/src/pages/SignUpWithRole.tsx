@@ -134,8 +134,7 @@ export default function SignUpWithRole() {
         </div>
 
         <SignUp
-          routing="path"
-          path="/sign-up"
+          routing="virtual"
           signInUrl="/sign-in"
           afterSignUpUrl={selectedRole === 'dealer' ? '/dealer/dashboard' : '/'}
           unsafeMetadata={{
