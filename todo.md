@@ -1706,3 +1706,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Auth Performance Fix (Mar 2026)
 - [x] Cache Clerk JWT verification results to avoid repeated API calls on every tRPC request
+
+## Sign-Up Page Fix (Mar 2026)
+- [x] Remove "Change role" link from dealer sign-up page — show clean Clerk sign-up form
