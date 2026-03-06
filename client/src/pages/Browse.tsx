@@ -136,6 +136,27 @@ export default function Browse() {
   });
   const utils = trpc.useUtils();
 
+  // Favorites
+  const { data: favoritesList } = trpc.favorites.list.useQuery(undefined, { enabled: isAuthenticated });
+  const favoritedIds = new Set((favoritesList ?? []).map((f: any) => f.favorite?.carId ?? f.car?.id));
+  const addFavoriteMutation = trpc.favorites.add.useMutation({
+    onSuccess: () => { utils.favorites.list.invalidate(); toast.success('Added to favourites'); },
+    onError: () => toast.error('Failed to save favourite'),
+  });
+  const removeFavoriteMutation = trpc.favorites.remove.useMutation({
+    onSuccess: () => { utils.favorites.list.invalidate(); toast.success('Removed from favourites'); },
+  });
+  const toggleFavorite = (carId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!isAuthenticated) { toast.info('Sign in to save favourites'); return; }
+    if (favoritedIds.has(carId)) {
+      removeFavoriteMutation.mutate({ carId });
+    } else {
+      addFavoriteMutation.mutate({ carId });
+    }
+  };
+
   // Fetch dealers for filter
   const { data: dealersList } = trpc.dealers.listForFilter.useQuery();
 
@@ -578,12 +599,10 @@ export default function Browse() {
                                 size="icon"
                                 variant="secondary"
                                 className="rounded-full"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  // TODO: Add to favorites
-                                }}
+                                onClick={(e) => toggleFavorite(car.id, e)}
+                                title={favoritedIds.has(car.id) ? 'Remove from favourites' : 'Add to favourites'}
                               >
-                                <Heart className="h-4 w-4" />
+                                <Heart className={`h-4 w-4 ${favoritedIds.has(car.id) ? 'fill-red-500 text-red-500' : ''}`} />
                               </Button>
                               <Button
                                 size="icon"

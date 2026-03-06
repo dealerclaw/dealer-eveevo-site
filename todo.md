@@ -1743,3 +1743,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Missing Routes Audit (Mar 2026)
 - [x] Fix /favorites 404 — created Favorites page and registered route in App.tsx
 - [x] Audit all header dropdown links — /favorites was the only missing route
+
+## Heart/Favourite Button Bug (Mar 2026)
+- [x] Fix heart button on vehicle cards — wired to trpc.favorites.add/remove on Browse and CarDetail pages, shows red fill when favourited

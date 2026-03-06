@@ -73,6 +73,27 @@ export default function CarDetail() {
     }
   }, [car, id]);
 
+  // Favorites
+  const utils = trpc.useUtils();
+  const { data: favoritesList } = trpc.favorites.list.useQuery(undefined, { enabled: isAuthenticated });
+  const carId = parseInt(id || "0");
+  const isFavorited = (favoritesList ?? []).some((f: any) => (f.favorite?.carId ?? f.car?.id) === carId);
+  const addFavoriteMutation = trpc.favorites.add.useMutation({
+    onSuccess: () => { utils.favorites.list.invalidate(); toast.success('Added to favourites'); },
+    onError: () => toast.error('Failed to save favourite'),
+  });
+  const removeFavoriteMutation = trpc.favorites.remove.useMutation({
+    onSuccess: () => { utils.favorites.list.invalidate(); toast.success('Removed from favourites'); },
+  });
+  const handleToggleFavorite = () => {
+    if (!isAuthenticated) { toast.info('Sign in to save favourites'); return; }
+    if (isFavorited) {
+      removeFavoriteMutation.mutate({ carId });
+    } else {
+      addFavoriteMutation.mutate({ carId });
+    }
+  };
+
   // Stripe checkout mutation
   const createCheckout = trpc.reservations.createCheckout.useMutation({
     onSuccess: (data) => {
@@ -166,8 +187,13 @@ export default function CarDetail() {
                       {car.isFeatured && <Badge className="bg-primary">Featured</Badge>}
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon">
-                    <Heart className="w-5 h-5" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleToggleFavorite}
+                    title={isFavorited ? 'Remove from favourites' : 'Add to favourites'}
+                  >
+                    <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
                   </Button>
                 </div>
 
