@@ -1703,3 +1703,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Performance Optimisation (Mar 2026)
 - [x] Implement lazy loading / code-splitting for all routes to reduce initial bundle size
 - [x] Add Suspense loading skeletons for lazy-loaded routes
+
+## Auth Performance Fix (Mar 2026)
+- [x] Cache Clerk JWT verification results to avoid repeated API calls on every tRPC request

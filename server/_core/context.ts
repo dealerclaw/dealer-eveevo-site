@@ -22,6 +22,29 @@ const ADMIN_EMAIL_ALLOWLIST = [
   'rebecca@rebeccaracer.com',
 ];
 
+// ---------------------------------------------------------------------------
+// In-memory cache for verified JWT tokens → User
+// Key: session token (JWT)
+// Value: { user, expiresAt } where expiresAt mirrors the JWT exp claim
+// This avoids calling verifyToken + Clerk API on every single tRPC request.
+// ---------------------------------------------------------------------------
+interface CacheEntry {
+  user: User;
+  expiresAt: number; // Unix timestamp (ms)
+}
+
+const tokenCache = new Map<string, CacheEntry>();
+
+// Clean up expired entries every 5 minutes to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  Array.from(tokenCache.entries()).forEach(([key, entry]) => {
+    if (entry.expiresAt <= now) {
+      tokenCache.delete(key);
+    }
+  });
+}, 5 * 60 * 1000);
+
 export async function createContext(
   opts: CreateExpressContextOptions
 ): Promise<TrpcContext> {
@@ -38,7 +61,29 @@ export async function createContext(
       return { req: opts.req, res: opts.res, user: null, adminUser: null };
     }
 
-    // Verify Clerk JWT token using @clerk/express verifyToken
+    // ------------------------------------------------------------------
+    // Fast path: check in-memory cache first
+    // ------------------------------------------------------------------
+    const cached = tokenCache.get(sessionToken);
+    if (cached && cached.expiresAt > Date.now()) {
+      user = cached.user;
+      // Still handle impersonation even on cache hit
+      const impersonateCookie = opts.req.cookies?.[IMPERSONATION_COOKIE];
+      if (impersonateCookie && user.role === 'admin') {
+        const impersonatedUserId = parseInt(impersonateCookie, 10);
+        if (!isNaN(impersonatedUserId)) {
+          const impersonatedUser = await db.getUserById(impersonatedUserId);
+          if (impersonatedUser) {
+            return { req: opts.req, res: opts.res, user: impersonatedUser, adminUser: user };
+          }
+        }
+      }
+      return { req: opts.req, res: opts.res, user, adminUser: null };
+    }
+
+    // ------------------------------------------------------------------
+    // Slow path: verify JWT with Clerk (only on first request per token)
+    // ------------------------------------------------------------------
     let sessionClaims;
     try {
       sessionClaims = await verifyToken(sessionToken, {
@@ -55,6 +100,8 @@ export async function createContext(
     }
 
     const clerkUserId = sessionClaims.sub;
+    // JWT exp is in seconds; convert to ms for Date.now() comparison
+    const tokenExpiresAt = sessionClaims.exp ? sessionClaims.exp * 1000 : Date.now() + 60 * 60 * 1000;
     
     // Try to get user from database first (faster and more reliable)
     let authenticatedUser = (await db.getUserByOpenId(clerkUserId)) ?? null;
@@ -104,6 +151,9 @@ export async function createContext(
       console.log('[Auth Context] Failed to get/sync user');
       return { req: opts.req, res: opts.res, user: null, adminUser: null };
     }
+
+    // Store in cache so subsequent requests skip verification
+    tokenCache.set(sessionToken, { user: authenticatedUser, expiresAt: tokenExpiresAt });
 
     // Check for admin impersonation cookie
     const impersonateCookie = opts.req.cookies?.[IMPERSONATION_COOKIE];
