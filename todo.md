@@ -1696,3 +1696,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Dealer Sign Up Fix (Mar 2026)
 - [ ] Fix Dealer Sign Up not allowing new dealer registrations
+
+## Sign-In Page Fix (Mar 2026)
+- [x] Fix sign-in page showing "Change role" / role selector instead of clean sign-in form

@@ -55,7 +55,9 @@ function Router() {
     <Switch>
         <Route path="/" component={Home} />
       <Route path="/sign-in" component={SignIn} />
+      <Route path="/sign-in/:rest*" component={SignIn} />
       <Route path="/sign-up" component={SignUpWithRole} />
+      <Route path="/sign-up/:rest*" component={SignUpWithRole} />
       <Route path={"/browse"} component={Browse} />
       <Route path={"/admin/sync"} component={AdminSync} />
       <Route path={'/admin/applications'} component={AdminApplications} />

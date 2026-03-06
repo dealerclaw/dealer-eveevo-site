@@ -8,8 +8,9 @@ export default function SignIn() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to EVEEVO</h1>
           <p className="text-gray-600">Sign in to access your account</p>
         </div>
-        <ClerkSignIn 
-          routing="hash"
+        <ClerkSignIn
+          routing="path"
+          path="/sign-in"
           signUpUrl="/sign-up"
           afterSignInUrl="/"
         />
