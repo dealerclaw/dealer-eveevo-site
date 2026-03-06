@@ -1699,3 +1699,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Sign-In Page Fix (Mar 2026)
 - [x] Fix sign-in page showing "Change role" / role selector instead of clean sign-in form
+
+## Performance Optimisation (Mar 2026)
+- [x] Implement lazy loading / code-splitting for all routes to reduce initial bundle size
+- [x] Add Suspense loading skeletons for lazy-loaded routes
