@@ -1719,3 +1719,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add admin toggle UI in AdminDealers page to enable/disable paywall
 - [x] Remove paywall checks from frontend and backend, wire to feature flag
 - [x] Add public siteSettings.getPaywallStatus tRPC endpoint for frontend
+
+## Admin Settings 404 Fix (Mar 2026)
+- [x] Fix admin settings menu giving 404 error — resolved by creating /account/settings page
+
+## Account Settings 404 Fix (Mar 2026)
+- [x] Create /account/settings page — currently gives 404 when clicked from profile dropdown

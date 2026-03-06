@@ -23,6 +23,9 @@ const SignIn = lazy(() => import("./pages/SignIn"));
 const SignUpWithRole = lazy(() => import("./pages/SignUpWithRole"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+// Account pages
+const AccountSettings = lazy(() => import("./pages/AccountSettings"));
+
 // Admin pages
 const AdminSync = lazy(() => import("./pages/AdminSync"));
 const AdminApplications = lazy(() => import("./pages/AdminApplications"));
@@ -253,6 +256,7 @@ function Router() {
             </Suspense>
           </DealerAuthGuard>
         </Route>
+        <Route path="/account/settings" component={AccountSettings} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
