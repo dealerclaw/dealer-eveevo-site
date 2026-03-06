@@ -861,13 +861,14 @@ export const appRouter = router({
           throw new Error('Unauthorized: Dealer access required');
         }
         
-        // Check subscription status
-        const dealer = await db.getDealerByUserId(ctx.user.id);
+        // Check subscription status — auto-create dealer record if missing
+        let dealer = await db.getDealerByUserId(ctx.user.id);
         if (!dealer) {
-          throw new Error('Dealer profile not found');
+          await db.ensureDealerRecord(ctx.user.id, ctx.user.name || '', ctx.user.email || '');
+          dealer = await db.getDealerByUserId(ctx.user.id);
         }
         
-        if (dealer.subscriptionStatus !== 'active' && await db.isPaywallEnabled()) {
+        if (dealer && dealer.subscriptionStatus !== 'active' && await db.isPaywallEnabled()) {
           throw new Error('Active subscription required to access dealer marketplace');
         }
         

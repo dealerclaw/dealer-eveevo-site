@@ -1725,3 +1725,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Account Settings 404 Fix (Mar 2026)
 - [x] Create /account/settings page — currently gives 404 when clicked from profile dropdown
+
+## Dealer Marketplace Empty Listings (Mar 2026)
+- [x] Investigate why realgrrtfitness dealer shows no listings in the dealer marketplace — root cause was missing dealer record, now fixed
+
+## Auto-Create Dealer Record on Sign-Up (Mar 2026)
+- [x] Auto-create dealer record on first login for all users with dealer role (currently they get role but no dealer profile)
+- [x] Fix marketplace/dashboard to gracefully handle missing dealer record instead of crashing
+- [x] Create missing dealer record for realgrrtfitness (user IDs 2550001, 2640003) — created dealer ID 150001

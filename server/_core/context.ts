@@ -152,6 +152,15 @@ export async function createContext(
       return { req: opts.req, res: opts.res, user: null, adminUser: null };
     }
 
+    // Auto-provision dealer record for new dealer users (idempotent)
+    if (authenticatedUser.role === 'dealer') {
+      db.ensureDealerRecord(
+        authenticatedUser.id,
+        authenticatedUser.name || '',
+        authenticatedUser.email || ''
+      ).catch(err => console.error('[Auth Context] ensureDealerRecord failed:', err));
+    }
+
     // Store in cache so subsequent requests skip verification
     tokenCache.set(sessionToken, { user: authenticatedUser, expiresAt: tokenExpiresAt });
 

@@ -2994,3 +2994,30 @@ export async function isPaywallEnabled(): Promise<boolean> {
   const val = await getSiteSetting('paywall_enabled');
   return val === 'true';
 }
+
+// ---------------------------------------------------------------------------
+// Auto-provision dealer record
+// ---------------------------------------------------------------------------
+/**
+ * Ensures a dealer record exists for a user with the dealer role.
+ * Called on every authenticated request so new dealers get a profile
+ * automatically without needing to complete a separate onboarding step.
+ * Idempotent — does nothing if the dealer record already exists.
+ */
+export async function ensureDealerRecord(userId: number, name: string, email: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  const existing = await db.select({ id: dealers.id }).from(dealers).where(eq(dealers.userId, userId)).limit(1);
+  if (existing.length > 0) return; // Already exists
+  const user = await db.select({ openId: users.openId }).from(users).where(eq(users.id, userId)).limit(1);
+  if (!user || user.length === 0) return;
+  await db.insert(dealers).values({
+    userId,
+    firebaseId: user[0].openId,
+    name: name || 'My Dealership',
+    email: email || null,
+    subscriptionStatus: 'none',
+    isVerified: false,
+  });
+  console.log(`[DB] Auto-created dealer record for user ${userId} (${email})`);
+}

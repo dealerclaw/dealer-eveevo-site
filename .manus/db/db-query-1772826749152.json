@@ -1,0 +1,20 @@
+{
+  "query": "\nSELECT marketplace, COUNT(*) as count, SUM(CASE WHEN isAvailable = 1 THEN 1 ELSE 0 END) as available_count\nFROM cars\nGROUP BY marketplace;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute \nSELECT marketplace, COUNT(*) as count, SUM(CASE WHEN isAvailable = 1 THEN 1 ELSE 0 END) as available_count\nFROM cars\nGROUP BY marketplace;\n",
+  "rows": [
+    {
+      "marketplace": "dealer_only",
+      "count": "26",
+      "available_count": "21"
+    },
+    {
+      "marketplace": "consumer",
+      "count": "29453",
+      "available_count": "29439"
+    }
+  ],
+  "messages": [],
+  "stdout": "marketplace\tcount\tavailable_count\ndealer_only\t26\t21\nconsumer\t29453\t29439\n",
+  "stderr": "",
+  "execution_time_ms": 399
+}
