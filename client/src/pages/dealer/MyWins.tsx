@@ -42,8 +42,15 @@ export default function MyWins() {
     },
   });
 
-  // Filter to only show won auctions
-  const wonAuctions = wins?.filter((item: any) => item.bid?.status === 'won') || [];
+  // Filter to only show won auctions, sorted: pending payment first (need action), then paid
+  const wonAuctions = (wins?.filter((item: any) => item.bid?.status === 'won') || [])
+    .sort((a: any, b: any) => {
+      // Pending payment wins come first (require action)
+      if (a.bid.paymentStatus === 'pending' && b.bid.paymentStatus !== 'pending') return -1;
+      if (a.bid.paymentStatus !== 'pending' && b.bid.paymentStatus === 'pending') return 1;
+      // Within same payment status, sort by most recent first
+      return new Date(b.bid.createdAt).getTime() - new Date(a.bid.createdAt).getTime();
+    });
 
   if (isLoading) {
     return (
@@ -283,11 +290,13 @@ export default function MyWins() {
                     <div className="border-t pt-4">
                       <h3 className="font-semibold mb-3">Next Steps</h3>
                       <ol className="space-y-2 text-sm text-muted-foreground">
-                        <li>1. Pay £10 commitment fee within 48 hours (secures your win)</li>
-                        <li>2. Contact seller to arrange vehicle inspection</li>
-                        <li>3. Inspect vehicle condition in person</li>
-                        <li>4. Pay remaining balance after satisfactory inspection</li>
-                        <li>5. Arrange delivery or pickup with seller</li>
+                        {win.paymentStatus !== 'paid' && (
+                          <li className="text-amber-600 font-medium">1. ⚡ Pay £10 commitment fee within 48 hours (secures your win)</li>
+                        )}
+                        <li>{win.paymentStatus === 'paid' ? '1.' : '2.'} Contact seller to arrange vehicle inspection</li>
+                        <li>{win.paymentStatus === 'paid' ? '2.' : '3.'} Inspect vehicle condition in person</li>
+                        <li>{win.paymentStatus === 'paid' ? '3.' : '4.'} Pay remaining balance after satisfactory inspection</li>
+                        <li>{win.paymentStatus === 'paid' ? '4.' : '5.'} Arrange delivery or pickup with seller</li>
                       </ol>
                     </div>
 
