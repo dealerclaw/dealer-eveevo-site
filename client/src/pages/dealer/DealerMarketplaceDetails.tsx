@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, ArrowLeft, ShoppingCart, CreditCard, MapPin, AlertTriangle, CheckCircle2, FileText, Phone, Mail, Bookmark } from "lucide-react";
+import { Loader2, ArrowLeft, ShoppingCart, CreditCard, MapPin, AlertTriangle, CheckCircle2, FileText, Phone, Mail, Bookmark, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation, useParams } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
 import MakeOfferDialog from "@/components/MakeOfferDialog";
+import ContactDealerDialog from "@/components/ContactDealerDialog";
 import DeliveryCostCalculator from "@/components/DeliveryCostCalculator";
 import QuickBidPanel from "@/components/QuickBidPanel";
 import ImageLightbox from "@/components/ImageLightbox";
@@ -413,14 +414,31 @@ export default function DealerMarketplaceDetails() {
                 <Separator />
 
                 <div className="space-y-2">
-                  <Button variant="outline" size="sm" className="w-full justify-start">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call Seller
-                  </Button>
-                  <Button variant="outline" size="sm" className="w-full justify-start">
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email Seller
-                  </Button>
+                  {car.dealer?.phone && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <a href={`tel:${car.dealer.phone}`}>
+                        <Phone className="w-4 h-4 mr-2" />
+                        Call Seller
+                      </a>
+                    </Button>
+                  )}
+                  <ContactDealerDialog
+                    carId={car.id}
+                    carName={`${car.year ?? ''} ${car.make} ${car.model}`.trim()}
+                    askingPrice={car.price ? parseFloat(car.price.toString()) : undefined}
+                    sellerName={car.dealerName || undefined}
+                    trigger={
+                      <Button variant="default" size="sm" className="w-full justify-start">
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Contact Dealer
+                      </Button>
+                    }
+                  />
                 </div>
               </CardContent>
               </Card>

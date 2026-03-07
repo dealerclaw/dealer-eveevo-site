@@ -649,3 +649,34 @@ export const siteSettings = mysqlTable("siteSettings", {
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type InsertSiteSetting = typeof siteSettings.$inferInsert;
+
+/**
+ * Dealer Enquiries - B2B marketplace contact/enquiry messages between dealers
+ */
+export const dealerEnquiries = mysqlTable("dealerEnquiries", {
+  id: int("id").autoincrement().primaryKey(),
+  carId: int("carId").references(() => cars.id).notNull(),
+  senderDealerId: int("senderDealerId").references(() => dealers.id).notNull(),
+  receiverDealerId: int("receiverDealerId").references(() => dealers.id).notNull(),
+  message: text("message").notNull(),
+  offerPrice: decimal("offerPrice", { precision: 10, scale: 2 }),
+  status: varchar("status", { length: 32 }).default("pending").notNull(), // pending | replied | closed
+  isReadByReceiver: boolean("isReadByReceiver").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type DealerEnquiry = typeof dealerEnquiries.$inferSelect;
+export type InsertDealerEnquiry = typeof dealerEnquiries.$inferInsert;
+
+/**
+ * Dealer Enquiry Replies - threaded replies to dealer enquiries
+ */
+export const dealerEnquiryReplies = mysqlTable("dealerEnquiryReplies", {
+  id: int("id").autoincrement().primaryKey(),
+  enquiryId: int("enquiryId").references(() => dealerEnquiries.id).notNull(),
+  senderDealerId: int("senderDealerId").references(() => dealers.id).notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type DealerEnquiryReply = typeof dealerEnquiryReplies.$inferSelect;
+export type InsertDealerEnquiryReply = typeof dealerEnquiryReplies.$inferInsert;

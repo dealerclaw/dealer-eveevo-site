@@ -58,6 +58,7 @@ const Cart = lazy(() => import("./pages/dealer/Cart"));
 const Watchlist = lazy(() => import("./pages/dealer/Watchlist"));
 const DealerSettings = lazy(() => import("./pages/dealer/DealerSettings"));
 const DealerInventoryHealth = lazy(() => import("./pages/dealer/DealerInventoryHealth"));
+const DealerInbox = lazy(() => import("./pages/dealer/DealerInbox"));
 
 // Lightweight page loading skeleton
 function PageLoader() {
@@ -162,6 +163,20 @@ function Router() {
           <DealerAuthGuard>
             <Suspense fallback={<PageLoader />}>
               <EditVehicle />
+            </Suspense>
+          </DealerAuthGuard>
+        </Route>
+        <Route path="/dealer/inbox/:id">
+          <DealerAuthGuard>
+            <Suspense fallback={<PageLoader />}>
+              <DealerInbox />
+            </Suspense>
+          </DealerAuthGuard>
+        </Route>
+        <Route path="/dealer/inbox">
+          <DealerAuthGuard>
+            <Suspense fallback={<PageLoader />}>
+              <DealerInbox />
             </Suspense>
           </DealerAuthGuard>
         </Route>

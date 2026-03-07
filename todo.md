@@ -1749,3 +1749,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Sign-In Return URL Fix (Mar 2026)
 - [x] After sign-in, redirect user back to the original page they were trying to visit (not homepage) — DealerAuthGuard passes returnTo param, SignIn reads it and redirects back
+
+## Contact Dealer Flow - B2B Marketplace (Mar 2026)
+- [x] Add dealer_enquiries table to schema (sender, receiver, car, message, status, timestamps)
+- [x] Add tRPC procedures: sendEnquiry, listEnquiries, markEnquiryRead, replyToEnquiry
+- [x] Add "Contact Dealer" button and enquiry dialog on marketplace listing detail page
+- [x] Build dealer inbox page (/dealer/inbox) showing received enquiries with reply functionality
+- [x] Send owner notification email when new enquiry is received
+- [x] Add unread enquiry badge to dealer sidebar navigation

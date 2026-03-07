@@ -10,6 +10,7 @@ import * as evDb from "./evDatabase";
 import { syncRouter } from "./syncRouter";
 import { importRouter } from "./importCars";
 import { financeRouter } from "./financeRouter";
+import { enquiriesRouter } from "./enquiriesRouter";
 import Stripe from "stripe";
 import { PRODUCTS } from "./products";
 import { notifyOwner } from "./_core/notification";
@@ -21,6 +22,7 @@ export const appRouter = router({
   sync: syncRouter,
   import: importRouter,
   finance: financeRouter,
+  enquiries: enquiriesRouter,
   
   auth: router({
     me: publicProcedure.query(opts => ({
