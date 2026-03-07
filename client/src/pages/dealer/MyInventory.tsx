@@ -137,6 +137,7 @@ export default function MyInventory() {
   const [auctionCarId, setAuctionCarId] = useState<number | null>(null);
   const [reservePrice, setReservePrice] = useState<string>("");
   const [startingBid, setStartingBid] = useState<string>("");
+  const [buyNowPrice, setBuyNowPrice] = useState<string>("");
   const [marketplaceCarId, setMarketplaceCarId] = useState<number | null>(null);
   const [marketplacePrice, setMarketplacePrice] = useState<string>("");
   const [cancelAuctionId, setCancelAuctionId] = useState<number | null>(null);
@@ -264,6 +265,9 @@ export default function MyInventory() {
       carId: auctionCarId!,
       reservePrice: parseFloat(reservePrice),
       startingBid: parseFloat(startingBid),
+      ...(buyNowPrice && parseFloat(buyNowPrice) > 0
+        ? { buyNowPrice: parseFloat(buyNowPrice) }
+        : {}),
     });
   };
 
@@ -565,11 +569,11 @@ export default function MyInventory() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Send to Auction Dialog */}
-      <Dialog open={auctionCarId !== null} onOpenChange={() => {
+      {/* Send to Auction Dialog */}      <Dialog open={auctionCarId !== null} onOpenChange={() => {
         setAuctionCarId(null);
         setReservePrice("");
         setStartingBid("");
+        setBuyNowPrice("");
       }}>
         <DialogContent>
           <DialogHeader>
@@ -608,6 +612,21 @@ export default function MyInventory() {
               />
               <p className="text-sm text-muted-foreground">
                 Auction will run for 48 hours. The car will only sell if the winning bid meets or exceeds your reserve price.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="buyNowPrice">Buy It Now Price (£) <span className="text-muted-foreground font-normal">(optional)</span></Label>
+              <Input
+                id="buyNowPrice"
+                type="number"
+                placeholder="e.g. 25000 — leave blank to disable"
+                value={buyNowPrice}
+                onChange={(e) => setBuyNowPrice(e.target.value)}
+                min="0"
+                step="100"
+              />
+              <p className="text-sm text-muted-foreground">
+                Dealers can skip bidding and purchase instantly at this price. Must be above the reserve price.
               </p>
             </div>
           </div>

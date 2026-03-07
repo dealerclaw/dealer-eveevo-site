@@ -953,6 +953,7 @@ export const appRouter = router({
         carId: z.number(),
         reservePrice: z.number(),
         startingBid: z.number(),
+        buyNowPrice: z.number().optional(), // Optional instant-purchase price
       }))
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
@@ -982,6 +983,9 @@ export const appRouter = router({
           startingBid: input.startingBid.toString(),
           currentHighestBid: input.startingBid.toString(), // Initialize with starting bid
           marketplace: 'dealer_only', // Auctions are dealer-only
+          ...(input.buyNowPrice && input.buyNowPrice > 0
+            ? { buyNowPrice: input.buyNowPrice.toString() }
+            : {}),
         });
         
         return { success: true, auctionEndDate: auctionEnd };
