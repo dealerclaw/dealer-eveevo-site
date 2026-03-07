@@ -1776,3 +1776,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Wire Buy It Now button on auction listing page with Stripe redirect (already wired; root cause was missing buyNowPrice on send-to-auction)
 - [x] Add Buy It Now price field to Send to Auction dialog in MyInventory
 - [x] Handle webhook: mark car as sold, cancel auction, notify bidders on BIN purchase (pre-existing)
+
+## Stripe Buy It Now Checkout Improvements (Mar 2026)
+- [x] Add car main image to Stripe checkout product_data.images for Buy It Now (already present)
+- [x] Update Buy It Now and Auction Win commitment fee to £10 with matching product name/description

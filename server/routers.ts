@@ -2625,9 +2625,9 @@ export const appRouter = router({
         // Get seller information
         const seller = await db.getDealerById(car.dealerId!);
         
-        // Create Stripe checkout session for £99 commitment fee
+        // Create Stripe checkout session for £10 commitment fee
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-        const commitmentFee = 99;
+        const commitmentFee = 10;
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
           line_items: [
@@ -2635,11 +2635,11 @@ export const appRouter = router({
               price_data: {
                 currency: 'gbp',
                 product_data: {
-                  name: `Buy Now Commitment Fee: ${car.make} ${car.model} ${car.year}`,
-                  description: `Non-refundable £99 commitment fee. Purchase price: £${buyNowPrice.toLocaleString()}. Balance due after inspection. VIN: ${car.vin || 'N/A'}`,
+                  name: `BUY IT NOW COMMITTMENT — ${car.make} ${car.model} ${car.year}`,
+                  description: `Refundable if the vehicle is materially not as advertised. Purchase price: £${buyNowPrice.toLocaleString()}. Balance due after inspection. VIN: ${car.vin || 'N/A'}`,
                   images: car.mainImage ? [car.mainImage] : undefined,
                 },
-                unit_amount: commitmentFee * 100, // £99 in pence
+                unit_amount: commitmentFee * 100, // £10 in pence
               },
               quantity: 1,
             },
@@ -2663,7 +2663,7 @@ export const appRouter = router({
         // Send notification to buyer
         await notifyOwner({
           title: `Purchase Confirmed: ${car.make} ${car.model}`,
-          content: `Congratulations! You have successfully purchased ${car.make} ${car.model} ${car.year} for £${buyNowPrice.toLocaleString()} via Buy Now.\n\nNext step: Complete £99 commitment fee payment.\n\nSeller: ${seller?.name || 'Unknown'}\nContact: ${seller?.email || 'N/A'}\n\nBalance due after inspection: £${(buyNowPrice - 99).toLocaleString()}`,
+          content: `Congratulations! You have successfully purchased ${car.make} ${car.model} ${car.year} for £${buyNowPrice.toLocaleString()} via Buy Now.\n\nNext step: Complete £10 commitment fee payment.\n\nSeller: ${seller?.name || 'Unknown'}\nContact: ${seller?.email || 'N/A'}\n\nBalance due after inspection: £${(buyNowPrice - 10).toLocaleString()}`,
         });
         
         // Send notification to seller
@@ -2787,7 +2787,7 @@ export const appRouter = router({
         }
 
         const winningBid = parseFloat(bid.bid.bidAmount);
-        const commitmentFee = 99; // £99 non-refundable commitment fee
+        const commitmentFee = 10; // £10 commitment fee (early access rate)
         
         // Create Stripe checkout session for auction win commitment fee
         const session = await stripe.checkout.sessions.create({
@@ -2797,11 +2797,11 @@ export const appRouter = router({
               price_data: {
                 currency: 'gbp',
                 product_data: {
-                  name: `Auction Commitment Fee: ${car.make} ${car.model} ${car.year}`,
-                  description: `Non-refundable £99 commitment fee. Winning bid: £${winningBid.toLocaleString()}. Balance due after inspection. VIN: ${car.vin || 'N/A'}`,
+                  name: `AUCTION WIN COMMITTMENT — ${car.make} ${car.model} ${car.year}`,
+                  description: `Refundable if the vehicle is materially not as advertised. Winning bid: £${winningBid.toLocaleString()}. Balance due after inspection. VIN: ${car.vin || 'N/A'}`,
                   images: car.mainImage ? [car.mainImage] : undefined,
                 },
-                unit_amount: commitmentFee * 100, // £99 in pence
+                unit_amount: commitmentFee * 100, // £10 in pence
               },
               quantity: 1,
             },
