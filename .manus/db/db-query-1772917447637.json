@@ -1,0 +1,34 @@
+{
+  "query": "SELECT db.id, db.bidAmount, db.status, db.paymentStatus, db.paidAt, db.dealerId, c.make, c.model, c.year, c.id as carId FROM dealerBids db JOIN cars c ON db.carId = c.id WHERE c.make LIKE '%Ford%' AND c.model LIKE '%Mustang%' AND db.status = 'won' ORDER BY db.createdAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT db.id, db.bidAmount, db.status, db.paymentStatus, db.paidAt, db.dealerId, c.make, c.model, c.year, c.id as carId FROM dealerBids db JOIN cars c ON db.carId = c.id WHERE c.make LIKE '%Ford%' AND c.model LIKE '%Mustang%' AND db.status = 'won' ORDER BY db.createdAt DESC;",
+  "rows": [
+    {
+      "id": "150004",
+      "bidAmount": "30000.00",
+      "status": "won",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "dealerId": "60015",
+      "make": "FORD",
+      "model": "Mustang Mach-E",
+      "year": "2025",
+      "carId": "150427"
+    },
+    {
+      "id": "120002",
+      "bidAmount": "36000.00",
+      "status": "won",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "dealerId": "60001",
+      "make": "FORD",
+      "model": "Mustang Mach-E",
+      "year": "2023",
+      "carId": "150176"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tbidAmount\tstatus\tpaymentStatus\tpaidAt\tdealerId\tmake\tmodel\tyear\tcarId\n150004\t30000.00\twon\tpending\tNULL\t60015\tFORD\tMustang Mach-E\t2025\t150427\n120002\t36000.00\twon\tpending\tNULL\t60001\tFORD\tMustang Mach-E\t2023\t150176\n",
+  "stderr": "",
+  "execution_time_ms": 354
+}

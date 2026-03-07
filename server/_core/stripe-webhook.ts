@@ -218,10 +218,46 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         // Notify owner/admin
         await notifyOwner({
           title: `Buy Now Payment Confirmed: ${car.make} ${car.model} ${car.year}`,
-          content: `£99 commitment fee received for ${car.make} ${car.model} ${car.year}.\n\nBuyer: ${buyerName} (${buyerEmail})\nPurchase Price: £${purchasePrice.toLocaleString()}\nBalance Due: £${(purchasePrice - 99).toLocaleString()}\n\nStripe Session: ${session.id}`,
+          content: `£10 commitment fee received for ${car.make} ${car.model} ${car.year}.\n\nBuyer: ${buyerName} (${buyerEmail})\nPurchase Price: £${purchasePrice.toLocaleString()}\nBalance Due: £${(purchasePrice - 10).toLocaleString()}\n\nStripe Session: ${session.id}`,
         });
 
         console.log('[Webhook] Buy Now payment confirmed for car:', carId);
+      }
+    }
+  }
+
+  // Handle Auction Win commitment fee payment
+  if (session.mode === 'payment' && session.metadata?.payment_type === 'auction_win') {
+    const bidId = session.metadata?.bidId ? parseInt(session.metadata.bidId) : null;
+    const carId = session.metadata?.car_id ? parseInt(session.metadata.car_id) : null;
+    const buyerName = session.metadata?.customer_name || 'Unknown';
+    const buyerEmail = session.metadata?.customer_email || 'N/A';
+
+    console.log('[Webhook] Auction win commitment fee paid:', { bidId, carId });
+
+    if (bidId) {
+      // Update bid payment status to paid
+      const paymentIntentId = typeof session.payment_intent === 'string'
+        ? session.payment_intent
+        : session.payment_intent?.id || session.id;
+
+      await db.updateBidPaymentStatus(bidId, {
+        paymentStatus: 'paid',
+        stripePaymentIntentId: paymentIntentId,
+        paidAt: new Date(),
+      });
+
+      console.log('[Webhook] Updated auction win bid payment status to paid:', bidId);
+
+      // Send confirmation notification
+      if (carId) {
+        const car = await db.getCarById(carId);
+        if (car) {
+          await notifyOwner({
+            title: `Auction Win Payment Confirmed: ${car.make} ${car.model} ${car.year}`,
+            content: `£10 commitment fee received for auction win on ${car.make} ${car.model} ${car.year}.\n\nBuyer: ${buyerName} (${buyerEmail})\nBid ID: ${bidId}\n\nStripe Session: ${session.id}`,
+          });
+        }
       }
     }
   }

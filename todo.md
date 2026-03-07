@@ -1784,3 +1784,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## My Wins Page £10 Update (Mar 2026)
 - [x] Replace all £99 references with £10 on My Wins page (commitment fee, balance due, next steps, button label)
 - [x] Show "Commitment Complete" status when £10 has been paid (pre-existing green paid banner already handles this)
+
+## Stripe Webhook Fix - Auction Win Payment Status (Mar 2026)
+- [x] Fix stripe-webhook.ts: handle checkout.session.completed for payment_type=auction_win to update bid payment_status to 'paid'
+- [x] Manually mark existing paid Ford Mustang Mach-E bid (id 150004) as paid in database
