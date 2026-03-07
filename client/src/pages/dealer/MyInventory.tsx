@@ -37,11 +37,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 // Days on Market badge component
-function DaysOnMarketBadge({ createdAt }: { createdAt: Date | string }) {
-  const days = Math.floor(
-    (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
-  );
-
+// Uses the daysOnMarket field from the advert feed (same source as inventory health report)
+function DaysOnMarketBadge({ days }: { days: number }) {
   if (days > 45) {
     return (
       <div className="flex flex-col items-start gap-0.5">
@@ -320,8 +317,8 @@ export default function MyInventory() {
                         {vehicle.realRange ? `${vehicle.realRange} mi` : "N/A"}
                       </TableCell>
                       <TableCell>
-                        {vehicle.createdAt ? (
-                          <DaysOnMarketBadge createdAt={vehicle.createdAt} />
+                        {vehicle.daysOnMarket != null ? (
+                          <DaysOnMarketBadge days={vehicle.daysOnMarket} />
                         ) : (
                           <span className="text-muted-foreground text-xs">—</span>
                         )}
