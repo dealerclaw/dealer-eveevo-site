@@ -1,0 +1,32 @@
+{
+  "query": "SELECT id, carId, dealerId, userId, status, paymentStatus, paidAt, message, bidAmount FROM dealerBids WHERE userId = 1050228 AND status = 'won' ORDER BY id DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, carId, dealerId, userId, status, paymentStatus, paidAt, message, bidAmount FROM dealerBids WHERE userId = 1050228 AND status = 'won' ORDER BY id DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "180001",
+      "carId": "150191",
+      "dealerId": "60015",
+      "userId": "1050228",
+      "status": "won",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "message": "Buy Now - Instant Purchase",
+      "bidAmount": "25000.00"
+    },
+    {
+      "id": "150014",
+      "carId": "152244",
+      "dealerId": "60015",
+      "userId": "1050228",
+      "status": "won",
+      "paymentStatus": "paid",
+      "paidAt": "2026-03-07 23:36:03",
+      "message": "Buy Now - Instant Purchase",
+      "bidAmount": "25000.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcarId\tdealerId\tuserId\tstatus\tpaymentStatus\tpaidAt\tmessage\tbidAmount\n180001\t150191\t60015\t1050228\twon\tpending\tNULL\tBuy Now - Instant Purchase\t25000.00\n150014\t152244\t60015\t1050228\twon\tpaid\t2026-03-07 23:36:03\tBuy Now - Instant Purchase\t25000.00\n",
+  "stderr": "",
+  "execution_time_ms": 347
+}

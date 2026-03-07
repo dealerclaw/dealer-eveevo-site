@@ -1268,7 +1268,7 @@ export async function buyNowAuction(carId: number, dealerId: number, userId: num
     .where(eq(cars.id, carId));
 
   // Create a winning bid record
-  await db.insert(dealerBids).values({
+  const [insertResult] = await db.insert(dealerBids).values({
     carId,
     dealerId,
     userId,
@@ -1276,6 +1276,7 @@ export async function buyNowAuction(carId: number, dealerId: number, userId: num
     message: "Buy Now - Instant Purchase",
     status: 'won',
   });
+  const newBidId = insertResult.insertId;
 
   // Mark all other bids as lost
   await db
@@ -1287,6 +1288,8 @@ export async function buyNowAuction(carId: number, dealerId: number, userId: num
         ne(dealerBids.dealerId, dealerId)
       )
     );
+
+  return { bidId: newBidId };
 }
 
 /**
@@ -3020,4 +3023,21 @@ export async function ensureDealerRecord(userId: number, name: string, email: st
     isVerified: false,
   });
   console.log(`[DB] Auto-created dealer record for user ${userId} (${email})`);
+}
+
+/**
+ * Get the current winning bid for a car (used as fallback in webhook)
+ */
+export async function getWonBidForCar(carId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const bids = await db
+    .select()
+    .from(dealerBids)
+    .where(and(eq(dealerBids.carId, carId), eq(dealerBids.status, 'won')))
+    .orderBy(desc(dealerBids.id))
+    .limit(1);
+
+  return bids[0] || null;
 }

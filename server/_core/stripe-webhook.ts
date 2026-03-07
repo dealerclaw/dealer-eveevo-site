@@ -225,14 +225,43 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const carId = session.metadata?.car_id ? parseInt(session.metadata.car_id) : null;
     const dealerId = session.metadata?.dealer_id ? parseInt(session.metadata.dealer_id) : null;
     const purchasePrice = session.metadata?.purchase_price ? parseFloat(session.metadata.purchase_price) : null;
+    const bidId = session.metadata?.bid_id ? parseInt(session.metadata.bid_id) : null;
     const buyerName = session.metadata?.customer_name || 'Unknown';
     const buyerEmail = session.metadata?.customer_email || 'N/A';
 
-    console.log('[Webhook] Buy Now commitment fee paid:', { carId, dealerId, purchasePrice });
+    console.log('[Webhook] Buy Now commitment fee paid:', { carId, dealerId, purchasePrice, bidId });
 
     if (carId && dealerId && purchasePrice) {
+      // Mark the winning bid as paid (if bid_id is in metadata)
+      if (bidId) {
+        const paymentIntentId = typeof session.payment_intent === 'string'
+          ? session.payment_intent
+          : (session.payment_intent as any)?.id || session.id;
+        await db.updateBidPaymentStatus(bidId, {
+          paymentStatus: 'paid',
+          stripePaymentIntentId: paymentIntentId,
+          paidAt: new Date(),
+        });
+        console.log('[Webhook] Updated Buy Now bid payment status to paid:', bidId);
+      } else {
+        // Fallback: find the winning bid for this car and mark it paid
+        console.warn('[Webhook] No bid_id in Buy Now metadata, attempting fallback lookup for car:', carId);
+        const wonBids = await db.getWonBidForCar(carId);
+        if (wonBids) {
+          const paymentIntentId = typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : (session.payment_intent as any)?.id || session.id;
+          await db.updateBidPaymentStatus(wonBids.id, {
+            paymentStatus: 'paid',
+            stripePaymentIntentId: paymentIntentId,
+            paidAt: new Date(),
+          });
+          console.log('[Webhook] Fallback: Updated Buy Now bid payment status to paid:', wonBids.id);
+        }
+      }
+
       // Car is already marked as sold (done at time of Buy Now click)
-      // Just send confirmation notifications
+      // Send confirmation notifications
       const car = await db.getCarById(carId);
       if (car) {
         // Notify owner/admin

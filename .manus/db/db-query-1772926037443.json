@@ -1,0 +1,175 @@
+{
+  "query": "SELECT b.id, b.carId, b.dealerId, b.bidAmount, b.paymentStatus, b.paidAt, c.make, c.model, c.year FROM dealerBids b LEFT JOIN cars c ON b.carId = c.id ORDER BY b.id DESC LIMIT 15;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT b.id, b.carId, b.dealerId, b.bidAmount, b.paymentStatus, b.paidAt, c.make, c.model, c.year FROM dealerBids b LEFT JOIN cars c ON b.carId = c.id ORDER BY b.id DESC LIMIT 15;",
+  "rows": [
+    {
+      "id": "180001",
+      "carId": "150191",
+      "dealerId": "60015",
+      "bidAmount": "25000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "FORD",
+      "model": "Explorer",
+      "year": "2024"
+    },
+    {
+      "id": "150014",
+      "carId": "152244",
+      "dealerId": "60015",
+      "bidAmount": "25000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "CUPRA",
+      "model": "Born",
+      "year": "2024"
+    },
+    {
+      "id": "150001",
+      "carId": "150550",
+      "dealerId": "60015",
+      "bidAmount": "40500.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "BMW",
+      "model": "Sport",
+      "year": "2022"
+    },
+    {
+      "id": "120004",
+      "carId": "150009",
+      "dealerId": "60006",
+      "bidAmount": "27000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "VOLKSWAGEN",
+      "model": "ID.4",
+      "year": "2023"
+    },
+    {
+      "id": "120003",
+      "carId": "150306",
+      "dealerId": "60009",
+      "bidAmount": "26000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "BMW",
+      "model": "i4",
+      "year": "2022"
+    },
+    {
+      "id": "120002",
+      "carId": "150176",
+      "dealerId": "60001",
+      "bidAmount": "36000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "FORD",
+      "model": "Mustang Mach-E",
+      "year": "2023"
+    },
+    {
+      "id": "120001",
+      "carId": "150121",
+      "dealerId": "60009",
+      "bidAmount": "26000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "TESLA",
+      "model": "Model Y",
+      "year": "2022"
+    },
+    {
+      "id": "90005",
+      "carId": "150006",
+      "dealerId": "60001",
+      "bidAmount": "29498.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "MERCEDES-BENZ",
+      "model": "EQC",
+      "year": "2021"
+    },
+    {
+      "id": "90004",
+      "carId": "180014",
+      "dealerId": "60006",
+      "bidAmount": "102000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "Mercedes-Benz",
+      "model": "EQS 450+",
+      "year": "2024"
+    },
+    {
+      "id": "90003",
+      "carId": "150063",
+      "dealerId": "60006",
+      "bidAmount": "31998.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024"
+    },
+    {
+      "id": "90001",
+      "carId": "150063",
+      "dealerId": "60006",
+      "bidAmount": "28500.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024"
+    },
+    {
+      "id": "60005",
+      "carId": "150063",
+      "dealerId": "60006",
+      "bidAmount": "28000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024"
+    },
+    {
+      "id": "60004",
+      "carId": "150063",
+      "dealerId": "60006",
+      "bidAmount": "27500.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024"
+    },
+    {
+      "id": "60003",
+      "carId": "150063",
+      "dealerId": "60006",
+      "bidAmount": "27000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024"
+    },
+    {
+      "id": "60002",
+      "carId": "150063",
+      "dealerId": "60024",
+      "bidAmount": "25000.00",
+      "paymentStatus": "pending",
+      "paidAt": "NULL",
+      "make": "SKODA",
+      "model": "Enyaq",
+      "year": "2024"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcarId\tdealerId\tbidAmount\tpaymentStatus\tpaidAt\tmake\tmodel\tyear\n180001\t150191\t60015\t25000.00\tpending\tNULL\tFORD\tExplorer\t2024\n150014\t152244\t60015\t25000.00\tpending\tNULL\tCUPRA\tBorn\t2024\n150001\t150550\t60015\t40500.00\tpending\tNULL\tBMW\tSport\t2022\n120004\t150009\t60006\t27000.00\tpending\tNULL\tVOLKSWAGEN\tID.4\t2023\n120003\t150306\t60009\t26000.00\tpending\tNULL\tBMW\ti4\t2022\n120002\t150176\t60001\t36000.00\tpending\tNULL\tFORD\tMustang Mach-E\t2023\n120001\t150121\t60009\t26000.00\tpending\tNULL\tTESLA\tModel Y\t2022\n90005\t150006\t60001\t29498.00\tpending\tNULL\tMERCEDES-BENZ\tEQC\t2021\n90004\t180014\t60006\t102000.00\tpending\tNULL\tMercedes-Benz\tEQS 450+\t2024\n90003\t150063\t60006\t31998.00\tpending\tNULL\tSKODA\tEnyaq\t2024\n90001\t150063\t60006\t28500.00\tpending\tNULL\tSKODA\tEnyaq\t2024\n60005\t150063\t60006\t28000.00\tpending\tNULL\tSKODA\tEnyaq\t2024\n60004\t150063\t60006\t27500.00\tpending\tNULL\tSKODA\tEnyaq\t2024\n60003\t150063\t60006\t27000.00\tpending\tNULL\tSKODA\tEnyaq\t2024\n60002\t150063\t60024\t25000.00\tpending\tNULL\tSKODA\tEnyaq\t2024\n",
+  "stderr": "",
+  "execution_time_ms": 350
+}

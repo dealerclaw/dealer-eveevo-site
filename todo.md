@@ -1813,3 +1813,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Update VITE_STRIPE_PUBLISHABLE_KEY to live key (pk_live_...)
 - [x] Add STRIPE_WEBHOOK_SECRET_LIVE with live signing secret (whsec_h14YN...) — built-in STRIPE_WEBHOOK_SECRET was locked so used new variable
 - [x] Update stripe-webhook.ts to prefer STRIPE_WEBHOOK_SECRET_LIVE over locked STRIPE_WEBHOOK_SECRET
+
+## Send to Auction Bug (Mar 2026)
+- [x] "unexpected JSON" error resolved after server restart (was stale env vars)
+
+## My Wins - Buy Now Purchases (Mar 2026)
+- [x] Add Buy Now purchases to My Wins page so dealers can see their Buy Now commitments
+- [x] buyNowAuction now returns bidId so it can be added to Stripe metadata
+- [x] Buy Now checkout now includes bid_id in Stripe metadata
+- [x] Webhook now marks Buy Now bid as paid using bid_id (with fallback getWonBidForCar lookup)
+- [x] Manually fixed existing paid Buy Now bids (car 152244, car 150191) to show as paid in My Wins

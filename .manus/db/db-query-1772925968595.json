@@ -1,0 +1,91 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "auctionHistory"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "carInquiries"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "carViews"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "cars"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerApplications"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerBids"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerCart"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerEnquiries"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerEnquiryReplies"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerOffers"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerReviews"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealerWatchlist"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "dealers"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "evFaultContributions"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "evFaultHelpful"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "evFaultRatings"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "evFaultViews"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "evFaults"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "favorites"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "financeApplications"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "proxyBids"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "reservations"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "savedSearches"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "siteSettings"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "testDriveBookings"
+    },
+    {
+      "Tables_in_Nm8U5tMkXcrrcW9FXkuveH": "users"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_Nm8U5tMkXcrrcW9FXkuveH\n__drizzle_migrations\nauctionHistory\ncarInquiries\ncarViews\ncars\ndealerApplications\ndealerBids\ndealerCart\ndealerEnquiries\ndealerEnquiryReplies\ndealerOffers\ndealerReviews\ndealerWatchlist\ndealers\nevFaultContributions\nevFaultHelpful\nevFaultRatings\nevFaultViews\nevFaults\nfavorites\nfinanceApplications\nproxyBids\nreservations\nsavedSearches\nsiteSettings\ntestDriveBookings\nusers\n",
+  "stderr": "",
+  "execution_time_ms": 357
+}

@@ -2620,7 +2620,8 @@ export const appRouter = router({
           }
         }
         // Process Buy Now - remove from auction and create winning bid record
-        await db.buyNowAuction(input.carId, dealer.id, ctx.user.id, buyNowPrice);
+        const buyNowResult = await db.buyNowAuction(input.carId, dealer.id, ctx.user.id, buyNowPrice);
+        const buyNowBidId = buyNowResult?.bidId;
 
         // Get seller information
         const seller = await db.getDealerById(car.dealerId!);
@@ -2658,6 +2659,7 @@ export const appRouter = router({
             purchase_price: buyNowPrice.toString(),
             customer_email: ctx.user.email || '',
             customer_name: ctx.user.name || dealer.name,
+            ...(buyNowBidId ? { bid_id: buyNowBidId.toString() } : {}),
           },
         });
         

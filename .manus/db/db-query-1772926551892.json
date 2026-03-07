@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE dealerBids SET paymentStatus = 'paid', paidAt = NOW(), stripePaymentIntentId = 'cs_live_b1QococEWgZsawBxBO7YtexernK4uFvbUXM8sn2o1ZL5S6o1voeosoXYxv' WHERE carId = 152244 AND status = 'won' AND paymentStatus != 'paid';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute UPDATE dealerBids SET paymentStatus = 'paid', paidAt = NOW(), stripePaymentIntentId = 'cs_live_b1QococEWgZsawBxBO7YtexernK4uFvbUXM8sn2o1ZL5S6o1voeosoXYxv' WHERE carId = 152244 AND status = 'won' AND paymentStatus != 'paid';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 524
+}
