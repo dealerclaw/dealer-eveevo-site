@@ -1766,3 +1766,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Green badge: under 30 days
 - [x] Amber badge: 30–45 days
 - [x] Purple badge with warning icon: over 45 days
+
+## Sortable Inventory Columns (Mar 2026)
+- [x] Add client-side sortable column headers to MyInventory table (Vehicle, Year, Price, Mileage, Range, Days Listed, Status, Marketplace)

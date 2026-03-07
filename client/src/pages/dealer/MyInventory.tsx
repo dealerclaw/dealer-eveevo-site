@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowRightLeft, Info, Gavel, AlertTriangle, Clock } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowRightLeft, Info, Gavel, AlertTriangle, Clock, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -101,8 +102,36 @@ const AuctionBadge = ({ endDate }: { endDate: Date | string }) => {
   );
 };
 
+type SortKey = 'vehicle' | 'year' | 'price' | 'mileage' | 'range' | 'daysOnMarket' | 'status' | 'marketplace';
+type SortDir = 'asc' | 'desc';
+
+function SortableHead({
+  label, sortKey, current, dir, onSort, className,
+}: {
+  label: string; sortKey: SortKey; current: SortKey | null; dir: SortDir; onSort: (k: SortKey) => void; className?: string;
+}) {
+  const active = current === sortKey;
+  return (
+    <TableHead
+      className={`cursor-pointer select-none whitespace-nowrap ${className ?? ''}`}
+      onClick={() => onSort(sortKey)}
+    >
+      <span className="inline-flex items-center gap-1">
+        {label}
+        {active ? (
+          dir === 'asc' ? <ChevronUp className="h-3.5 w-3.5 text-primary" /> : <ChevronDown className="h-3.5 w-3.5 text-primary" />
+        ) : (
+          <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground/50" />
+        )}
+      </span>
+    </TableHead>
+  );
+}
+
 export default function MyInventory() {
   const [, navigate] = useLocation();
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [viewingCar, setViewingCar] = useState<any | null>(null);
   const [auctionCarId, setAuctionCarId] = useState<number | null>(null);
@@ -113,6 +142,36 @@ export default function MyInventory() {
   const [cancelAuctionId, setCancelAuctionId] = useState<number | null>(null);
   
   const { data: inventory, isLoading, refetch } = trpc.dealer.getMyInventory.useQuery();
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+  };
+
+  const sortedInventory = useMemo(() => {
+    if (!inventory || !sortKey) return inventory ?? [];
+    return [...inventory].sort((a: any, b: any) => {
+      let av: any, bv: any;
+      switch (sortKey) {
+        case 'vehicle': av = `${a.make} ${a.model}`.toLowerCase(); bv = `${b.make} ${b.model}`.toLowerCase(); break;
+        case 'year': av = a.year ?? 0; bv = b.year ?? 0; break;
+        case 'price': av = parseFloat(a.price ?? '0'); bv = parseFloat(b.price ?? '0'); break;
+        case 'mileage': av = a.mileage ?? 0; bv = b.mileage ?? 0; break;
+        case 'range': av = a.realRange ?? 0; bv = b.realRange ?? 0; break;
+        case 'daysOnMarket': av = a.daysOnMarket ?? 0; bv = b.daysOnMarket ?? 0; break;
+        case 'status': av = a.isAvailable ? 1 : 0; bv = b.isAvailable ? 1 : 0; break;
+        case 'marketplace': av = a.marketplace ?? ''; bv = b.marketplace ?? ''; break;
+        default: return 0;
+      }
+      if (av < bv) return sortDir === 'asc' ? -1 : 1;
+      if (av > bv) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [inventory, sortKey, sortDir]);
   
   const deleteMutation = trpc.dealer.deleteVehicle.useMutation({
     onSuccess: () => {
@@ -267,19 +326,19 @@ export default function MyInventory() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-16"></TableHead>
-                    <TableHead>Vehicle</TableHead>
-                    <TableHead>Year</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Mileage</TableHead>
-                    <TableHead>Range</TableHead>
-                    <TableHead>Days Listed</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Marketplace</TableHead>
+                    <SortableHead label="Vehicle" sortKey="vehicle" current={sortKey} dir={sortDir} onSort={handleSort} />
+                    <SortableHead label="Year" sortKey="year" current={sortKey} dir={sortDir} onSort={handleSort} />
+                    <SortableHead label="Price" sortKey="price" current={sortKey} dir={sortDir} onSort={handleSort} />
+                    <SortableHead label="Mileage" sortKey="mileage" current={sortKey} dir={sortDir} onSort={handleSort} />
+                    <SortableHead label="Range" sortKey="range" current={sortKey} dir={sortDir} onSort={handleSort} />
+                    <SortableHead label="Days Listed" sortKey="daysOnMarket" current={sortKey} dir={sortDir} onSort={handleSort} />
+                    <SortableHead label="Status" sortKey="status" current={sortKey} dir={sortDir} onSort={handleSort} />
+                    <SortableHead label="Marketplace" sortKey="marketplace" current={sortKey} dir={sortDir} onSort={handleSort} />
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {inventory.map((vehicle: any) => (
+                  {sortedInventory.map((vehicle: any) => (
                     <TableRow key={vehicle.id}>
                       <TableCell className="w-16 pr-0">
                         {vehicle.mainImage ? (
