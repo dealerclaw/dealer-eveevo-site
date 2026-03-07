@@ -1757,3 +1757,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Build dealer inbox page (/dealer/inbox) showing received enquiries with reply functionality
 - [x] Send owner notification email when new enquiry is received
 - [x] Add unread enquiry badge to dealer sidebar navigation
+
+## Dealer Inventory Stock List UI (Mar 2026)
+- [x] Add small car thumbnail image to each row in the dealer inventory stock list (MyInventory page)
