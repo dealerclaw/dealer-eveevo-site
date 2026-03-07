@@ -3,15 +3,33 @@ import DealerLayout from "@/components/DealerLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trophy, Car, Calendar, DollarSign, User, Phone, Mail, CreditCard, Download, FileText } from "lucide-react";
+import { Loader2, Trophy, Car, Calendar, DollarSign, User, Phone, Mail, CreditCard, Download, FileText, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import ScheduleInspectionDialog from "@/components/ScheduleInspectionDialog";
 import { exportWinsToCSV, exportWinsToPDF } from "@/lib/exportWins";
+import { useEffect } from "react";
 
 export default function MyWins() {
   const [, setLocation] = useLocation();
-  const { data: wins, isLoading } = trpc.auction.getMyBids.useQuery();
+  const utils = trpc.useUtils();
+  const { data: wins, isLoading, refetch } = trpc.auction.getMyBids.useQuery(undefined, {
+    // Disable cache so we always get fresh data
+    staleTime: 0,
+  });
+
+  // Auto-refetch when returning from Stripe payment (payment=success in URL)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      // Refetch after a short delay to allow webhook to process
+      const timer = setTimeout(() => {
+        refetch();
+        toast.success('Payment confirmed! Your commitment fee has been received.');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
   
   const createPaymentCheckout = trpc.auction.createWinPaymentCheckout.useMutation({
     onSuccess: (data) => {
@@ -54,6 +72,14 @@ export default function MyWins() {
             <Badge variant="secondary" className="text-lg px-4 py-2">
               {wonAuctions.length} {wonAuctions.length === 1 ? 'Win' : 'Wins'}
             </Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { refetch(); toast.info('Refreshing...'); }}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
             {wonAuctions.length > 0 && (
               <>
                 <Button
