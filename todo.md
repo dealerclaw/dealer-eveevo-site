@@ -1807,3 +1807,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add fallback verification to stripe-webhook.ts so live payments still process when signing secret mismatches
 - [x] Add admin adminConfirmPayment tRPC procedure to manually confirm payments by Stripe session ID
 - [x] Log signing secret prefix on each webhook call for easy diagnosis
+
+## Live Stripe Keys Fix (Mar 2026)
+- [x] Update STRIPE_SECRET_KEY to live key (sk_live_...)
+- [x] Update VITE_STRIPE_PUBLISHABLE_KEY to live key (pk_live_...)
+- [x] Add STRIPE_WEBHOOK_SECRET_LIVE with live signing secret (whsec_h14YN...) — built-in STRIPE_WEBHOOK_SECRET was locked so used new variable
+- [x] Update stripe-webhook.ts to prefer STRIPE_WEBHOOK_SECRET_LIVE over locked STRIPE_WEBHOOK_SECRET

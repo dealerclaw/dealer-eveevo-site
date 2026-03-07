@@ -19,9 +19,11 @@ export async function handleStripeWebhook(req: Request, res: Response) {
   }
 
   let event: Stripe.Event;
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  // Prefer STRIPE_WEBHOOK_SECRET_LIVE (user-settable) over the locked built-in STRIPE_WEBHOOK_SECRET
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET_LIVE || process.env.STRIPE_WEBHOOK_SECRET;
+  const secretSource = process.env.STRIPE_WEBHOOK_SECRET_LIVE ? 'STRIPE_WEBHOOK_SECRET_LIVE' : 'STRIPE_WEBHOOK_SECRET';
   const secretPreview = webhookSecret ? `${webhookSecret.slice(0, 10)}...` : 'NOT SET';
-  console.log('[Webhook] Using signing secret starting with:', secretPreview);
+  console.log(`[Webhook] Using signing secret from ${secretSource}:`, secretPreview);
 
   try {
     event = stripe.webhooks.constructEvent(
