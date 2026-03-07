@@ -1760,3 +1760,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Dealer Inventory Stock List UI (Mar 2026)
 - [x] Add small car thumbnail image to each row in the dealer inventory stock list (MyInventory page)
+
+## Inventory Days on Market (Mar 2026)
+- [x] Add "Days on Market" column to MyInventory table using createdAt date
+- [x] Green badge: under 30 days
+- [x] Amber badge: 30–45 days
+- [x] Purple badge with warning icon: over 45 days

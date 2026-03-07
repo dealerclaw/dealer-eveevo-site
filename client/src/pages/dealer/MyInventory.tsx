@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowRightLeft, Info, Gavel } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ArrowRightLeft, Info, Gavel, AlertTriangle, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -35,6 +35,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+// Days on Market badge component
+function DaysOnMarketBadge({ createdAt }: { createdAt: Date | string }) {
+  const days = Math.floor(
+    (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  if (days > 45) {
+    return (
+      <div className="flex flex-col items-start gap-0.5">
+        <Badge className="bg-purple-600 hover:bg-purple-700 text-white gap-1">
+          <AlertTriangle className="h-3 w-3" />
+          {days}d
+        </Badge>
+        <span className="text-[10px] text-purple-600 font-medium leading-tight">Slow mover</span>
+      </div>
+    );
+  }
+  if (days > 30) {
+    return (
+      <Badge className="bg-amber-500 hover:bg-amber-600 text-white gap-1">
+        <Clock className="h-3 w-3" />
+        {days}d
+      </Badge>
+    );
+  }
+  return (
+    <Badge className="bg-green-600 hover:bg-green-700 text-white gap-1">
+      <Clock className="h-3 w-3" />
+      {days}d
+    </Badge>
+  );
+}
 
 // Auction Badge Component with countdown timer
 const AuctionBadge = ({ endDate }: { endDate: Date | string }) => {
@@ -242,6 +275,7 @@ export default function MyInventory() {
                     <TableHead>Price</TableHead>
                     <TableHead>Mileage</TableHead>
                     <TableHead>Range</TableHead>
+                    <TableHead>Days Listed</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Marketplace</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -284,6 +318,13 @@ export default function MyInventory() {
                       </TableCell>
                       <TableCell>
                         {vehicle.realRange ? `${vehicle.realRange} mi` : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        {vehicle.createdAt ? (
+                          <DaysOnMarketBadge createdAt={vehicle.createdAt} />
+                        ) : (
+                          <span className="text-muted-foreground text-xs">—</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Badge variant={vehicle.isAvailable ? "default" : "secondary"}>
