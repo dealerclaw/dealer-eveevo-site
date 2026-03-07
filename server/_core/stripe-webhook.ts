@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import Stripe from "stripe";
 import * as db from "../db";
 import { notifyOwner } from "./notification";
+import { sendEmail } from "../email";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -249,14 +250,115 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
       console.log('[Webhook] Updated auction win bid payment status to paid:', bidId);
 
-      // Send confirmation notification
+      // Send buyer + seller notifications
       if (carId) {
         const car = await db.getCarById(carId);
         if (car) {
+          const vehicleInfo = `${car.year} ${car.make} ${car.model}`;
+
+          // Notify owner/admin
           await notifyOwner({
-            title: `Auction Win Payment Confirmed: ${car.make} ${car.model} ${car.year}`,
-            content: `£10 commitment fee received for auction win on ${car.make} ${car.model} ${car.year}.\n\nBuyer: ${buyerName} (${buyerEmail})\nBid ID: ${bidId}\n\nStripe Session: ${session.id}`,
+            title: `Auction Win Payment Confirmed: ${vehicleInfo}`,
+            content: `£10 commitment fee received for auction win on ${vehicleInfo}.\n\nBuyer: ${buyerName} (${buyerEmail})\nBid ID: ${bidId}\n\nStripe Session: ${session.id}`,
           });
+
+          // --- Buyer confirmation email ---
+          if (buyerEmail && buyerEmail !== 'N/A') {
+            // Get seller dealer info from car.dealerId
+            const sellerDealer = car.dealerId ? await db.getDealerById(car.dealerId) : null;
+            const sellerName = sellerDealer?.name || 'the seller';
+            const sellerContact = sellerDealer?.email || sellerDealer?.phone || 'Contact via EVEEVO platform';
+
+            await sendEmail({
+              to: buyerEmail,
+              subject: `✅ Commitment Fee Confirmed — ${vehicleInfo}`,
+              html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #333; line-height: 1.6; }
+  .header { background: #9BCB90; color: white; padding: 24px; text-align: center; }
+  .content { padding: 24px; max-width: 600px; margin: 0 auto; }
+  .box { background: #f9fafb; border-radius: 8px; padding: 16px; margin: 16px 0; }
+  .steps { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 16px 0; }
+  .footer { text-align: center; color: #9ca3af; font-size: 13px; padding: 16px; }
+</style></head>
+<body>
+  <div class="header"><h1>✅ Commitment Fee Confirmed</h1><p>Your £10 commitment fee has been received</p></div>
+  <div class="content">
+    <p>Hi ${buyerName},</p>
+    <p>Your £10 commitment fee for the following vehicle has been confirmed. Your auction win is now secured.</p>
+    <div class="box">
+      <strong>Vehicle:</strong> ${vehicleInfo}<br>
+      <strong>VIN:</strong> ${car.vin || 'N/A'}<br>
+      <strong>Winning Bid:</strong> £${Number(session.amount_total || 0) > 1000 ? 'See My Wins' : 'See My Wins'}<br>
+      <strong>Balance Due:</strong> Payable directly to seller after inspection
+    </div>
+    <div class="steps">
+      <strong>⚡ Next Steps</strong>
+      <ol>
+        <li>Contact the seller to arrange a vehicle inspection</li>
+        <li>Inspect the vehicle in person</li>
+        <li>Pay the remaining balance directly to the seller after satisfactory inspection</li>
+        <li>Arrange delivery or collection</li>
+      </ol>
+    </div>
+    <div class="box">
+      <strong>Seller Contact:</strong><br>
+      ${sellerName}<br>
+      ${sellerContact}
+    </div>
+    <p>You can view your win details at any time in <strong>My Wins</strong> on the EVEEVO platform.</p>
+  </div>
+  <div class="footer">EVEEVO — Smart. Easy. Electric. | This is an automated notification.</div>
+</body>
+</html>`,
+            });
+            console.log('[Webhook] Sent buyer payment confirmation email to:', buyerEmail);
+          }
+
+          // --- Seller notification email ---
+          const sellerDealer = car.dealerId ? await db.getDealerById(car.dealerId) : null;
+          if (sellerDealer?.email) {
+            await sendEmail({
+              to: sellerDealer.email,
+              subject: `🎉 Buyer Has Paid Commitment Fee — ${vehicleInfo}`,
+              html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #333; line-height: 1.6; }
+  .header { background: #1e293b; color: white; padding: 24px; text-align: center; }
+  .content { padding: 24px; max-width: 600px; margin: 0 auto; }
+  .box { background: #f9fafb; border-radius: 8px; padding: 16px; margin: 16px 0; }
+  .highlight { background: #dcfce7; border-left: 4px solid #16a34a; padding: 16px; margin: 16px 0; }
+  .footer { text-align: center; color: #9ca3af; font-size: 13px; padding: 16px; }
+</style></head>
+<body>
+  <div class="header"><h1>🎉 Commitment Fee Received</h1><p>A buyer has secured their auction win on your vehicle</p></div>
+  <div class="content">
+    <p>Hi ${sellerDealer.name},</p>
+    <p>A buyer has paid the £10 commitment fee and secured their auction win on your vehicle:</p>
+    <div class="box">
+      <strong>Vehicle:</strong> ${vehicleInfo}<br>
+      <strong>VIN:</strong> ${car.vin || 'N/A'}
+    </div>
+    <div class="highlight">
+      <strong>✅ What this means:</strong> The buyer is committed to purchasing this vehicle. They will contact you to arrange an inspection.
+    </div>
+    <div class="box">
+      <strong>Buyer:</strong> ${buyerName}<br>
+      <strong>Contact:</strong> ${buyerEmail !== 'N/A' ? buyerEmail : 'Contact via EVEEVO platform'}
+    </div>
+    <p>Please be available to arrange a convenient inspection time. Once the buyer is satisfied, they will pay the full balance directly to you.</p>
+    <p>You can view full details in <strong>My Auctions</strong> on the EVEEVO platform.</p>
+  </div>
+  <div class="footer">EVEEVO — Smart. Easy. Electric. | This is an automated notification.</div>
+</body>
+</html>`,
+            });
+            console.log('[Webhook] Sent seller notification email to:', sellerDealer.email);
+          }
         }
       }
     }

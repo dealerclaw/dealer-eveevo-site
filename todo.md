@@ -1788,3 +1788,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Stripe Webhook Fix - Auction Win Payment Status (Mar 2026)
 - [x] Fix stripe-webhook.ts: handle checkout.session.completed for payment_type=auction_win to update bid payment_status to 'paid'
 - [x] Manually mark existing paid Ford Mustang Mach-E bid (id 150004) as paid in database
+
+## Auction Win Payment Notifications (Mar 2026)
+- [x] Send "Payment confirmed" email to winning dealer when commitment fee is paid
+- [x] Send "Buyer has paid commitment fee" email to selling dealer when commitment fee is paid
