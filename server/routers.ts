@@ -2942,6 +2942,58 @@ export const appRouter = router({
 
           return { success: true };
       }),
+
+    // Admin: manually confirm a payment by Stripe session ID (fallback when webhook fails)
+    adminConfirmPayment: protectedProcedure
+      .input(z.object({
+        stripeSessionId: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+        const session = await stripe.checkout.sessions.retrieve(input.stripeSessionId);
+
+        if (!session) {
+          throw new Error('Stripe session not found');
+        }
+
+        if (session.payment_status !== 'paid') {
+          throw new Error(`Payment not completed. Status: ${session.payment_status}`);
+        }
+
+        const paymentType = session.metadata?.payment_type || session.metadata?.purchase_type;
+        const result: Record<string, any> = { sessionId: session.id, paymentType, status: session.payment_status };
+
+        if (paymentType === 'auction_win') {
+          const bidId = session.metadata?.bidId ? parseInt(session.metadata.bidId) : null;
+          if (!bidId) throw new Error('No bidId in session metadata');
+
+          const paymentIntentId = typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : (session.payment_intent as any)?.id || session.id;
+
+          await db.updateBidPaymentStatus(bidId, {
+            paymentStatus: 'paid',
+            stripePaymentIntentId: paymentIntentId,
+            paidAt: new Date(),
+          });
+
+          result.bidId = bidId;
+          result.message = `Bid ${bidId} payment status updated to paid`;
+        } else if (paymentType === 'buy_now') {
+          const carId = session.metadata?.car_id ? parseInt(session.metadata.car_id) : null;
+          if (!carId) throw new Error('No car_id in session metadata');
+          result.carId = carId;
+          result.message = `Buy Now payment confirmed for car ${carId}`;
+        } else {
+          throw new Error(`Unknown payment type: ${paymentType}`);
+        }
+
+        return result;
+      }),
   }),
 });
 export type AppRouter = typeof appRouter;

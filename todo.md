@@ -1799,3 +1799,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## My Wins Reset & Paid Status Fix (Mar 2026)
 - [x] Clear all won bids for dealer 60015 from database (12 records deleted)
 - [x] Confirmed paid status logic is correct in UI; root cause was live webhook signing secret mismatch
+
+## Webhook Debug (Mar 2026)
+- [x] Debug why live Stripe webhook is not updating bid paymentStatus to 'paid' after payment
+
+## Webhook Fallback Mode (Mar 2026)
+- [x] Add fallback verification to stripe-webhook.ts so live payments still process when signing secret mismatches
+- [x] Add admin adminConfirmPayment tRPC procedure to manually confirm payments by Stripe session ID
+- [x] Log signing secret prefix on each webhook call for easy diagnosis
