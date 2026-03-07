@@ -186,7 +186,7 @@ export default function MyWins() {
                         <div>
                           <p className="text-sm text-muted-foreground">Commitment Fee</p>
                           <p className="text-xl font-bold text-blue-600">
-                            £99
+                            £10
                           </p>
                         </div>
                       </div>
@@ -213,7 +213,7 @@ export default function MyWins() {
                           Balance Due After Inspection
                         </h3>
                         <p className="text-2xl font-bold text-amber-600">
-                          £{(parseFloat(win.bidAmount) - 99).toLocaleString()}
+                          £{(parseFloat(win.bidAmount) - 10).toLocaleString()}
                         </p>
                         <p className="text-sm text-muted-foreground mt-2">
                           Pay balance via bank transfer after satisfactory vehicle inspection
@@ -257,7 +257,7 @@ export default function MyWins() {
                     <div className="border-t pt-4">
                       <h3 className="font-semibold mb-3">Next Steps</h3>
                       <ol className="space-y-2 text-sm text-muted-foreground">
-                        <li>1. Pay £99 commitment fee within 48 hours (secures your win)</li>
+                        <li>1. Pay £10 commitment fee within 48 hours (secures your win)</li>
                         <li>2. Contact seller to arrange vehicle inspection</li>
                         <li>3. Inspect vehicle condition in person</li>
                         <li>4. Pay remaining balance after satisfactory inspection</li>
@@ -291,7 +291,7 @@ export default function MyWins() {
                           ) : (
                             <>
                               <CreditCard className="h-4 w-4 mr-2" />
-                              Pay £99 Commitment Fee
+                              Pay £10 Commitment Fee
                             </>
                           )}
                         </Button>

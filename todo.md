@@ -1780,3 +1780,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Stripe Buy It Now Checkout Improvements (Mar 2026)
 - [x] Add car main image to Stripe checkout product_data.images for Buy It Now (already present)
 - [x] Update Buy It Now and Auction Win commitment fee to £10 with matching product name/description
+
+## My Wins Page £10 Update (Mar 2026)
+- [x] Replace all £99 references with £10 on My Wins page (commitment fee, balance due, next steps, button label)
+- [x] Show "Commitment Complete" status when £10 has been paid (pre-existing green paid banner already handles this)
