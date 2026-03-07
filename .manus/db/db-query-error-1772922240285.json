@@ -1,0 +1,8 @@
+{
+  "query": "SELECT db.id, db.dealer_id, db.car_id, db.status, db.payment_status, db.bid_amount, db.paid_at FROM dealer_bids db WHERE db.status = 'won' ORDER BY db.id DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT db.id, db.dealer_id, db.car_id, db.status, db.payment_status, db.bid_amount, db.paid_at FROM dealer_bids db WHERE db.status = 'won' ORDER BY db.id DESC LIMIT 20;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table 'nm8u5tmkxcrrcw9fxkuveh.dealer_bids' doesn't exist"
+  ]
+}

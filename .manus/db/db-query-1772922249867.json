@@ -1,0 +1,190 @@
+{
+  "query": "SELECT id, dealerId, carId, status, paymentStatus, bidAmount, paidAt FROM dealerBids WHERE status = 'won' ORDER BY id DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, dealerId, carId, status, paymentStatus, bidAmount, paidAt FROM dealerBids WHERE status = 'won' ORDER BY id DESC LIMIT 20;",
+  "rows": [
+    {
+      "id": "150013",
+      "dealerId": "60015",
+      "carId": "151615",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "21000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150012",
+      "dealerId": "60015",
+      "carId": "152138",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "25000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150011",
+      "dealerId": "60015",
+      "carId": "150591",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "25000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150010",
+      "dealerId": "60015",
+      "carId": "150874",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "25000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150009",
+      "dealerId": "60015",
+      "carId": "150223",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "21000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150008",
+      "dealerId": "60015",
+      "carId": "152014",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "20000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150007",
+      "dealerId": "60015",
+      "carId": "152022",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "50000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150006",
+      "dealerId": "60015",
+      "carId": "150479",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "25000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150005",
+      "dealerId": "60015",
+      "carId": "150029",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "35000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150004",
+      "dealerId": "60015",
+      "carId": "150427",
+      "status": "won",
+      "paymentStatus": "paid",
+      "bidAmount": "30000.00",
+      "paidAt": "2026-03-07 21:04:28"
+    },
+    {
+      "id": "150003",
+      "dealerId": "60015",
+      "carId": "150302",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "33500.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "150002",
+      "dealerId": "60015",
+      "carId": "150082",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "25000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "120003",
+      "dealerId": "60009",
+      "carId": "150306",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "26000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "120002",
+      "dealerId": "60001",
+      "carId": "150176",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "36000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "120001",
+      "dealerId": "60009",
+      "carId": "150121",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "26000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "90005",
+      "dealerId": "60001",
+      "carId": "150006",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "29498.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "90004",
+      "dealerId": "60006",
+      "carId": "180014",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "102000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "90003",
+      "dealerId": "60006",
+      "carId": "150063",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "31998.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "30003",
+      "dealerId": "1",
+      "carId": "180013",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "75000.00",
+      "paidAt": "NULL"
+    },
+    {
+      "id": "30002",
+      "dealerId": "1",
+      "carId": "180019",
+      "status": "won",
+      "paymentStatus": "pending",
+      "bidAmount": "54000.00",
+      "paidAt": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tdealerId\tcarId\tstatus\tpaymentStatus\tbidAmount\tpaidAt\n150013\t60015\t151615\twon\tpending\t21000.00\tNULL\n150012\t60015\t152138\twon\tpending\t25000.00\tNULL\n150011\t60015\t150591\twon\tpending\t25000.00\tNULL\n150010\t60015\t150874\twon\tpending\t25000.00\tNULL\n150009\t60015\t150223\twon\tpending\t21000.00\tNULL\n150008\t60015\t152014\twon\tpending\t20000.00\tNULL\n150007\t60015\t152022\twon\tpending\t50000.00\tNULL\n150006\t60015\t150479\twon\tpending\t25000.00\tNULL\n150005\t60015\t150029\twon\tpending\t35000.00\tNULL\n150004\t60015\t150427\twon\tpaid\t30000.00\t2026-03-07 21:04:28\n150003\t60015\t150302\twon\tpending\t33500.00\tNULL\n150002\t60015\t150082\twon\tpending\t25000.00\tNULL\n120003\t60009\t150306\twon\tpending\t26000.00\tNULL\n120002\t60001\t150176\twon\tpending\t36000.00\tNULL\n120001\t60009\t150121\twon\tpending\t26000.00\tNULL\n90005\t60001\t150006\twon\tpending\t29498.00\tNULL\n90004\t60006\t180014\twon\tpending\t102000.00\tNULL\n90003\t60006\t150063\twon\tpending\t31998.00\tNULL\n30003\t1\t180013\twon\tpending\t75000.00\tNULL\n30002\t1\t180019\twon\tpending\t54000.00\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 352
+}

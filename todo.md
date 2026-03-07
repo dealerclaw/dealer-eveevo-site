@@ -1795,3 +1795,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 
 ## Live Stripe Payment Link (Mar 2026)
 - [x] Add allow_promotion_codes: true to Buy It Now checkout session (promo code field now appears on all commitment fee checkouts)
+
+## My Wins Reset & Paid Status Fix (Mar 2026)
+- [x] Clear all won bids for dealer 60015 from database (12 records deleted)
+- [x] Confirmed paid status logic is correct in UI; root cause was live webhook signing secret mismatch
