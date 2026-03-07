@@ -1792,3 +1792,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Auction Win Payment Notifications (Mar 2026)
 - [x] Send "Payment confirmed" email to winning dealer when commitment fee is paid
 - [x] Send "Buyer has paid commitment fee" email to selling dealer when commitment fee is paid
+
+## Live Stripe Payment Link (Mar 2026)
+- [x] Add allow_promotion_codes: true to Buy It Now checkout session (promo code field now appears on all commitment fee checkouts)

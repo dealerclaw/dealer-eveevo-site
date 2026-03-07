@@ -2649,6 +2649,7 @@ export const appRouter = router({
           cancel_url: `${ctx.req.headers.origin}/dealer/auction?payment=cancelled`,
           customer_email: ctx.user.email || undefined,
           client_reference_id: ctx.user.id.toString(),
+          allow_promotion_codes: true,
           metadata: {
             user_id: ctx.user.id.toString(),
             dealer_id: dealer.id.toString(),
