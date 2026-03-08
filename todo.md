@@ -1840,3 +1840,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Fix TypeScript errors in AddVehicle.tsx (moved to useEffect pattern)
 - [x] Show trim level, derivative desc, previous keepers, insurance group, CO2 in lookup result
 - [x] VRM input supports Enter key and auto-uppercases
+
+## VRM Lookup 403 Error (Mar 2026)
+- [x] Fix 403 error - AutoTrader endpoint requires separate subscription; switched back to UK Vehicle Data endpoint
+- [x] Updated ONEAUTO_API_KEY to correct key (ESVZkXLb...)
+- [x] UK Vehicle Data endpoint confirmed working (200) with new key
+- [x] UK Vehicle Data provides battery capacity + real range which AutoTrader lacks
