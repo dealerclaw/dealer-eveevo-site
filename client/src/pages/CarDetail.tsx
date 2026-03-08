@@ -23,6 +23,7 @@ import {
   Store,
   Phone,
   Mail,
+  ExternalLink,
 } from "lucide-react";
 
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
@@ -272,7 +273,23 @@ export default function CarDetail() {
                 </CardContent>
               </Card>
 
+              {/* EV Database Specs Link */}
+              {car.evdbVehicleId && (
+                <div className="flex">
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    onClick={() => window.open(`/ev-specs/${car.evdbVehicleId}`, '_blank')}
+                  >
+                    <Zap className="w-4 h-4" />
+                    View Full EV Specs
+                    <ExternalLink className="w-3 h-3" />
+                  </Button>
+                </div>
+              )}
+
               {/* Description */}
+      
               {car.description && (
                 <Card>
                   <CardHeader>

@@ -1860,3 +1860,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Parse and clean ev_database_export_phev.json (428 unique PHEV vehicles, clean JSON array)
 - [x] Import PHEV vehicles into evVehicles MySQL table using INSERT IGNORE (no duplicates)
 - [x] Verified: 428 new PHEV vehicles imported, total 1,077 records (649 BEV + 428 PHEV)
+
+## EV Specs Page Enhancements (Mar 2026)
+- [x] Add BEV/PHEV/MHEV drivetrain type badge to /ev-specs/:id page header
+- [x] Add "View Full EV Specs" button to consumer car detail page (links to /ev-specs/:id if evdb_vehicle_id exists)
+- [x] Add evdbVehicleId column to cars table via direct SQL (ALTER TABLE)
+- [x] Add evdbVehicleId to addVehicle and updateVehicle tRPC procedure input schemas
+- [x] Save evdbVehicleId in AddVehicle.tsx submit handler when VRM lookup finds a match

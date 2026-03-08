@@ -218,6 +218,13 @@
       "when": 1772931255115,
       "tag": "0030_polite_next_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "5",
+      "when": 1772933195333,
+      "tag": "0031_shocking_magus",
+      "breakpoints": true
     }
   ]
 }

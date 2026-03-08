@@ -239,6 +239,9 @@ export default function AddVehicle() {
       submitData.features = formData.features.split(",").map((f) => f.trim()).filter(Boolean);
     }
 
+    // Include EV Database vehicle ID if found via VRM lookup
+    if (evdbVehicleId) submitData.evdbVehicleId = evdbVehicleId;
+
     addMutation.mutate(submitData);
   };
 

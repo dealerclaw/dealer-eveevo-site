@@ -89,6 +89,7 @@ export const cars = mysqlTable("cars", {
   acceleration: varchar("acceleration", { length: 50 }),
   topSpeed: int("topSpeed"),
   power: int("power"), // in kW
+  evdbVehicleId: int("evdbVehicleId"), // EV Database ID for linking to /ev-specs/:id
   
   // Images and media
   images: json("images").$type<string[]>(),

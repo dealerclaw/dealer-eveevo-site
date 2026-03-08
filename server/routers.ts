@@ -617,6 +617,7 @@ export const appRouter = router({
         features: z.array(z.string()).optional(),
         vin: z.string().optional(),
         registrationNumber: z.string().optional(),
+        evdbVehicleId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
@@ -652,6 +653,7 @@ export const appRouter = router({
         registrationNumber: z.string().optional(),
         isAvailable: z.boolean().optional(),
         conditionNotes: z.string().optional(),
+        evdbVehicleId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
