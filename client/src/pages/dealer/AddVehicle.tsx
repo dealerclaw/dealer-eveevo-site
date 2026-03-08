@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, Search, CheckCircle2 } from "lucide-react";
 import DealerLayout from "@/components/DealerLayout";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -20,6 +20,9 @@ import { toast } from "sonner";
 export default function AddVehicle() {
   const [, navigate] = useLocation();
   const [uploading, setUploading] = useState(false);
+  const [vrm, setVrm] = useState("");
+  const [vrmSearched, setVrmSearched] = useState("");
+  const [vrmPopulated, setVrmPopulated] = useState(false);
   const [formData, setFormData] = useState({
     make: "",
     model: "",
@@ -49,6 +52,53 @@ export default function AddVehicle() {
     reservePrice: "",
     buyNowPrice: "",
   });
+
+  const vrmQuery = trpc.dealer.lookupVrm.useQuery(
+    { vrm: vrmSearched },
+    { enabled: vrmSearched.length >= 2, retry: false }
+  );
+
+  useEffect(() => {
+    if (vrmQuery.data && !vrmPopulated) {
+      const data = vrmQuery.data;
+      setFormData((prev) => ({
+        ...prev,
+        make: data.make || prev.make,
+        model: data.model || prev.model,
+        year: data.year || prev.year,
+        color: data.color || prev.color,
+        fuelType: data.fuelType || prev.fuelType,
+        transmission: data.transmission || prev.transmission,
+        bodyType: data.bodyType || prev.bodyType,
+        vin: data.vin || prev.vin,
+        registrationNumber: data.registrationNumber || prev.registrationNumber,
+        batteryCapacity: data.batteryCapacity || prev.batteryCapacity,
+        realRange: data.realRange || prev.realRange,
+        topSpeed: data.topSpeed || prev.topSpeed,
+        power: data.power || prev.power,
+        acceleration: data.acceleration || prev.acceleration,
+        chargingTime: data.chargingTime || prev.chargingTime,
+      }));
+      setVrmPopulated(true);
+      toast.success(`Vehicle found: ${data.make} ${data.model} (${data.year})`);
+    }
+  }, [vrmQuery.data, vrmPopulated]);
+
+  useEffect(() => {
+    if (vrmQuery.error) {
+      toast.error(vrmQuery.error.message || "VRM not found");
+    }
+  }, [vrmQuery.error]);
+
+  const handleVrmLookup = () => {
+    const cleaned = vrm.replace(/\s+/g, "").toUpperCase();
+    if (cleaned.length < 2) {
+      toast.error("Please enter a valid registration number");
+      return;
+    }
+    setVrmPopulated(false);
+    setVrmSearched(cleaned);
+  };
 
   const addMutation = trpc.dealer.addVehicle.useMutation({
     onSuccess: () => {
@@ -199,6 +249,69 @@ export default function AddVehicle() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* VRM Lookup */}
+          <Card className="border-2 border-primary/30 bg-primary/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="h-5 w-5 text-primary" />
+                Auto-fill from Registration Plate
+              </CardTitle>
+              <CardDescription>
+                Enter the vehicle's registration number to automatically populate the details below
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-3">
+                <Input
+                  placeholder="e.g. AB21ABC"
+                  value={vrm}
+                  onChange={(e) => setVrm(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleVrmLookup())}
+                  className="font-mono text-lg tracking-widest uppercase max-w-[200px]"
+                  maxLength={8}
+                />
+                <Button
+                  type="button"
+                  onClick={handleVrmLookup}
+                  disabled={vrmQuery.isFetching}
+                  className="gap-2"
+                >
+                  {vrmQuery.isFetching ? (
+                    <><Loader2 className="h-4 w-4 animate-spin" /> Looking up...</>
+                  ) : (
+                    <><Search className="h-4 w-4" /> Look Up</>
+                  )}
+                </Button>
+              </div>
+
+              {vrmPopulated && vrmQuery.data && (
+                <div className="mt-4 space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-400">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Vehicle found — {vrmQuery.data.make} {vrmQuery.data.model} ({vrmQuery.data.year})
+                    {vrmQuery.data.trimLevel && <span className="text-muted-foreground">· {vrmQuery.data.trimLevel}</span>}
+                  </div>
+
+                  {(vrmQuery.data.isStolen || vrmQuery.data.isScrapped || vrmQuery.data.isExported) && (
+                    <div className="rounded-md bg-destructive/10 border border-destructive/30 p-3 text-sm text-destructive font-medium">
+                      ⚠️ Warning:
+                      {vrmQuery.data.isStolen && ' This vehicle is reported STOLEN.'}
+                      {vrmQuery.data.isScrapped && ' This vehicle has been SCRAPPED.'}
+                      {vrmQuery.data.isExported && ' This vehicle has been EXPORTED.'}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted-foreground">
+                    {vrmQuery.data.derivativeDesc && <span>Spec: <span className="text-foreground">{vrmQuery.data.derivativeDesc}</span></span>}
+                    {vrmQuery.data.previousKeepers !== null && <span>Previous keepers: <span className="text-foreground">{vrmQuery.data.previousKeepers}</span></span>}
+                    {vrmQuery.data.insuranceGroup && <span>Insurance group: <span className="text-foreground">{vrmQuery.data.insuranceGroup}/50</span></span>}
+                    {vrmQuery.data.co2 !== null && vrmQuery.data.co2 !== undefined && <span>CO₂: <span className="text-foreground">{vrmQuery.data.co2}g/km</span></span>}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Marketplace Selection */}
           <Card>
             <CardHeader>

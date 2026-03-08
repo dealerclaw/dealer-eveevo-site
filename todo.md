@@ -1823,3 +1823,20 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Buy Now checkout now includes bid_id in Stripe metadata
 - [x] Webhook now marks Buy Now bid as paid using bid_id (with fallback getWonBidForCar lookup)
 - [x] Manually fixed existing paid Buy Now bids (car 152244, car 150191) to show as paid in My Wins
+
+## Send to Auction JSON Error (Mar 2026)
+- [ ] Fix "Unexpected token '<', is not valid JSON" error on Send to Auction button
+
+## VRM Lookup - Add Vehicle (Mar 2026)
+- [ ] Add VRM lookup input to Add Vehicle form using OneAutoAPI
+- [ ] Add tRPC procedure to call OneAutoAPI by VRM (server-side, key from env)
+- [ ] Auto-populate all car fields from API response
+- [ ] Show loading state and error handling for failed lookups
+
+## VRM Lookup - AutoTrader Switch (Mar 2026)
+- [x] Switch VRM lookup from UK Vehicle Data to AutoTrader API endpoint (2p/lookup vs 12p)
+- [x] Update field mappings for AutoTrader response structure
+- [x] Add stolen/scrapped/exported warning banner to Add Vehicle form
+- [x] Fix TypeScript errors in AddVehicle.tsx (moved to useEffect pattern)
+- [x] Show trim level, derivative desc, previous keepers, insurance group, CO2 in lookup result
+- [x] VRM input supports Enter key and auto-uppercases

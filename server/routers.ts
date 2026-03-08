@@ -1,4 +1,5 @@
 import { COOKIE_NAME } from "@shared/const";
+import { ENV } from "./_core/env";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
@@ -448,6 +449,117 @@ export const appRouter = router({
           throw new Error('Unauthorized: Dealer access required');
         }
         return await db.getDealerCars(ctx.user.id, input);
+      }),
+
+    lookupVrm: protectedProcedure
+      .input(z.object({ vrm: z.string().min(2).max(10) }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'dealer' && ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Dealer access required');
+        }
+        const apiKey = ENV.ONEAUTO_API_KEY;
+        if (!apiKey) throw new Error('VRM lookup not configured');
+
+        const vrm = input.vrm.replace(/\s+/g, '').toUpperCase();
+        // Use AutoTrader API (via OneAutoAPI) — cheaper and includes basic vehicle check
+        const url = `https://api.oneautoapi.com/autotrader/vehiclelookupfromvrm/v2?vehicle_registration_mark=${encodeURIComponent(vrm)}`;
+
+        const res = await fetch(url, { headers: { 'x-api-key': apiKey } });
+        if (!res.ok) throw new Error(`VRM lookup failed: ${res.status}`);
+
+        const json = await res.json() as any;
+        if (!json.success) throw new Error(json.result?.error || 'VRM not found');
+
+        const r = json.result;
+        const basic = r?.basic_vehicle_info ?? {};
+        const perf = r?.performance_data ?? {};
+        const evData = r?.ev_data ?? {};
+        const check = r?.basic_vehicle_check ?? {};
+        const oem = r?.oem_data ?? {};
+
+        // Best fast charge time (10-80%)
+        const fastChargers: any[] = evData.fast_charger_table ?? [];
+        let bestFastMins: number | null = null;
+        for (const fc of fastChargers) {
+          if (bestFastMins === null || fc.fast_charger_chargetime_10to80_percent_mins < bestFastMins) {
+            bestFastMins = fc.fast_charger_chargetime_10to80_percent_mins;
+          }
+        }
+        // Fallback to onboard charger if no fast charger data
+        const onboardChargers: any[] = evData.onboard_charger_table ?? [];
+        let bestOnboardMins: number | null = null;
+        for (const oc of onboardChargers) {
+          if (bestOnboardMins === null || oc.charger_chargetime_0to100_mins < bestOnboardMins) {
+            bestOnboardMins = oc.charger_chargetime_0to100_mins;
+          }
+        }
+
+        // Map fuel type from AutoTrader field
+        const fuelRaw = (basic.autotrader_fuel_type_desc ?? '').toLowerCase();
+        let fuelType = 'Electric';
+        if (fuelRaw.includes('plug') || fuelRaw.includes('phev')) fuelType = 'Plug-in Hybrid';
+        else if (fuelRaw.includes('hybrid')) fuelType = 'Hybrid';
+        else if (fuelRaw.includes('petrol') || fuelRaw.includes('gasoline')) fuelType = 'Petrol';
+        else if (fuelRaw.includes('diesel')) fuelType = 'Diesel';
+
+        // Map body type — AutoTrader labels are already clean
+        const bodyMap: Record<string, string> = {
+          'hatchback': 'Hatchback', 'saloon': 'Saloon', 'sedan': 'Saloon',
+          'suv': 'SUV', 'estate': 'Estate', 'coupe': 'Coupe',
+          'convertible': 'Convertible', 'mpv': 'MPV', 'van': 'Van',
+          'pickup': 'Pickup', 'crossover': 'SUV', 'suv estate': 'SUV',
+        };
+        const rawBody = (basic.autotrader_body_type_desc ?? '').toLowerCase();
+        const bodyTypeMapped = bodyMap[rawBody] ||
+          Object.entries(bodyMap).find(([k]) => rawBody.includes(k))?.[1] || basic.autotrader_body_type_desc || '';
+
+        // Make: capitalise properly
+        const makeRaw = basic.manufacturer_desc ?? oem.oem_manufacturer_desc ?? '';
+        const makeFmt = makeRaw ? makeRaw.charAt(0).toUpperCase() + makeRaw.slice(1).toLowerCase() : '';
+
+        // Colour is already properly capitalised in AutoTrader response
+        const colourStr = basic.colour ?? '';
+
+        // Year from first_registration_date
+        const year = basic.first_registration_date
+          ? String(new Date(basic.first_registration_date).getFullYear())
+          : '';
+
+        // Charge time string
+        let chargingTime = '';
+        if (bestFastMins) chargingTime = `${bestFastMins} mins (10-80% fast charge)`;
+        else if (bestOnboardMins) chargingTime = `${bestOnboardMins} mins (0-100% AC)`;
+
+        return {
+          make: makeFmt,
+          model: basic.model_range_desc ?? '',
+          year,
+          color: colourStr,
+          fuelType,
+          transmission: basic.autotrader_transmission_desc ?? 'Automatic',
+          bodyType: bodyTypeMapped,
+          vin: basic.vehicle_identification_number ?? '',
+          registrationNumber: vrm,
+          batteryCapacity: '',  // Not in AutoTrader response — dealer fills manually
+          realRange: '',         // Not in AutoTrader response — dealer fills manually
+          topSpeed: perf.top_speed_mph ? String(Math.round(perf.top_speed_mph)) : '',
+          power: '',             // Not in AutoTrader response — dealer fills manually
+          acceleration: perf['0to60_mph'] ? `${perf['0to60_mph']}s 0-60mph`
+            : perf['0to100_kmph'] ? `${perf['0to100_kmph']}s 0-100km/h` : '',
+          chargingTime,
+          doors: basic.number_doors ?? null,
+          seats: basic.number_seats ?? null,
+          ncapRating: null,
+          co2: r?.engine_data?.co2_gkm ?? null,
+          // Vehicle check data
+          isStolen: check.is_stolen ?? false,
+          isScrapped: check.is_scrapped ?? false,
+          isExported: check.is_exported ?? false,
+          previousKeepers: check.number_previous_keepers ?? null,
+          trimLevel: basic.trim_level_desc ?? '',
+          derivativeDesc: basic.derivative_desc ?? '',
+          insuranceGroup: r?.insurance_data?.insurance_group_1to50 ?? null,
+        };
       }),
 
     addVehicle: protectedProcedure
