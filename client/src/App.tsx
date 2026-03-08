@@ -59,6 +59,7 @@ const Watchlist = lazy(() => import("./pages/dealer/Watchlist"));
 const DealerSettings = lazy(() => import("./pages/dealer/DealerSettings"));
 const DealerInventoryHealth = lazy(() => import("./pages/dealer/DealerInventoryHealth"));
 const DealerInbox = lazy(() => import("./pages/dealer/DealerInbox"));
+const EvSpecs = lazy(() => import("./pages/EvSpecs"));
 
 // Lightweight page loading skeleton
 function PageLoader() {
@@ -275,6 +276,7 @@ function Router() {
         <Route path="/account/settings" component={AccountSettings} />
         <Route path="/account">{() => <Redirect to="/account/settings" />}</Route>
         <Route path="/favorites" component={Favorites} />
+        <Route path="/ev-specs/:id" component={EvSpecs} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

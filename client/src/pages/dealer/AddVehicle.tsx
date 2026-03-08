@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
-import { Upload, X, Loader2, Search, CheckCircle2 } from "lucide-react";
+import { Upload, X, Loader2, Search, CheckCircle2, Zap } from "lucide-react";
 import DealerLayout from "@/components/DealerLayout";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ export default function AddVehicle() {
   const [vrm, setVrm] = useState("");
   const [vrmSearched, setVrmSearched] = useState("");
   const [vrmPopulated, setVrmPopulated] = useState(false);
+  const [evdbVehicleId, setEvdbVehicleId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     make: "",
     model: "",
@@ -80,6 +81,7 @@ export default function AddVehicle() {
         chargingTime: data.chargingTime || prev.chargingTime,
       }));
       setVrmPopulated(true);
+      if (data.evdbVehicleId) setEvdbVehicleId(data.evdbVehicleId);
       toast.success(`Vehicle found: ${data.make} ${data.model} (${data.year})`);
     }
   }, [vrmQuery.data, vrmPopulated]);
@@ -307,6 +309,22 @@ export default function AddVehicle() {
                     {vrmQuery.data.insuranceGroup && <span>Insurance group: <span className="text-foreground">{vrmQuery.data.insuranceGroup}/50</span></span>}
                     {vrmQuery.data.co2 !== null && vrmQuery.data.co2 !== undefined && <span>CO₂: <span className="text-foreground">{vrmQuery.data.co2}g/km</span></span>}
                   </div>
+
+                  {evdbVehicleId && (
+                    <div className="pt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 border-green-500/50 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950"
+                        onClick={() => window.open(`/ev-specs/${evdbVehicleId}`, '_blank')}
+                      >
+                        <Zap className="h-4 w-4" />
+                        View Full EV Database Specs
+                      </Button>
+                      <p className="text-xs text-muted-foreground mt-1">EV Database ID: {evdbVehicleId} · Confidence: {vrmQuery.data.evdbConfidence ? `${Math.round(vrmQuery.data.evdbConfidence)}%` : 'N/A'}</p>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

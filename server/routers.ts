@@ -525,7 +525,7 @@ export const appRouter = router({
         const makeRaw = modelData?.manufacturer_desc ?? vi?.dvla_manufacturer_desc ?? '';
         const makeFmt = makeRaw ? makeRaw.charAt(0).toUpperCase() + makeRaw.slice(1).toLowerCase() : '';
 
-        return {
+        const result = {
           make: makeFmt,
           model: modelData?.model_range_desc ?? vi?.dvla_model_desc ?? '',
           year: vi?.manufactured_year ? String(vi.manufactured_year) : '',
@@ -553,8 +553,44 @@ export const appRouter = router({
           previousKeepers,
           trimLevel: modelData?.model_variant ?? '',
           derivativeDesc: modelData?.model_desc ?? '',
-          insuranceGroup: null, // Not available in UK Vehicle Data endpoint
+          insuranceGroup: null as number | null, // Not available in UK Vehicle Data endpoint
+          evdbVehicleId: null as number | null,
+          evdbMake: null as string | null,
+          evdbModel: null as string | null,
+          evdbVersion: null as string | null,
+          evdbConfidence: null as number | null,
         };
+
+        // Also look up EV Database ID (best effort, don't fail if this errors)
+        try {
+          const evdbUrl = `https://api.oneautoapi.com/evdatabase/uk/searchfromvrm?vehicle_registration_mark=${encodeURIComponent(vrm)}`;
+          const evdbRes = await fetch(evdbUrl, { headers: { 'x-api-key': apiKey } });
+          if (evdbRes.ok) {
+            const evdbJson = await evdbRes.json() as any;
+            const matches = evdbJson.matches ?? [];
+            if (matches.length > 0) {
+              // Sort by overall_score descending, pick best match
+              const best = matches.sort((a: any, b: any) => (b.overall_score ?? 0) - (a.overall_score ?? 0))[0];
+              result.evdbVehicleId = best.evdb_vehicle_id ?? null;
+              result.evdbMake = best.make ?? null;
+              result.evdbModel = best.model ?? null;
+              result.evdbVersion = best.version ?? null;
+              result.evdbConfidence = best.overall_score ?? null;
+            }
+          }
+        } catch (evdbErr) {
+          console.warn('[VRM] EV Database lookup failed (non-fatal):', evdbErr);
+        }
+
+        return result;
+      }),
+
+    getEvDbVehicle: protectedProcedure
+      .input(z.object({ evdbId: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const vehicle = await db.getEvDbVehicleById(input.evdbId);
+        if (!vehicle) throw new Error('EV Database vehicle not found');
+        return vehicle;
       }),
 
     addVehicle: protectedProcedure

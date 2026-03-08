@@ -3041,3 +3041,20 @@ export async function getWonBidForCar(carId: number) {
 
   return bids[0] || null;
 }
+
+/**
+ * Get EV Database vehicle by ID from local evVehicles table
+ */
+export async function getEvDbVehicleById(evdbId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const { evVehicles } = await import('../drizzle/schema');
+  const rows = await db
+    .select()
+    .from(evVehicles)
+    .where(eq(evVehicles.id, evdbId))
+    .limit(1);
+
+  return rows[0] || null;
+}

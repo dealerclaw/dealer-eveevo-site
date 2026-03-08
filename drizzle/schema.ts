@@ -680,3 +680,65 @@ export const dealerEnquiryReplies = mysqlTable("dealerEnquiryReplies", {
 });
 export type DealerEnquiryReply = typeof dealerEnquiryReplies.$inferSelect;
 export type InsertDealerEnquiryReply = typeof dealerEnquiryReplies.$inferInsert;
+
+/**
+ * EV Vehicles - EV Database data synced from Firebase/JSON export
+ * Vehicle_ID from ev-database.org is the primary key
+ */
+export const evVehicles = mysqlTable("evVehicles", {
+  id: int("id").primaryKey(),  // Vehicle_ID from EV Database
+  make: varchar("make", { length: 100 }),
+  model: varchar("model", { length: 100 }),
+  version: varchar("version", { length: 200 }),
+  availabilityStatus: int("availability_status"),
+  availabilityDateFrom: varchar("availability_date_from", { length: 20 }),
+  availabilityDateTo: varchar("availability_date_to", { length: 20 }),
+  priceFromUk: int("price_from_uk"),
+  drivetrainType: varchar("drivetrain_type", { length: 20 }),
+  drivetrainPropulsion: varchar("drivetrain_propulsion", { length: 50 }),
+  drivetrainPower: int("drivetrain_power"),
+  drivetrainPowerHp: int("drivetrain_power_hp"),
+  drivetrainTorque: int("drivetrain_torque"),
+  performanceAcceleration: decimal("performance_acceleration", { precision: 5, scale: 1 }),
+  performanceTopspeed: int("performance_topspeed"),
+  rangeWltp: int("range_wltp"),
+  rangeReal: int("range_real"),
+  rangeRealWHwy: int("range_real_w_hwy"),
+  rangeRealWCmb: int("range_real_w_cmb"),
+  rangeRealWCty: int("range_real_w_cty"),
+  rangeRealBHwy: int("range_real_b_hwy"),
+  rangeRealBCmb: int("range_real_b_cmb"),
+  rangeRealBCty: int("range_real_b_cty"),
+  efficiencyReal: int("efficiency_real"),
+  efficiencyRealFuelEqV: int("efficiency_real_fuel_eq_v"),
+  fastchargePlug: varchar("fastcharge_plug", { length: 50 }),
+  fastchargePowerMax: int("fastcharge_power_max"),
+  fastchargePowerAvg: int("fastcharge_power_avg"),
+  fastchargeChargeTime: int("fastcharge_charge_time"),
+  fastchargeChargeSpeed: int("fastcharge_charge_speed"),
+  fastchargeOptional: boolean("fastcharge_optional"),
+  fastchargeTable: json("fastcharge_table"),
+  batteryCapacityUseable: decimal("battery_capacity_useable", { precision: 6, scale: 1 }),
+  batteryCapacityFull: decimal("battery_capacity_full", { precision: 6, scale: 1 }),
+  dimsLength: int("dims_length"),
+  dimsWidth: int("dims_width"),
+  dimsHeight: int("dims_height"),
+  dimsWheelbase: int("dims_wheelbase"),
+  dimsWeight: int("dims_weight"),
+  dimsWeightGvwr: int("dims_weight_gvwr"),
+  dimsBootspace: int("dims_bootspace"),
+  dimsBootspaceMax: int("dims_bootspace_max"),
+  dimsBootspaceFrunk: int("dims_bootspace_frunk"),
+  dimsTowHitch: boolean("dims_tow_hitch"),
+  dimsTowWeightBraked: int("dims_tow_weight_braked"),
+  miscBody: varchar("misc_body", { length: 50 }),
+  miscSegment: varchar("misc_segment", { length: 10 }),
+  miscSeats: int("misc_seats"),
+  bikUkYear: varchar("bik_uk_year", { length: 20 }),
+  bikUkRate: int("bik_uk_rate"),
+  bikUkAmount: int("bik_uk_amount"),
+  evdbDetailUrl: varchar("evdb_detail_url", { length: 500 }),
+  images: json("images").$type<string[]>(),
+  relatedSuccessorId: int("related_successor_id"),
+});
+export type EvVehicle = typeof evVehicles.$inferSelect;

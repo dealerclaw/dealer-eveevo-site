@@ -1825,13 +1825,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Manually fixed existing paid Buy Now bids (car 152244, car 150191) to show as paid in My Wins
 
 ## Send to Auction JSON Error (Mar 2026)
-- [ ] Fix "Unexpected token '<', is not valid JSON" error on Send to Auction button
+- [x] "Unexpected token '<'" error resolved after server restart (stale env vars)
 
 ## VRM Lookup - Add Vehicle (Mar 2026)
-- [ ] Add VRM lookup input to Add Vehicle form using OneAutoAPI
-- [ ] Add tRPC procedure to call OneAutoAPI by VRM (server-side, key from env)
-- [ ] Auto-populate all car fields from API response
-- [ ] Show loading state and error handling for failed lookups
+- [x] Add VRM lookup input to Add Vehicle form using OneAutoAPI
+- [x] Add tRPC procedure to call OneAutoAPI by VRM (server-side, key from env)
+- [x] Auto-populate all car fields from API response
+- [x] Show loading state and error handling for failed lookups
 
 ## VRM Lookup - AutoTrader Switch (Mar 2026)
 - [x] Switch VRM lookup from UK Vehicle Data to AutoTrader API endpoint (2p/lookup vs 12p)
@@ -1846,3 +1846,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Updated ONEAUTO_API_KEY to correct key (ESVZkXLb...)
 - [x] UK Vehicle Data endpoint confirmed working (200) with new key
 - [x] UK Vehicle Data provides battery capacity + real range which AutoTrader lacks
+
+## EV Database Lookup from VRM (Mar 2026)
+- [x] Add OneAutoAPI evdatabase/uk/searchfromvrm call to lookupVrm procedure to get evdb_vehicle_id
+- [x] Add getEvDbVehicle tRPC procedure to look up full EV spec from local MySQL table by evdb_vehicle_id
+- [x] Add "View Full EV Database Specs" button to Add Vehicle form VRM result card (shows EV DB ID + confidence %)
+- [x] Create /ev-specs/:id page with full EV specs (performance, range, battery, charging, dimensions, BIK, gallery)
+- [x] Route /ev-specs/:id registered in App.tsx
+- [x] 649 EV vehicles imported into local evVehicles MySQL table from ev-database.json
+- [ ] Migrate evDatabase.ts Firebase procedures to use local MySQL table (currently causing console error)
