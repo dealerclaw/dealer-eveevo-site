@@ -1,0 +1,130 @@
+{
+  "query": "SELECT LOWER(make) as make, COUNT(*) as cnt FROM cars GROUP BY LOWER(make) ORDER BY cnt DESC LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT LOWER(make) as make, COUNT(*) as cnt FROM cars GROUP BY LOWER(make) ORDER BY cnt DESC LIMIT 30;",
+  "rows": [
+    {
+      "make": "bmw",
+      "cnt": "3799"
+    },
+    {
+      "make": "audi",
+      "cnt": "3152"
+    },
+    {
+      "make": "volvo",
+      "cnt": "2195"
+    },
+    {
+      "make": "volkswagen",
+      "cnt": "1944"
+    },
+    {
+      "make": "mercedes-benz",
+      "cnt": "1845"
+    },
+    {
+      "make": "tesla",
+      "cnt": "1594"
+    },
+    {
+      "make": "kia",
+      "cnt": "1482"
+    },
+    {
+      "make": "ford",
+      "cnt": "1456"
+    },
+    {
+      "make": "hyundai",
+      "cnt": "1280"
+    },
+    {
+      "make": "porsche",
+      "cnt": "1059"
+    },
+    {
+      "make": "peugeot",
+      "cnt": "1024"
+    },
+    {
+      "make": "skoda",
+      "cnt": "898"
+    },
+    {
+      "make": "polestar",
+      "cnt": "878"
+    },
+    {
+      "make": "vauxhall",
+      "cnt": "790"
+    },
+    {
+      "make": "mini",
+      "cnt": "754"
+    },
+    {
+      "make": "mg",
+      "cnt": "720"
+    },
+    {
+      "make": "renault",
+      "cnt": "700"
+    },
+    {
+      "make": "cupra",
+      "cnt": "668"
+    },
+    {
+      "make": "byd",
+      "cnt": "507"
+    },
+    {
+      "make": "jaguar",
+      "cnt": "443"
+    },
+    {
+      "make": "toyota",
+      "cnt": "344"
+    },
+    {
+      "make": "lexus",
+      "cnt": "296"
+    },
+    {
+      "make": "nissan",
+      "cnt": "292"
+    },
+    {
+      "make": "smart",
+      "cnt": "205"
+    },
+    {
+      "make": "jeep",
+      "cnt": "200"
+    },
+    {
+      "make": "citroen",
+      "cnt": "178"
+    },
+    {
+      "make": "lotus",
+      "cnt": "178"
+    },
+    {
+      "make": "fiat",
+      "cnt": "142"
+    },
+    {
+      "make": "honda",
+      "cnt": "138"
+    },
+    {
+      "make": "abarth",
+      "cnt": "84"
+    }
+  ],
+  "messages": [],
+  "stdout": "make\tcnt\nbmw\t3799\naudi\t3152\nvolvo\t2195\nvolkswagen\t1944\nmercedes-benz\t1845\ntesla\t1594\nkia\t1482\nford\t1456\nhyundai\t1280\nporsche\t1059\npeugeot\t1024\nskoda\t898\npolestar\t878\nvauxhall\t790\nmini\t754\nmg\t720\nrenault\t700\ncupra\t668\nbyd\t507\njaguar\t443\ntoyota\t344\nlexus\t296\nnissan\t292\nsmart\t205\njeep\t200\ncitroen\t178\nlotus\t178\nfiat\t142\nhonda\t138\nabarth\t84\n",
+  "stderr": "",
+  "execution_time_ms": 438
+}

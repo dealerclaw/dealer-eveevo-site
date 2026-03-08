@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE cars c\nJOIN (\n  SELECT \n    c2.id as car_id,\n    MIN(ev.id) as ev_id\n  FROM cars c2\n  JOIN evVehicles ev \n    ON LOWER(TRIM(c2.make)) = LOWER(TRIM(ev.make))\n    AND LOWER(TRIM(c2.model)) = LOWER(TRIM(ev.model))\n  WHERE c2.evdbVehicleId IS NULL\n  GROUP BY c2.id\n) matched ON c.id = matched.car_id\nSET c.evdbVehicleId = matched.ev_id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute UPDATE cars c\nJOIN (\n  SELECT \n    c2.id as car_id,\n    MIN(ev.id) as ev_id\n  FROM cars c2\n  JOIN evVehicles ev \n    ON LOWER(TRIM(c2.make)) = LOWER(TRIM(ev.make))\n    AND LOWER(TRIM(c2.model)) = LOWER(TRIM(ev.model))\n  WHERE c2.evdbVehicleId IS NULL\n  GROUP BY c2.id\n) matched ON c.id = matched.car_id\nSET c.evdbVehicleId = matched.ev_id;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 5373
+}

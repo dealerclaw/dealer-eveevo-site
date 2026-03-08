@@ -1867,3 +1867,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add evdbVehicleId column to cars table via direct SQL (ALTER TABLE)
 - [x] Add evdbVehicleId to addVehicle and updateVehicle tRPC procedure input schemas
 - [x] Save evdbVehicleId in AddVehicle.tsx submit handler when VRM lookup finds a match
+
+## EV/Hybrid Badge & Specs Visibility (Mar 2026)
+- [x] Bulk-match existing cars to evVehicles table by make+model to populate evdbVehicleId for all cars
+- [x] Show BEV/PHEV/Hybrid badge directly on CarDetail page (from fuelType field, no click required)
+- [x] Ensure "View Full EV Specs" button appears for all matched cars
+- [x] Add public cars.getEvDbVehicle procedure so consumers (not just dealers) can fetch EV specs
+- [x] Add BEV/PHEV badge and View Full EV Specs button to DealerMarketplaceDetails page

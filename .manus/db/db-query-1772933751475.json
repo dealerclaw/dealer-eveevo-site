@@ -1,0 +1,15 @@
+{
+  "query": "SELECT \n  COUNT(*) as total_cars,\n  SUM(CASE WHEN evdbVehicleId IS NOT NULL THEN 1 ELSE 0 END) as with_evdb_id,\n  SUM(CASE WHEN evdbVehicleId IS NULL THEN 1 ELSE 0 END) as without_evdb_id\nFROM cars;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT \n  COUNT(*) as total_cars,\n  SUM(CASE WHEN evdbVehicleId IS NOT NULL THEN 1 ELSE 0 END) as with_evdb_id,\n  SUM(CASE WHEN evdbVehicleId IS NULL THEN 1 ELSE 0 END) as without_evdb_id\nFROM cars;",
+  "rows": [
+    {
+      "total_cars": "29480",
+      "with_evdb_id": "0",
+      "without_evdb_id": "29480"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_cars\twith_evdb_id\twithout_evdb_id\n29480\t0\t29480\n",
+  "stderr": "",
+  "execution_time_ms": 481
+}

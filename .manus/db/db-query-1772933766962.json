@@ -1,0 +1,442 @@
+{
+  "query": "SHOW COLUMNS FROM evVehicles;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SHOW COLUMNS FROM evVehicles;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "make",
+      "Type": "varchar(100)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "model",
+      "Type": "varchar(100)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "version",
+      "Type": "varchar(200)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "availability_status",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "availability_date_from",
+      "Type": "varchar(20)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "availability_date_to",
+      "Type": "varchar(20)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "price_from_uk",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "drivetrain_type",
+      "Type": "varchar(20)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "drivetrain_propulsion",
+      "Type": "varchar(50)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "drivetrain_power",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "drivetrain_power_hp",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "drivetrain_torque",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "performance_acceleration",
+      "Type": "decimal(5,1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "performance_topspeed",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_wltp",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_real",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_real_w_hwy",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_real_w_cmb",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_real_w_cty",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_real_b_hwy",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_real_b_cmb",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "range_real_b_cty",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "efficiency_real",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "efficiency_real_fuel_eq_v",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fastcharge_plug",
+      "Type": "varchar(50)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fastcharge_power_max",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fastcharge_power_avg",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fastcharge_charge_time",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fastcharge_charge_speed",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fastcharge_optional",
+      "Type": "tinyint(1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "fastcharge_table",
+      "Type": "json",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "battery_capacity_useable",
+      "Type": "decimal(6,1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "battery_capacity_full",
+      "Type": "decimal(6,1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_length",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_width",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_height",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_wheelbase",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_weight",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_weight_gvwr",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_bootspace",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_bootspace_max",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_bootspace_frunk",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_tow_hitch",
+      "Type": "tinyint(1)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "dims_tow_weight_braked",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "misc_body",
+      "Type": "varchar(50)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "misc_segment",
+      "Type": "varchar(10)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "misc_seats",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "bik_uk_year",
+      "Type": "varchar(20)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "bik_uk_rate",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "bik_uk_amount",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "evdb_detail_url",
+      "Type": "varchar(500)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "images",
+      "Type": "json",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "related_successor_id",
+      "Type": "int",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint\tNO\tPRI\tNULL\t\nmake\tvarchar(100)\tYES\t\tNULL\t\nmodel\tvarchar(100)\tYES\t\tNULL\t\nversion\tvarchar(200)\tYES\t\tNULL\t\navailability_status\tint\tYES\t\tNULL\t\navailability_date_from\tvarchar(20)\tYES\t\tNULL\t\navailability_date_to\tvarchar(20)\tYES\t\tNULL\t\nprice_from_uk\tint\tYES\t\tNULL\t\ndrivetrain_type\tvarchar(20)\tYES\t\tNULL\t\ndrivetrain_propulsion\tvarchar(50)\tYES\t\tNULL\t\ndrivetrain_power\tint\tYES\t\tNULL\t\ndrivetrain_power_hp\tint\tYES\t\tNULL\t\ndrivetrain_torque\tint\tYES\t\tNULL\t\nperformance_acceleration\tdecimal(5,1)\tYES\t\tNULL\t\nperformance_topspeed\tint\tYES\t\tNULL\t\nrange_wltp\tint\tYES\t\tNULL\t\nrange_real\tint\tYES\t\tNULL\t\nrange_real_w_hwy\tint\tYES\t\tNULL\t\nrange_real_w_cmb\tint\tYES\t\tNULL\t\nrange_real_w_cty\tint\tYES\t\tNULL\t\nrange_real_b_hwy\tint\tYES\t\tNULL\t\nrange_real_b_cmb\tint\tYES\t\tNULL\t\nrange_real_b_cty\tint\tYES\t\tNULL\t\nefficiency_real\tint\tYES\t\tNULL\t\nefficiency_real_fuel_eq_v\tint\tYES\t\tNULL\t\nfastcharge_plug\tvarchar(50)\tYES\t\tNULL\t\nfastcharge_power_max\tint\tYES\t\tNULL\t\nfastcharge_power_avg\tint\tYES\t\tNULL\t\nfastcharge_charge_time\tint\tYES\t\tNULL\t\nfastcharge_charge_speed\tint\tYES\t\tNULL\t\nfastcharge_optional\ttinyint(1)\tYES\t\tNULL\t\nfastcharge_table\tjson\tYES\t\tNULL\t\nbattery_capacity_useable\tdecimal(6,1)\tYES\t\tNULL\t\nbattery_capacity_full\tdecimal(6,1)\tYES\t\tNULL\t\ndims_length\tint\tYES\t\tNULL\t\ndims_width\tint\tYES\t\tNULL\t\ndims_height\tint\tYES\t\tNULL\t\ndims_wheelbase\tint\tYES\t\tNULL\t\ndims_weight\tint\tYES\t\tNULL\t\ndims_weight_gvwr\tint\tYES\t\tNULL\t\ndims_bootspace\tint\tYES\t\tNULL\t\ndims_bootspace_max\tint\tYES\t\tNULL\t\ndims_bootspace_frunk\tint\tYES\t\tNULL\t\ndims_tow_hitch\ttinyint(1)\tYES\t\tNULL\t\ndims_tow_weight_braked\tint\tYES\t\tNULL\t\nmisc_body\tvarchar(50)\tYES\t\tNULL\t\nmisc_segment\tvarchar(10)\tYES\t\tNULL\t\nmisc_seats\tint\tYES\t\tNULL\t\nbik_uk_year\tvarchar(20)\tYES\t\tNULL\t\nbik_uk_rate\tint\tYES\t\tNULL\t\nbik_uk_amount\tint\tYES\t\tNULL\t\nevdb_detail_url\tvarchar(500)\tYES\t\tNULL\t\nimages\tjson\tYES\t\tNULL\t\nrelated_successor_id\tint\tYES\t\tNULL\t\n",
+  "stderr": "",
+  "execution_time_ms": 351
+}

@@ -86,6 +86,14 @@ export const appRouter = router({
       .query(async () => {
         return await db.getCars({ isFeatured: true, limit: 10 });
       }),
+
+    getEvDbVehicle: publicProcedure
+      .input(z.object({ evdbId: z.number().int().positive() }))
+      .query(async ({ input }) => {
+        const vehicle = await db.getEvDbVehicleById(input.evdbId);
+        if (!vehicle) throw new Error('EV Database vehicle not found');
+        return vehicle;
+      }),
   }),
 
   // Site settings (public read)

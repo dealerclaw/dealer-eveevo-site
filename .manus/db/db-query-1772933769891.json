@@ -1,0 +1,150 @@
+{
+  "query": "SELECT id, make, model, version, drivetrain_type FROM evVehicles LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, version, drivetrain_type FROM evVehicles LIMIT 20;",
+  "rows": [
+    {
+      "id": "1002",
+      "make": "Audi",
+      "model": "Q7 e-tron",
+      "version": "NULL",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1004",
+      "make": "BMW",
+      "model": "i3",
+      "version": "60 Ah",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1005",
+      "make": "BMW",
+      "model": "i8",
+      "version": "NULL",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1006",
+      "make": "BMW",
+      "model": "225xe",
+      "version": "iPerformance Active Tourer",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1007",
+      "make": "BMW",
+      "model": "330e",
+      "version": "iPerformance",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1010",
+      "make": "Ford",
+      "model": "Focus",
+      "version": "Electric",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1011",
+      "make": "Nissan",
+      "model": "Leaf",
+      "version": "NULL",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1012",
+      "make": "Kia",
+      "model": "Soul EV",
+      "version": "NULL",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1013",
+      "make": "Mercedes-Benz",
+      "model": "B 250e",
+      "version": "NULL",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1014",
+      "make": "Mercedes-Benz",
+      "model": "C 350e Plug-In",
+      "version": "Saloon",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1015",
+      "make": "Mercedes-Benz",
+      "model": "C 350e Plug-In",
+      "version": "Estate",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1017",
+      "make": "Mercedes-Benz",
+      "model": "GLE 500e Plug-In",
+      "version": "NULL",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1018",
+      "make": "Mitsubishi",
+      "model": "Outlander PHEV",
+      "version": "NULL",
+      "drivetrain_type": "PHEV"
+    },
+    {
+      "id": "1019",
+      "make": "Nissan",
+      "model": "Leaf",
+      "version": "24 kWh",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1020",
+      "make": "Nissan",
+      "model": "Leaf",
+      "version": "30 kWh",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1021",
+      "make": "Nissan",
+      "model": "e-NV200 Combi",
+      "version": "NULL",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1022",
+      "make": "Vauxhall",
+      "model": "Ampera",
+      "version": "NULL",
+      "drivetrain_type": "EREV"
+    },
+    {
+      "id": "1026",
+      "make": "Renault",
+      "model": "Zoe",
+      "version": "Q210",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1027",
+      "make": "Citroen",
+      "model": "C-Zero",
+      "version": "NULL",
+      "drivetrain_type": "BEV"
+    },
+    {
+      "id": "1028",
+      "make": "Peugeot",
+      "model": "iOn",
+      "version": "NULL",
+      "drivetrain_type": "BEV"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tversion\tdrivetrain_type\n1002\tAudi\tQ7 e-tron\tNULL\tPHEV\n1004\tBMW\ti3\t60 Ah\tBEV\n1005\tBMW\ti8\tNULL\tPHEV\n1006\tBMW\t225xe\tiPerformance Active Tourer\tPHEV\n1007\tBMW\t330e\tiPerformance\tPHEV\n1010\tFord\tFocus\tElectric\tBEV\n1011\tNissan\tLeaf\tNULL\tBEV\n1012\tKia\tSoul EV\tNULL\tBEV\n1013\tMercedes-Benz\tB 250e\tNULL\tBEV\n1014\tMercedes-Benz\tC 350e Plug-In\tSaloon\tPHEV\n1015\tMercedes-Benz\tC 350e Plug-In\tEstate\tPHEV\n1017\tMercedes-Benz\tGLE 500e Plug-In\tNULL\tPHEV\n1018\tMitsubishi\tOutlander PHEV\tNULL\tPHEV\n1019\tNissan\tLeaf\t24 kWh\tBEV\n1020\tNissan\tLeaf\t30 kWh\tBEV\n1021\tNissan\te-NV200 Combi\tNULL\tBEV\n1022\tVauxhall\tAmpera\tNULL\tEREV\n1026\tRenault\tZoe\tQ210\tBEV\n1027\tCitroen\tC-Zero\tNULL\tBEV\n1028\tPeugeot\tiOn\tNULL\tBEV\n",
+  "stderr": "",
+  "execution_time_ms": 348
+}

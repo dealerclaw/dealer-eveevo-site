@@ -1,0 +1,170 @@
+{
+  "query": "SELECT id, make, model, year, evdbVehicleId, registrationNumber FROM cars ORDER BY id DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, make, model, year, evdbVehicleId, registrationNumber FROM cars ORDER BY id DESC LIMIT 20;",
+  "rows": [
+    {
+      "id": "240001",
+      "make": "Kia",
+      "model": "EV3",
+      "year": "2025",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "GD25PTY"
+    },
+    {
+      "id": "210001",
+      "make": "tesla",
+      "model": "model 3",
+      "year": "NULL",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "180019",
+      "make": "Jaguar",
+      "model": "I-PACE EV400",
+      "year": "2023",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "180015",
+      "make": "Porsche",
+      "model": "Taycan 4S",
+      "year": "2023",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "180014",
+      "make": "Mercedes-Benz",
+      "model": "EQS 450+",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "180013",
+      "make": "BMW",
+      "model": "iX xDrive50",
+      "year": "2023",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164905",
+      "make": "VOLVO",
+      "model": "Ex30",
+      "year": "2025",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164904",
+      "make": "VOLVO",
+      "model": "Unknown",
+      "year": "2025",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164903",
+      "make": "AUDI",
+      "model": "A6 E-tron",
+      "year": "2025",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164902",
+      "make": "AUDI",
+      "model": "A6 E-tron",
+      "year": "2025",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164901",
+      "make": "RENAULT",
+      "model": "5",
+      "year": "2025",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164900",
+      "make": "VOLKSWAGEN",
+      "model": "ID.5",
+      "year": "2025",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164899",
+      "make": "VAUXHALL",
+      "model": "Grandland",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164898",
+      "make": "VAUXHALL",
+      "model": "Grandland",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164897",
+      "make": "VOLVO",
+      "model": "Ex30",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164896",
+      "make": "FORD",
+      "model": "Explorer",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164895",
+      "make": "FORD",
+      "model": "Capri",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164894",
+      "make": "AUDI",
+      "model": "Q4 E-tron",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164893",
+      "make": "AUDI",
+      "model": "E-tron GT",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    },
+    {
+      "id": "164892",
+      "make": "VOLKSWAGEN",
+      "model": "Id. Buzz",
+      "year": "2024",
+      "evdbVehicleId": "NULL",
+      "registrationNumber": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tmake\tmodel\tyear\tevdbVehicleId\tregistrationNumber\n240001\tKia\tEV3\t2025\tNULL\tGD25PTY\n210001\ttesla\tmodel 3\tNULL\tNULL\tNULL\n180019\tJaguar\tI-PACE EV400\t2023\tNULL\tNULL\n180015\tPorsche\tTaycan 4S\t2023\tNULL\tNULL\n180014\tMercedes-Benz\tEQS 450+\t2024\tNULL\tNULL\n180013\tBMW\tiX xDrive50\t2023\tNULL\tNULL\n164905\tVOLVO\tEx30\t2025\tNULL\tNULL\n164904\tVOLVO\tUnknown\t2025\tNULL\tNULL\n164903\tAUDI\tA6 E-tron\t2025\tNULL\tNULL\n164902\tAUDI\tA6 E-tron\t2025\tNULL\tNULL\n164901\tRENAULT\t5\t2025\tNULL\tNULL\n164900\tVOLKSWAGEN\tID.5\t2025\tNULL\tNULL\n164899\tVAUXHALL\tGrandland\t2024\tNULL\tNULL\n164898\tVAUXHALL\tGrandland\t2024\tNULL\tNULL\n164897\tVOLVO\tEx30\t2024\tNULL\tNULL\n164896\tFORD\tExplorer\t2024\tNULL\tNULL\n164895\tFORD\tCapri\t2024\tNULL\tNULL\n164894\tAUDI\tQ4 E-tron\t2024\tNULL\tNULL\n164893\tAUDI\tE-tron GT\t2024\tNULL\tNULL\n164892\tVOLKSWAGEN\tId. Buzz\t2024\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 350
+}

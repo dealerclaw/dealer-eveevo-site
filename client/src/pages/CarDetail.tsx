@@ -8,9 +8,6 @@ import { trpc } from "@/lib/trpc";
 import {
   ArrowLeft,
   Battery,
-  Calendar,
-  Car,
-  Fuel,
   Gauge,
   Heart,
   MapPin,
@@ -24,14 +21,15 @@ import {
   Phone,
   Mail,
   ExternalLink,
+  Car,
 } from "lucide-react";
 
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import FinanceCalculator from "@/components/FinanceCalculator";
 import CarImageGallery from "@/components/CarImageGallery";
 import AddToShortlistButton from "@/components/AddToShortlistButton";
-import { useState, useEffect } from "react";
-import { Link, useParams, useLocation } from "wouter";
+import { useEffect } from "react";
+import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 
 export default function CarDetail() {
@@ -39,37 +37,30 @@ export default function CarDetail() {
   const [, navigate] = useLocation();
   const { isAuthenticated, user } = useAuth();
 
-
   // Fetch car details
   const { data: car, isLoading } = trpc.cars.getById.useQuery(
     { id: parseInt(id || "0") },
     { enabled: !!id }
   );
-  
+
+  // Fetch EV Database specs if evdbVehicleId is set
+  const { data: evSpec } = trpc.cars.getEvDbVehicle.useQuery(
+    { evdbId: car?.evdbVehicleId ?? 0 },
+    { enabled: !!car?.evdbVehicleId, retry: false }
+  );
+
   // Track recently viewed vehicles
   useEffect(() => {
     if (car && id) {
       const carId = parseInt(id);
       const stored = localStorage.getItem("recentlyViewed");
       let recentlyViewed: number[] = [];
-      
       if (stored) {
-        try {
-          recentlyViewed = JSON.parse(stored);
-        } catch (e) {
-          console.error("Failed to parse recently viewed:", e);
-        }
+        try { recentlyViewed = JSON.parse(stored); } catch (e) { /* ignore */ }
       }
-      
-      // Remove if already exists (to move to front)
-      recentlyViewed = recentlyViewed.filter(id => id !== carId);
-      
-      // Add to front
+      recentlyViewed = recentlyViewed.filter(vid => vid !== carId);
       recentlyViewed.unshift(carId);
-      
-      // Keep only last 10
       recentlyViewed = recentlyViewed.slice(0, 10);
-      
       localStorage.setItem("recentlyViewed", JSON.stringify(recentlyViewed));
     }
   }, [car, id]);
@@ -113,12 +104,8 @@ export default function CarDetail() {
       toast.error("Please sign in to reserve a vehicle");
       return;
     }
-
     if (!car) return;
-
-    createCheckout.mutate({
-      carId: car.id,
-    });
+    createCheckout.mutate({ carId: car.id });
   };
 
   if (isLoading) {
@@ -140,9 +127,7 @@ export default function CarDetail() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">Car not found</h2>
             <p className="text-muted-foreground mb-4">The vehicle you're looking for doesn't exist.</p>
-            <Button onClick={() => navigate('/browse')}>
-              Browse Vehicles
-            </Button>
+            <Button onClick={() => navigate('/browse')}>Browse Vehicles</Button>
           </div>
         </main>
       </div>
@@ -150,6 +135,16 @@ export default function CarDetail() {
   }
 
   const images = car.images && car.images.length > 0 ? car.images : (car.mainImage ? [car.mainImage] : []);
+
+  // Determine drivetrain type badge
+  const drivetrainType = evSpec?.drivetrainType ?? null;
+  const drivetrainBadge = drivetrainType === "BEV"
+    ? { label: "⚡ Battery Electric (BEV)", className: "bg-green-100 text-green-800 border-green-300" }
+    : drivetrainType === "PHEV"
+    ? { label: "🔌 Plug-in Hybrid (PHEV)", className: "bg-blue-100 text-blue-800 border-blue-300" }
+    : drivetrainType
+    ? { label: drivetrainType, className: "bg-yellow-100 text-yellow-800 border-yellow-300" }
+    : null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -168,7 +163,7 @@ export default function CarDetail() {
             <div className="lg:col-span-2 space-y-6">
               {/* Image Gallery */}
               <CarImageGallery images={images} make={car.make} model={car.model} />
-              
+
               {!car.isAvailable && (
                 <Badge variant="destructive" className="text-lg px-4 py-2 w-full justify-center">
                   Not Available
@@ -177,15 +172,24 @@ export default function CarDetail() {
 
               {/* Vehicle title and badges */}
               <div>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
                     <h1 className="text-3xl font-bold mb-2">
                       {car.year} {car.make} {car.model}
                     </h1>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 items-center">
                       <Badge variant="secondary">{car.condition}</Badge>
                       {car.bodyType && <Badge variant="outline">{car.bodyType}</Badge>}
                       {car.isFeatured && <Badge className="bg-primary">Featured</Badge>}
+                      {/* BEV / PHEV / Hybrid badge — shown as soon as evSpec loads */}
+                      {drivetrainBadge && (
+                        <Badge
+                          variant="outline"
+                          className={`font-semibold text-sm px-3 py-1 ${drivetrainBadge.className}`}
+                        >
+                          {drivetrainBadge.label}
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <Button
@@ -201,6 +205,19 @@ export default function CarDetail() {
                 <p className="text-3xl font-bold text-primary mb-4">
                   £{car.price ? parseInt(car.price).toLocaleString() : "N/A"}
                 </p>
+
+                {/* View Full EV Specs button — prominent, shown whenever evdbVehicleId is set */}
+                {car.evdbVehicleId && (
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold"
+                    onClick={() => window.open(`/ev-specs/${car.evdbVehicleId}`, '_blank')}
+                  >
+                    <Zap className="w-4 h-4" />
+                    View Full EV Specs
+                    <ExternalLink className="w-3 h-3 opacity-70" />
+                  </Button>
+                )}
               </div>
 
               {/* Key specifications */}
@@ -273,23 +290,7 @@ export default function CarDetail() {
                 </CardContent>
               </Card>
 
-              {/* EV Database Specs Link */}
-              {car.evdbVehicleId && (
-                <div className="flex">
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                    onClick={() => window.open(`/ev-specs/${car.evdbVehicleId}`, '_blank')}
-                  >
-                    <Zap className="w-4 h-4" />
-                    View Full EV Specs
-                    <ExternalLink className="w-3 h-3" />
-                  </Button>
-                </div>
-              )}
-
               {/* Description */}
-      
               {car.description && (
                 <Card>
                   <CardHeader>
@@ -379,9 +380,9 @@ export default function CarDetail() {
                     <AddToShortlistButton carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
                   )}
 
-                  <Button 
-                    variant="outline" 
-                    className="w-full" 
+                  <Button
+                    variant="outline"
+                    className="w-full"
                     size="lg"
                     onClick={() => {
                       if (car.dealer?.whatsappNumber) {
@@ -407,8 +408,8 @@ export default function CarDetail() {
 
                   {/* Show prominent finance button for FREE tier dealers, hide for PAID dealers */}
                   {car.dealer?.subscriptionStatus !== 'active' && (
-                    <Button 
-                      className="w-full bg-green-600 hover:bg-green-700 text-white" 
+                    <Button
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
                       size="lg"
                       onClick={() => navigate(`/finance-check?carId=${car.id}`)}
                     >
@@ -475,8 +476,8 @@ export default function CarDetail() {
 
               {/* Finance Calculator */}
               {car.price && (
-                <FinanceCalculator 
-                  vehiclePrice={parseInt(car.price)} 
+                <FinanceCalculator
+                  vehiclePrice={parseInt(car.price)}
                   carId={car.id}
                 />
               )}
@@ -509,8 +510,8 @@ function SimilarVehiclesSection({ carId }: { carId: number }) {
         <h2 className="text-2xl font-bold mb-6">Similar Vehicles</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {similarCars.map((car) => (
-            <Card 
-              key={car.id} 
+            <Card
+              key={car.id}
               className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => navigate(`/cars/${car.id}`)}
             >

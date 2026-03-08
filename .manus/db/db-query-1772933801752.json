@@ -1,0 +1,130 @@
+{
+  "query": "SELECT LOWER(make) as make, COUNT(*) as cnt FROM evVehicles GROUP BY LOWER(make) ORDER BY cnt DESC LIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT LOWER(make) as make, COUNT(*) as cnt FROM evVehicles GROUP BY LOWER(make) ORDER BY cnt DESC LIMIT 30;",
+  "rows": [
+    {
+      "make": "mercedes-benz",
+      "cnt": "109"
+    },
+    {
+      "make": "audi",
+      "cnt": "92"
+    },
+    {
+      "make": "bmw",
+      "cnt": "81"
+    },
+    {
+      "make": "porsche",
+      "cnt": "78"
+    },
+    {
+      "make": "volkswagen",
+      "cnt": "76"
+    },
+    {
+      "make": "tesla",
+      "cnt": "64"
+    },
+    {
+      "make": "volvo",
+      "cnt": "57"
+    },
+    {
+      "make": "peugeot",
+      "cnt": "52"
+    },
+    {
+      "make": "ford",
+      "cnt": "35"
+    },
+    {
+      "make": "kia",
+      "cnt": "33"
+    },
+    {
+      "make": "hyundai",
+      "cnt": "31"
+    },
+    {
+      "make": "vauxhall",
+      "cnt": "31"
+    },
+    {
+      "make": "skoda",
+      "cnt": "27"
+    },
+    {
+      "make": "citroen",
+      "cnt": "26"
+    },
+    {
+      "make": "cupra",
+      "cnt": "20"
+    },
+    {
+      "make": "renault",
+      "cnt": "20"
+    },
+    {
+      "make": "polestar",
+      "cnt": "20"
+    },
+    {
+      "make": "land rover",
+      "cnt": "19"
+    },
+    {
+      "make": "smart",
+      "cnt": "17"
+    },
+    {
+      "make": "ds",
+      "cnt": "16"
+    },
+    {
+      "make": "toyota",
+      "cnt": "15"
+    },
+    {
+      "make": "mg",
+      "cnt": "15"
+    },
+    {
+      "make": "mini",
+      "cnt": "13"
+    },
+    {
+      "make": "nissan",
+      "cnt": "13"
+    },
+    {
+      "make": "byd",
+      "cnt": "13"
+    },
+    {
+      "make": "jeep",
+      "cnt": "9"
+    },
+    {
+      "make": "jaguar",
+      "cnt": "7"
+    },
+    {
+      "make": "lotus",
+      "cnt": "6"
+    },
+    {
+      "make": "mitsubishi",
+      "cnt": "6"
+    },
+    {
+      "make": "lexus",
+      "cnt": "5"
+    }
+  ],
+  "messages": [],
+  "stdout": "make\tcnt\nmercedes-benz\t109\naudi\t92\nbmw\t81\nporsche\t78\nvolkswagen\t76\ntesla\t64\nvolvo\t57\npeugeot\t52\nford\t35\nkia\t33\nhyundai\t31\nvauxhall\t31\nskoda\t27\ncitroen\t26\ncupra\t20\nrenault\t20\npolestar\t20\nland rover\t19\nsmart\t17\nds\t16\ntoyota\t15\nmg\t15\nmini\t13\nnissan\t13\nbyd\t13\njeep\t9\njaguar\t7\nlotus\t6\nmitsubishi\t6\nlexus\t5\n",
+  "stderr": "",
+  "execution_time_ms": 352
+}

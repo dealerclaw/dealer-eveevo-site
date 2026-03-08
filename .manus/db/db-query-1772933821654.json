@@ -1,0 +1,15 @@
+{
+  "query": "SELECT \n  SUM(CASE WHEN evdbVehicleId IS NOT NULL THEN 1 ELSE 0 END) as matched,\n  SUM(CASE WHEN evdbVehicleId IS NULL THEN 1 ELSE 0 END) as unmatched,\n  COUNT(*) as total\nFROM cars;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT \n  SUM(CASE WHEN evdbVehicleId IS NOT NULL THEN 1 ELSE 0 END) as matched,\n  SUM(CASE WHEN evdbVehicleId IS NULL THEN 1 ELSE 0 END) as unmatched,\n  COUNT(*) as total\nFROM cars;",
+  "rows": [
+    {
+      "matched": "25095",
+      "unmatched": "4385",
+      "total": "29480"
+    }
+  ],
+  "messages": [],
+  "stdout": "matched\tunmatched\ttotal\n25095\t4385\t29480\n",
+  "stderr": "",
+  "execution_time_ms": 778
+}

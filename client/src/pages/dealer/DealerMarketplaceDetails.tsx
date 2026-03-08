@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, ArrowLeft, ShoppingCart, CreditCard, MapPin, AlertTriangle, CheckCircle2, FileText, Phone, Mail, Bookmark, MessageSquare } from "lucide-react";
+import { Loader2, ArrowLeft, ShoppingCart, CreditCard, MapPin, AlertTriangle, CheckCircle2, FileText, Phone, Mail, Bookmark, MessageSquare, Zap, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation, useParams } from "wouter";
 import DealerLayout from "@/components/DealerLayout";
@@ -22,6 +22,21 @@ export default function DealerMarketplaceDetails() {
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const { data: car, isLoading } = trpc.dealer.getMarketplaceVehicleDetails.useQuery({ carId });
+
+  // Fetch EV Database specs for BEV/PHEV badge and full specs link
+  const { data: evSpec } = trpc.cars.getEvDbVehicle.useQuery(
+    { evdbId: car?.evdbVehicleId ?? 0 },
+    { enabled: !!car?.evdbVehicleId, retry: false }
+  );
+
+  const drivetrainType = evSpec?.drivetrainType ?? null;
+  const drivetrainBadge = drivetrainType === "BEV"
+    ? { label: "⚡ Battery Electric (BEV)", className: "bg-green-100 text-green-800 border-green-300" }
+    : drivetrainType === "PHEV"
+    ? { label: "🔌 Plug-in Hybrid (PHEV)", className: "bg-blue-100 text-blue-800 border-blue-300" }
+    : drivetrainType
+    ? { label: drivetrainType, className: "bg-yellow-100 text-yellow-800 border-yellow-300" }
+    : null;
 
   const addToCartMutation = trpc.dealer.addToCart.useMutation({
     onSuccess: () => {
@@ -141,15 +156,37 @@ export default function DealerMarketplaceDetails() {
             <Card>
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-3xl">
+                  <div className="flex-1">
+                    <CardTitle className="text-3xl mb-2">
                       {car.year} {car.make} {car.model}
                     </CardTitle>
-
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <Badge variant={car.condition === 'new' ? 'default' : 'secondary'} className="text-sm">
+                        {car.condition}
+                      </Badge>
+                      {/* BEV / PHEV / Hybrid badge */}
+                      {drivetrainBadge && (
+                        <Badge
+                          variant="outline"
+                          className={`font-semibold text-sm px-3 py-1 ${drivetrainBadge.className}`}
+                        >
+                          {drivetrainBadge.label}
+                        </Badge>
+                      )}
+                    </div>
+                    {/* View Full EV Specs button */}
+                    {car.evdbVehicleId && (
+                      <Button
+                        variant="outline"
+                        className="mt-3 gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold"
+                        onClick={() => window.open(`/ev-specs/${car.evdbVehicleId}`, '_blank')}
+                      >
+                        <Zap className="w-4 h-4" />
+                        View Full EV Specs
+                        <ExternalLink className="w-3 h-3 opacity-70" />
+                      </Button>
+                    )}
                   </div>
-                  <Badge variant={car.condition === 'new' ? 'default' : 'secondary'} className="text-sm">
-                    {car.condition}
-                  </Badge>
                 </div>
                 
                 {/* Auction Status Banner */}

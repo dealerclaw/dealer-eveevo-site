@@ -1,0 +1,130 @@
+{
+  "query": "SELECT DISTINCT LOWER(c.make) as car_make, COUNT(*) as car_count\nFROM cars c\nGROUP BY LOWER(c.make)\nORDER BY car_count DESC\nLIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT DISTINCT LOWER(c.make) as car_make, COUNT(*) as car_count\nFROM cars c\nGROUP BY LOWER(c.make)\nORDER BY car_count DESC\nLIMIT 30;",
+  "rows": [
+    {
+      "car_make": "bmw",
+      "car_count": "3799"
+    },
+    {
+      "car_make": "audi",
+      "car_count": "3152"
+    },
+    {
+      "car_make": "volvo",
+      "car_count": "2195"
+    },
+    {
+      "car_make": "volkswagen",
+      "car_count": "1944"
+    },
+    {
+      "car_make": "mercedes-benz",
+      "car_count": "1845"
+    },
+    {
+      "car_make": "tesla",
+      "car_count": "1594"
+    },
+    {
+      "car_make": "kia",
+      "car_count": "1482"
+    },
+    {
+      "car_make": "ford",
+      "car_count": "1456"
+    },
+    {
+      "car_make": "hyundai",
+      "car_count": "1280"
+    },
+    {
+      "car_make": "porsche",
+      "car_count": "1059"
+    },
+    {
+      "car_make": "peugeot",
+      "car_count": "1024"
+    },
+    {
+      "car_make": "skoda",
+      "car_count": "898"
+    },
+    {
+      "car_make": "polestar",
+      "car_count": "878"
+    },
+    {
+      "car_make": "vauxhall",
+      "car_count": "790"
+    },
+    {
+      "car_make": "mini",
+      "car_count": "754"
+    },
+    {
+      "car_make": "mg",
+      "car_count": "720"
+    },
+    {
+      "car_make": "renault",
+      "car_count": "700"
+    },
+    {
+      "car_make": "cupra",
+      "car_count": "668"
+    },
+    {
+      "car_make": "byd",
+      "car_count": "507"
+    },
+    {
+      "car_make": "jaguar",
+      "car_count": "443"
+    },
+    {
+      "car_make": "toyota",
+      "car_count": "344"
+    },
+    {
+      "car_make": "lexus",
+      "car_count": "296"
+    },
+    {
+      "car_make": "nissan",
+      "car_count": "292"
+    },
+    {
+      "car_make": "smart",
+      "car_count": "205"
+    },
+    {
+      "car_make": "jeep",
+      "car_count": "200"
+    },
+    {
+      "car_make": "lotus",
+      "car_count": "178"
+    },
+    {
+      "car_make": "citroen",
+      "car_count": "178"
+    },
+    {
+      "car_make": "fiat",
+      "car_count": "142"
+    },
+    {
+      "car_make": "honda",
+      "car_count": "138"
+    },
+    {
+      "car_make": "abarth",
+      "car_count": "84"
+    }
+  ],
+  "messages": [],
+  "stdout": "car_make\tcar_count\nbmw\t3799\naudi\t3152\nvolvo\t2195\nvolkswagen\t1944\nmercedes-benz\t1845\ntesla\t1594\nkia\t1482\nford\t1456\nhyundai\t1280\nporsche\t1059\npeugeot\t1024\nskoda\t898\npolestar\t878\nvauxhall\t790\nmini\t754\nmg\t720\nrenault\t700\ncupra\t668\nbyd\t507\njaguar\t443\ntoyota\t344\nlexus\t296\nnissan\t292\nsmart\t205\njeep\t200\nlotus\t178\ncitroen\t178\nfiat\t142\nhonda\t138\nabarth\t84\n",
+  "stderr": "",
+  "execution_time_ms": 441
+}

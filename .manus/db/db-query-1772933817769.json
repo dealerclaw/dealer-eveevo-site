@@ -1,0 +1,27 @@
+{
+  "query": "SELECT \n  COUNT(*) as total_cars,\n  SUM(CASE WHEN evdbVehicleId IS NOT NULL THEN 1 ELSE 0 END) as with_evdb_id,\n  SUM(CASE WHEN evdbVehicleId IS NULL THEN 1 ELSE 0 END) as without_evdb_id\nFROM cars;\n\nSELECT c.make, c.model, c.evdbVehicleId, ev.drivetrain_type\nFROM cars c\nJOIN evVehicles ev ON c.evdbVehicleId = ev.id\nLIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT \n  COUNT(*) as total_cars,\n  SUM(CASE WHEN evdbVehicleId IS NOT NULL THEN 1 ELSE 0 END) as with_evdb_id,\n  SUM(CASE WHEN evdbVehicleId IS NULL THEN 1 ELSE 0 END) as without_evdb_id\nFROM cars;\n\nSELECT c.make, c.model, c.evdbVehicleId, ev.drivetrain_type\nFROM cars c\nJOIN evVehicles ev ON c.evdbVehicleId = ev.id\nLIMIT 10;",
+  "rows": [
+    {
+      "total_cars": "29480",
+      "with_evdb_id": "25095",
+      "without_evdb_id": "4385"
+    }
+  ],
+  "messages": [
+    "make\tmodel\tevdbVehicleId\tdrivetrain_type",
+    "PORSCHE\tTaycan\t1116\tBEV",
+    "PORSCHE\tTaycan\t1116\tBEV",
+    "BMW\ti7\t1676\tBEV",
+    "TESLA\tModel S\t1031\tBEV",
+    "BMW\tIX3\t1535\tBEV",
+    "MERCEDES-BENZ\tEQC\t1135\tBEV",
+    "JAGUAR\tI-Pace\t1097\tBEV",
+    "VOLKSWAGEN\tID.4\t1273\tBEV",
+    "VOLKSWAGEN\tID.4\t1273\tBEV",
+    "VOLKSWAGEN\tID.4\t1273\tBEV"
+  ],
+  "stdout": "total_cars\twith_evdb_id\twithout_evdb_id\n29480\t25095\t4385\nmake\tmodel\tevdbVehicleId\tdrivetrain_type\nPORSCHE\tTaycan\t1116\tBEV\nPORSCHE\tTaycan\t1116\tBEV\nBMW\ti7\t1676\tBEV\nTESLA\tModel S\t1031\tBEV\nBMW\tIX3\t1535\tBEV\nMERCEDES-BENZ\tEQC\t1135\tBEV\nJAGUAR\tI-Pace\t1097\tBEV\nVOLKSWAGEN\tID.4\t1273\tBEV\nVOLKSWAGEN\tID.4\t1273\tBEV\nVOLKSWAGEN\tID.4\t1273\tBEV\n",
+  "stderr": "",
+  "execution_time_ms": 1170
+}
