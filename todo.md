@@ -1855,3 +1855,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Route /ev-specs/:id registered in App.tsx
 - [x] 649 EV vehicles imported into local evVehicles MySQL table from ev-database.json
 - [ ] Migrate evDatabase.ts Firebase procedures to use local MySQL table (currently causing console error)
+
+## PHEV EV Database Import (Mar 2026)
+- [x] Parse and clean ev_database_export_phev.json (428 unique PHEV vehicles, clean JSON array)
+- [x] Import PHEV vehicles into evVehicles MySQL table using INSERT IGNORE (no duplicates)
+- [x] Verified: 428 new PHEV vehicles imported, total 1,077 records (649 BEV + 428 PHEV)
