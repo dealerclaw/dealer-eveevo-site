@@ -1874,3 +1874,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Ensure "View Full EV Specs" button appears for all matched cars
 - [x] Add public cars.getEvDbVehicle procedure so consumers (not just dealers) can fetch EV specs
 - [x] Add BEV/PHEV badge and View Full EV Specs button to DealerMarketplaceDetails page
+
+## Browse Page Listing Card Badges (Mar 2026)
+- [x] Add BEV/PHEV drivetrain type badge to vehicle listing cards on Browse/Search page
+- [x] Add evVehicles left join to getCars DB helper to return drivetrainType without N+1 queries

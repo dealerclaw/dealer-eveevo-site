@@ -46,9 +46,9 @@ import {
   type InsertEvFaultContribution,
   type EvFaultRating,
   type InsertEvFaultRating,
-  type EvFaultView,
   type InsertEvFaultView,
-  siteSettings
+  siteSettings,
+  evVehicles
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -269,14 +269,18 @@ export async function getCars(filters?: {
       buyNowPrice: cars.buyNowPrice,
       createdAt: cars.createdAt,
       updatedAt: cars.updatedAt,
+      evdbVehicleId: cars.evdbVehicleId,
       // Dealer fields
       dealerName: dealers.name,
       dealerEmail: dealers.email,
       dealerPhone: dealers.phone,
       dealerAddress: dealers.address,
+      // EV Database fields
+      drivetrainType: evVehicles.drivetrainType,
     })
     .from(cars)
     .leftJoin(dealers, eq(cars.dealerId, dealers.id))
+    .leftJoin(evVehicles, eq(cars.evdbVehicleId, evVehicles.id))
     .where(and(...conditions))
     .orderBy(desc(cars.createdAt))
     .limit(filters?.limit ?? 50)

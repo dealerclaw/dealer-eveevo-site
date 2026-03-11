@@ -613,13 +613,28 @@ export default function Browse() {
                                 <GitCompare className="h-4 w-4" />
                               </Button>
                             </div>
-                            {car.condition && (
-                              <div className="absolute top-2 left-2">
+                            <div className="absolute top-2 left-2 flex flex-col gap-1">
+                              {car.condition && (
                                 <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
                                   {car.condition === 'new' ? 'New' : 'Used'}
                                 </span>
-                              </div>
-                            )}
+                              )}
+                              {car.drivetrainType === 'BEV' && (
+                                <span className="px-2 py-0.5 bg-green-600 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+                                  <Zap className="w-3 h-3" /> BEV
+                                </span>
+                              )}
+                              {car.drivetrainType === 'PHEV' && (
+                                <span className="px-2 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full">
+                                  🔌 PHEV
+                                </span>
+                              )}
+                              {car.drivetrainType && car.drivetrainType !== 'BEV' && car.drivetrainType !== 'PHEV' && (
+                                <span className="px-2 py-0.5 bg-yellow-500 text-white text-xs font-semibold rounded-full">
+                                  {car.drivetrainType}
+                                </span>
+                              )}
+                            </div>
                             {car.images && car.images.length > 1 && (
                               <div className="absolute bottom-2 left-2">
                                 <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded-full flex items-center gap-1">
