@@ -1887,3 +1887,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Rewrite server/_core/email.ts to use Resend API (same transport as server/email.ts — no new key needed)
 - [x] Write vitest tests for sendEmail and sendDealerApplicationEmail (7/7 passing)
 - [x] Remove nodemailer/Ethereal dependency from dealer application notifications
+
+## Dealer Application Confirmation & Browse Filter (Mar 2026)
+- [x] Add sendDealerApplicationConfirmationEmail to server/_core/email.ts
+- [x] Call confirmation email from submitApplication procedure (non-blocking)
+- [x] Add BEV/PHEV/HEV/MHEV drivetrain filter checkboxes to Browse page sidebar
+- [x] Wire drivetrainType filter to client-side filteredCars memo (no extra API call needed)

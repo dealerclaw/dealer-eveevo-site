@@ -121,3 +121,73 @@ Review at: https://dealer.eveevo.co.uk/admin/applications
     text,
   });
 }
+
+/**
+ * Send application received confirmation to the dealer applicant.
+ * Called immediately after sendDealerApplicationEmail in submitApplication.
+ */
+export async function sendDealerApplicationConfirmationEmail(application: {
+  businessName: string;
+  contactName: string;
+  email: string;
+}) {
+  const html = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#f9f9f9">
+      <div style="background:#fff;border-radius:8px;padding:24px;border:1px solid #e5e7eb">
+        <div style="text-align:center;margin-bottom:24px">
+          <h1 style="color:#16a34a;font-size:24px;margin:0">EVEEVO</h1>
+          <p style="color:#6b7280;margin:4px 0 0">Smart. Easy. Electric.</p>
+        </div>
+
+        <h2 style="color:#111827;margin-top:0">Application Received</h2>
+        <p style="color:#374151">Hi ${application.contactName},</p>
+        <p style="color:#374151">
+          Thank you for applying to join EVEEVO as a dealer. We've received your application for
+          <strong>${application.businessName}</strong> and our team will review it shortly.
+        </p>
+
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:20px 0">
+          <h3 style="color:#15803d;margin:0 0 8px">What happens next?</h3>
+          <ol style="color:#374151;margin:0;padding-left:20px;line-height:1.8">
+            <li>Our team reviews your application (typically within 1–2 business days)</li>
+            <li>We'll contact you at <strong>${application.email}</strong> with a decision</li>
+            <li>Once approved, you'll receive access to the EVEEVO dealer portal</li>
+          </ol>
+        </div>
+
+        <p style="color:#374151">
+          If you have any questions in the meantime, please don't hesitate to contact us at
+          <a href="mailto:support@eveevo.com" style="color:#16a34a">support@eveevo.com</a>.
+        </p>
+
+        <p style="color:#374151">Kind regards,<br><strong>The EVEEVO Team</strong></p>
+      </div>
+      <p style="color:#9ca3af;font-size:12px;margin-top:16px;text-align:center">
+        This is an automated confirmation. Please do not reply to this email.
+      </p>
+    </div>
+  `;
+
+  const text = `
+Hi ${application.contactName},
+
+Thank you for applying to join EVEEVO as a dealer. We've received your application for ${application.businessName}.
+
+What happens next:
+1. Our team reviews your application (typically within 1-2 business days)
+2. We'll contact you at ${application.email} with a decision
+3. Once approved, you'll receive access to the EVEEVO dealer portal
+
+Questions? Email us at support@eveevo.com
+
+Kind regards,
+The EVEEVO Team
+  `.trim();
+
+  return await sendEmail({
+    to: application.email,
+    subject: `Application Received — ${application.businessName}`,
+    html,
+    text,
+  });
+}

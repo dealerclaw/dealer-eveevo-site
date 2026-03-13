@@ -41,6 +41,7 @@ export default function Browse() {
   const [rangeFilter, setRangeFilter] = useState([0, 400]);
   const [mileageFilter, setMileageFilter] = useState([0, 100000]);
   const [condition, setCondition] = useState<"all" | "new" | "used">("all");
+  const [drivetrainFilter, setDrivetrainFilter] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
@@ -195,9 +196,13 @@ export default function Browse() {
         car.description?.toLowerCase().includes(term)
       );
     }
+
+    if (drivetrainFilter.length > 0) {
+      result = result.filter(car => car.drivetrainType && drivetrainFilter.includes(car.drivetrainType));
+    }
     
     return result;
-  }, [cars, searchTerm]);
+  }, [cars, searchTerm, drivetrainFilter]);
 
   // Sort cars
   const sortedCars = useMemo(() => {
@@ -299,7 +304,7 @@ export default function Browse() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedMake, selectedModel, priceRange, rangeFilter, condition, searchTerm]);
+  }, [selectedMake, selectedModel, priceRange, rangeFilter, condition, searchTerm, drivetrainFilter]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -447,6 +452,35 @@ export default function Browse() {
                     />
                   </div>
 
+                  {/* Drivetrain Type Filter */}
+                  <div>
+                    <Label className="mb-2 block">Drivetrain Type</Label>
+                    <div className="space-y-2">
+                      {([
+                        { value: 'BEV', label: '⚡ Battery Electric (BEV)', color: 'text-green-600' },
+                        { value: 'PHEV', label: '🔌 Plug-in Hybrid (PHEV)', color: 'text-blue-600' },
+                        { value: 'HEV', label: '🔋 Hybrid (HEV)', color: 'text-yellow-600' },
+                        { value: 'MHEV', label: '⚙️ Mild Hybrid (MHEV)', color: 'text-orange-500' },
+                      ] as const).map(({ value, label, color }) => (
+                        <label key={value} className="flex items-center gap-2 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            className="rounded border-border accent-primary w-4 h-4"
+                            checked={drivetrainFilter.includes(value)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setDrivetrainFilter(prev => [...prev, value]);
+                              } else {
+                                setDrivetrainFilter(prev => prev.filter(v => v !== value));
+                              }
+                            }}
+                          />
+                          <span className={`text-sm font-medium ${color}`}>{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Save Search */}
                   {isAuthenticated && (
                     <Dialog open={saveSearchOpen} onOpenChange={setSaveSearchOpen}>
@@ -530,6 +564,7 @@ export default function Browse() {
                       setRangeFilter([0, 400]);
                       setMileageFilter([0, 100000]);
                       setCondition("all");
+                      setDrivetrainFilter([]);
                     }}
                   >
                     Reset Filters

@@ -785,8 +785,15 @@ export const appRouter = router({
         const application = await db.createDealerApplication(ctx.user.id, input);
         
         // Send email notification to admin
-        const { sendDealerApplicationEmail } = await import('./_core/email');
+        const { sendDealerApplicationEmail, sendDealerApplicationConfirmationEmail } = await import('./_core/email');
+        // Notify admin
         await sendDealerApplicationEmail(input);
+        // Send confirmation to applicant (non-blocking — don't fail the request if this errors)
+        sendDealerApplicationConfirmationEmail({
+          businessName: input.businessName,
+          contactName: input.contactName,
+          email: input.email,
+        }).catch(err => console.error('[Dealer Application] Failed to send confirmation email:', err));
         
         console.log('[Dealer Application] New application submitted:', {
           id: application.id,
