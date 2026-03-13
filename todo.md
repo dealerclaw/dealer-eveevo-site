@@ -1882,3 +1882,8 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Admin Role Fix (Mar 2026)
 - [x] Fix anthony.perry@eveevo.co.uk role to admin (was dealer) - impersonate button not showing
 - [x] Add anthony.perry@eveevo.co.uk to ADMIN_EMAIL_ALLOWLIST in context.ts
+
+## Real Email Provider Integration (Mar 2026)
+- [x] Rewrite server/_core/email.ts to use Resend API (same transport as server/email.ts — no new key needed)
+- [x] Write vitest tests for sendEmail and sendDealerApplicationEmail (7/7 passing)
+- [x] Remove nodemailer/Ethereal dependency from dealer application notifications
