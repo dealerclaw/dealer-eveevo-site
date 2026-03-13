@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, email, name, role FROM users WHERE email = 'anthony.perry@eveevo.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3jpSMebo1JsfBYm.7d0fbe421945 --database Nm8U5tMkXcrrcW9FXkuveH --execute SELECT id, email, name, role FROM users WHERE email = 'anthony.perry@eveevo.com';",
+  "rows": [
+    {
+      "id": "2520001",
+      "email": "anthony.perry@eveevo.com",
+      "name": "Anthony Perry",
+      "role": "admin"
+    },
+    {
+      "id": "2640001",
+      "email": "anthony.perry@eveevo.com",
+      "name": "Anthony Perry",
+      "role": "admin"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tname\trole\n2520001\tanthony.perry@eveevo.com\tAnthony Perry\tadmin\n2640001\tanthony.perry@eveevo.com\tAnthony Perry\tadmin\n",
+  "stderr": "",
+  "execution_time_ms": 411
+}

@@ -1878,3 +1878,7 @@ Note: Notification system for matching vehicles can be implemented as a future e
 ## Browse Page Listing Card Badges (Mar 2026)
 - [x] Add BEV/PHEV drivetrain type badge to vehicle listing cards on Browse/Search page
 - [x] Add evVehicles left join to getCars DB helper to return drivetrainType without N+1 queries
+
+## Admin Role Fix (Mar 2026)
+- [x] Fix anthony.perry@eveevo.co.uk role to admin (was dealer) - impersonate button not showing
+- [x] Add anthony.perry@eveevo.co.uk to ADMIN_EMAIL_ALLOWLIST in context.ts

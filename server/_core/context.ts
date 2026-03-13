@@ -17,6 +17,7 @@ const IMPERSONATION_COOKIE = 'eveevo_impersonate';
 // Admin email allowlist — these accounts always get admin role regardless of Clerk metadata
 const ADMIN_EMAIL_ALLOWLIST = [
   'anthony.perry@eveevo.com',
+  'anthony.perry@eveevo.co.uk',
   'anthony.m.perry@gmail.com',
   'rebecca.jackson@eveevo.co.uk',
   'rebecca@rebeccaracer.com',
