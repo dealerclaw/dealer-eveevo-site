@@ -271,6 +271,7 @@ export async function getCars(filters?: {
       updatedAt: cars.updatedAt,
       evdbVehicleId: cars.evdbVehicleId,
       dealerClawCarId: cars.dealerClawCarId,
+      rebeccaReview: cars.rebeccaReview,
       // Dealer fields
       dealerName: dealers.name,
       dealerEmail: dealers.email,

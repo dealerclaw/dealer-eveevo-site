@@ -12,6 +12,7 @@ import ContactDealerDialog from "@/components/ContactDealerDialog";
 import DeliveryCostCalculator from "@/components/DeliveryCostCalculator";
 import QuickBidPanel from "@/components/QuickBidPanel";
 import ImageLightbox from "@/components/ImageLightbox";
+import RebeccaReviewPanel from "@/components/RebeccaReviewPanel";
 import { useState } from "react";
 
 export default function DealerMarketplaceDetails() {
@@ -351,6 +352,16 @@ export default function DealerMarketplaceDetails() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Rebecca Review Panel */}
+          {car.rebeccaReview && (
+            <div className="col-span-full">
+              <RebeccaReviewPanel
+                rebeccaReview={car.rebeccaReview}
+                carTitle={`${car.year} ${car.make} ${car.model}`}
+              />
+            </div>
+          )}
 
           {/* Sidebar - Pricing & actions */}
           <div className="space-y-6">

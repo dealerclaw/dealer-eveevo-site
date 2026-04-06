@@ -1935,3 +1935,11 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] cars.getById already returns all columns via cars spread — no change needed
 - [x] Create RebeccaReviewPanel.tsx component in client/src/components/ (9-section layout)
 - [x] Embed RebeccaReviewPanel on consumer CarDetail page (after Features card)
+
+## Rebecca Review Follow-up (Apr 2026)
+- [x] Add RebeccaReviewPanel to DealerMarketplaceDetails.tsx
+- [x] Add rebeccaReview to getCars select in db.ts so Browse page can read it
+- [x] Add ⭐ Rebecca Reviewed badge to Browse listing cards
+- [x] Add rebeccaReview textarea to AddVehicle form (with JSON validation)
+- [x] Add rebeccaReview textarea to EditVehicle form (with JSON validation + pre-fill)
+- [x] Wire rebeccaReview through addVehicle and updateVehicle tRPC procedures

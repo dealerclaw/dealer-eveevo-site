@@ -53,6 +53,7 @@ export default function EditVehicle() {
     reservePrice: "",
     buyNowPrice: "",
     conditionNotes: "",
+    rebeccaReview: "",
   });
 
   const [evdbVehicleId, setEvdbVehicleId] = useState<number | null>(null);
@@ -128,6 +129,7 @@ export default function EditVehicle() {
         reservePrice: vehicle.reservePrice?.toString() || "",
         buyNowPrice: vehicle.buyNowPrice?.toString() || "",
         conditionNotes: vehicle.conditionNotes || "",
+        rebeccaReview: (vehicle as any).rebeccaReview || "",
       });
     }
   }, [vehicle]);
@@ -261,6 +263,16 @@ export default function EditVehicle() {
     }
 
     if (evdbVehicleId) submitData.evdbVehicleId = evdbVehicleId;
+    if (formData.rebeccaReview.trim()) {
+      try {
+        JSON.parse(formData.rebeccaReview);
+        (submitData as any).rebeccaReview = formData.rebeccaReview.trim();
+      } catch {
+        // invalid JSON — skip silently
+      }
+    } else {
+      (submitData as any).rebeccaReview = null;
+    }
     updateMutation.mutate({ id: vehicleId, ...submitData });
   };
 
@@ -754,6 +766,34 @@ export default function EditVehicle() {
             carId={vehicleId} 
             existingReports={vehicle?.inspectionReports || []}
           />
+
+          {/* Rebecca Review */}
+          <Card className="border-2 border-violet-200 dark:border-violet-800 bg-violet-50/50 dark:bg-violet-950/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-violet-700 dark:text-violet-300">
+                <span>⭐</span> Rebecca Review (Optional)
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Paste the AI-generated Rebecca review JSON here. This will display a detailed review panel on the car listing.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="rebeccaReview">Review JSON</Label>
+                <textarea
+                  id="rebeccaReview"
+                  className="w-full min-h-[120px] rounded-md border border-input bg-background px-3 py-2 text-sm font-mono placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  value={formData.rebeccaReview}
+                  onChange={(e) => handleInputChange("rebeccaReview", e.target.value)}
+                  placeholder='{"verdict": "Best used EV under £35k if you charge at home", "rating": 8, ...}'
+                />
+                {formData.rebeccaReview && (() => {
+                  try { JSON.parse(formData.rebeccaReview); return <p className="text-xs text-green-600">✓ Valid JSON</p>; }
+                  catch { return <p className="text-xs text-red-500">✗ Invalid JSON — please check the format</p>; }
+                })()}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Submit Buttons */}
           <div className="flex items-center gap-4">

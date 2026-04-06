@@ -674,6 +674,11 @@ export default function Browse() {
                                   🐾 DealerClaw
                                 </span>
                               )}
+                              {car.rebeccaReview && (
+                                <span className="px-2 py-0.5 bg-violet-600 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+                                  ⭐ Rebecca Reviewed
+                                </span>
+                              )}
                             </div>
                             {car.images && car.images.length > 1 && (
                               <div className="absolute bottom-2 left-2">
