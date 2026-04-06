@@ -52,6 +52,51 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Image upload endpoint
   app.use("/api", uploadImageRouter);
+
+  // DealerClaw REST API endpoints
+  // POST /api/dealerclaw/push  — upsert a car listing from DealerClaw
+  app.post('/api/dealerclaw/push', async (req, res) => {
+    try {
+      const secret = process.env.DEALERCLAW_SYNC_SECRET || '';
+      const body = req.body;
+
+      if (!secret || body?.secret !== secret) {
+        return res.status(401).json({ error: 'Invalid sync secret' });
+      }
+
+      const { upsertDealerClawCar } = await import('../syncRouter');
+      const result = await upsertDealerClawCar(body);
+      return res.json({ ok: true, ...result });
+    } catch (err) {
+      console.error('[DealerClaw REST] POST /api/dealerclaw/push error:', err);
+      return res.status(500).json({ error: err instanceof Error ? err.message : 'Internal server error' });
+    }
+  });
+
+  // DELETE /api/dealerclaw/delete  — soft-delete a car listing by DealerClaw car ID
+  app.delete('/api/dealerclaw/delete', async (req, res) => {
+    try {
+      const secret = process.env.DEALERCLAW_SYNC_SECRET || '';
+      const body = req.body;
+
+      if (!secret || body?.secret !== secret) {
+        return res.status(401).json({ error: 'Invalid sync secret' });
+      }
+
+      const dealerClawCarId = Number(body?.dealerClawCarId);
+      if (!dealerClawCarId || isNaN(dealerClawCarId)) {
+        return res.status(400).json({ error: 'dealerClawCarId is required and must be a number' });
+      }
+
+      const { softDeleteDealerClawCar } = await import('../syncRouter');
+      const result = await softDeleteDealerClawCar(dealerClawCarId);
+      return res.json({ ok: true, ...result });
+    } catch (err) {
+      console.error('[DealerClaw REST] DELETE /api/dealerclaw/delete error:', err);
+      return res.status(500).json({ error: err instanceof Error ? err.message : 'Internal server error' });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

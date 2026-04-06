@@ -130,6 +130,10 @@ export const cars = mysqlTable("cars", {
   daysOnMarket: int("daysOnMarket").default(0), // Calculated field
   lastHealthCheck: timestamp("lastHealthCheck"),
   oneAutoUrl: varchar("oneAutoUrl", { length: 500 }), // Link to OneAuto listing
+
+  // DealerClaw sync fields
+  dealerClawCarId: int("dealerClawCarId"),        // DealerClaw car ID for sync deduplication
+  dealerClawDealerId: int("dealerClawDealerId"),  // DealerClaw dealer ID
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

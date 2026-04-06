@@ -1893,3 +1893,12 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Call confirmation email from submitApplication procedure (non-blocking)
 - [x] Add BEV/PHEV/HEV/MHEV drivetrain filter checkboxes to Browse page sidebar
 - [x] Wire drivetrainType filter to client-side filteredCars memo (no extra API call needed)
+
+## DealerClaw Sync Integration (Apr 2026)
+- [x] Add dealerClawCarId and dealerClawDealerId columns to drizzle/schema.ts cars table
+- [x] Add DealerClaw tRPC procedures to syncRouter.ts (pushCarFromDealerClaw, deleteCarFromDealerClaw)
+- [x] Add shared helper functions upsertDealerClawCar and softDeleteDealerClawCar
+- [x] Expose REST API endpoints POST /api/dealerclaw/push and DELETE /api/dealerclaw/delete
+- [x] Add DEALERCLAW_SYNC_SECRET secret
+- [x] Run pnpm db:push migration (migrations 0027-0031 back-filled, 0032 applied)
+- [x] Write 8 vitest tests for DealerClaw sync (all passing)
