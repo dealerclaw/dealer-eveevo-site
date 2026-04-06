@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import Header from "./Header";
-import { Users, FileText, RefreshCw, Activity, Upload } from "lucide-react";
+import { Users, FileText, RefreshCw, Activity, Upload, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AdminLayoutProps {
@@ -35,6 +35,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin/oneauto-import",
       label: "OneAuto Import",
       icon: Upload,
+    },
+    {
+      href: "/admin/dealerclaw",
+      label: "DealerClaw",
+      icon: Zap,
     },
   ];
 

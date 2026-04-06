@@ -2566,6 +2566,22 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    setDealerClawCarId: protectedProcedure
+      .input(z.object({
+        carId: z.number(),
+        dealerClawCarId: z.number().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') throw new Error('Unauthorized: Admin access required');
+        const { getDb } = await import('./db');
+        const { cars } = await import('../drizzle/schema');
+        const { eq: eqLocal } = await import('drizzle-orm');
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.update(cars).set({ dealerClawCarId: input.dealerClawCarId }).where(eqLocal(cars.id, input.carId));
+        return { success: true };
+      }),
+
     // Feature flags
     getPaywallStatus: protectedProcedure
       .query(async ({ ctx }) => {

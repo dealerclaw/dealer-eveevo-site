@@ -1922,3 +1922,16 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add VRM lookup card to EditVehicle.tsx with EV Database link
 - [x] Load existing evdbVehicleId from vehicle record into EditVehicle form on load
 - [x] Save evdbVehicleId on form submit in EditVehicle
+
+## DealerClaw Admin Improvements (Apr 2026)
+- [ ] Add DealerClaw link to admin sidebar navigation
+- [ ] Add "Link to DealerClaw" action on admin car detail page
+- [ ] Set up DEALERCLAW_WEBHOOK_URL secret
+
+## Rebecca Review Panel (Apr 2026)
+- [x] Add rebeccaReview text column to cars table in schema.ts
+- [x] Run pnpm db:push migration for rebeccaReview column (migration 0034 applied cleanly)
+- [x] Add rebeccaReview to syncRouter DealerClawCarInput type, insert, and update
+- [x] cars.getById already returns all columns via cars spread — no change needed
+- [x] Create RebeccaReviewPanel.tsx component in client/src/components/ (9-section layout)
+- [x] Embed RebeccaReviewPanel on consumer CarDetail page (after Features card)

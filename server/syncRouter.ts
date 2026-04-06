@@ -42,6 +42,7 @@ export const syncRouter = router({
         sourceUrl: z.string().optional(),
         condition: z.enum(["excellent", "good", "fair"]).optional(),
         keyFeatures: z.array(z.string()).optional(),
+        rebeccaReview: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -163,6 +164,7 @@ export type DealerClawCarInput = {
   sourceUrl?: string;
   condition?: "excellent" | "good" | "fair";
   keyFeatures?: string[];
+  rebeccaReview?: string;
 };
 
 export async function upsertDealerClawCar(input: DealerClawCarInput) {
@@ -211,6 +213,7 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
         mainImage,
         isAvailable: true,
         ...(linkedDealerId ? { dealerId: linkedDealerId } : {}),
+        ...(input.rebeccaReview !== undefined ? { rebeccaReview: input.rebeccaReview } : {}),
         updatedAt: new Date(),
       })
       .where(eq(cars.dealerClawCarId, input.dealerClawCarId));
@@ -240,6 +243,7 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
       marketplace: "consumer",
       isAuction: false,
       condition: "used",
+      ...(input.rebeccaReview !== undefined ? { rebeccaReview: input.rebeccaReview } : {}),
     });
 
     const insertId = (result as any).insertId ?? (result as any)[0]?.insertId;

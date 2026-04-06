@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, TrendingDown, Clock, CheckCircle2, Mail, Phone } from "lucide-react";
+import { AlertCircle, TrendingDown, Clock, CheckCircle2, Mail, Phone, Zap, X } from "lucide-react";
 import { toast } from "sonner";
 import AdminLayout from "@/components/AdminLayout";
 
@@ -54,6 +54,20 @@ export default function AdminInventoryHealth() {
     window.location.href = `mailto:${dealerEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     toast.success("Email client opened");
   };
+
+  const [linkingCarId, setLinkingCarId] = useState<number | null>(null);
+  const [dealerClawInput, setDealerClawInput] = useState("");
+  const utils = trpc.useUtils();
+
+  const setDealerClawCarId = trpc.admin.setDealerClawCarId.useMutation({
+    onSuccess: () => {
+      toast.success("DealerClaw Car ID updated");
+      setLinkingCarId(null);
+      setDealerClawInput("");
+      utils.dealer.getAllInventoryHealth.invalidate();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
 
   const filteredInventory = inventory?.filter((car: any) => {
     if (!searchDealer) return true;
@@ -246,6 +260,60 @@ export default function AdminInventoryHealth() {
                           >
                             View on OneAuto →
                           </a>
+                        )}
+                      </div>
+
+                      {/* DealerClaw Link */}
+                      <div className="mt-3">
+                        {car.dealerClawCarId ? (
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-purple-600 text-white text-xs">
+                              <Zap className="w-3 h-3 mr-1" /> DealerClaw #{car.dealerClawCarId}
+                            </Badge>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 text-xs text-muted-foreground"
+                              onClick={() => setDealerClawCarId.mutate({ carId: car.id, dealerClawCarId: null })}
+                            >
+                              <X className="w-3 h-3 mr-1" /> Unlink
+                            </Button>
+                          </div>
+                        ) : linkingCarId === car.id ? (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              placeholder="DealerClaw Car ID"
+                              value={dealerClawInput}
+                              onChange={(e) => setDealerClawInput(e.target.value)}
+                              className="h-8 w-40 text-sm"
+                              autoFocus
+                            />
+                            <Button
+                              size="sm"
+                              className="h-8"
+                              onClick={() => {
+                                const id = parseInt(dealerClawInput);
+                                if (!id) return toast.error("Enter a valid DealerClaw Car ID");
+                                setDealerClawCarId.mutate({ carId: car.id, dealerClawCarId: id });
+                              }}
+                              disabled={setDealerClawCarId.isPending}
+                            >
+                              Save
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-8" onClick={() => { setLinkingCarId(null); setDealerClawInput(""); }}>
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 text-xs border-purple-300 text-purple-700 hover:bg-purple-50"
+                            onClick={() => { setLinkingCarId(car.id); setDealerClawInput(""); }}
+                          >
+                            <Zap className="w-3 h-3 mr-1" /> Link to DealerClaw
+                          </Button>
                         )}
                       </div>
 

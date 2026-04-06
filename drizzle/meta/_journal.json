@@ -239,6 +239,13 @@
       "when": 1775506839883,
       "tag": "0033_remarkable_micromax",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1775510419811,
+      "tag": "0034_bored_iron_patriot",
+      "breakpoints": true
     }
   ]
 }

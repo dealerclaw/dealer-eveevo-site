@@ -137,6 +137,7 @@ export const cars = mysqlTable("cars", {
   // DealerClaw sync fields
   dealerClawCarId: int("dealerClawCarId"),        // DealerClaw car ID for sync deduplication
   dealerClawDealerId: int("dealerClawDealerId"),  // DealerClaw dealer ID
+  rebeccaReview: text("rebeccaReview"),           // Rebecca AI review JSON blob
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

@@ -28,6 +28,7 @@ import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import FinanceCalculator from "@/components/FinanceCalculator";
 import CarImageGallery from "@/components/CarImageGallery";
 import AddToShortlistButton from "@/components/AddToShortlistButton";
+import RebeccaReviewPanel from "@/components/RebeccaReviewPanel";
 import { useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -328,6 +329,12 @@ export default function CarDetail() {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Rebecca Review Panel */}
+              <RebeccaReviewPanel
+                rebeccaReview={car.rebeccaReview}
+                carTitle={`${car.year} ${car.make} ${car.model}`}
+              />
             </div>
 
             {/* Right column - Reservation card and Finance Calculator */}
