@@ -1912,3 +1912,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Call DealerClaw webhook from reservations.create procedure (event: reserved)
 - [x] Call DealerClaw webhook from dealer marketplace buyNow procedure (event: sold)
 - [ ] Add DEALERCLAW_WEBHOOK_URL secret once DealerClaw provides their endpoint URL
+
+## DealerClaw Follow-up Features (Apr 2026)
+- [x] Add reservation_cancelled webhook call when reservation status updated to cancelled
+- [x] Add getReservationById helper to db.ts for webhook lookup
+- [x] Build /admin/dealerclaw admin panel at /admin/dealerclaw (DealerClawAdmin.tsx)
+- [x] Add admin.getDealerClawCars and admin.setDealerClawDealerId procedures to routers.ts
+- [x] Register /admin/dealerclaw route in App.tsx
+- [x] Add VRM lookup card to EditVehicle.tsx with EV Database link
+- [x] Load existing evdbVehicleId from vehicle record into EditVehicle form on load
+- [x] Save evdbVehicleId on form submit in EditVehicle

@@ -33,6 +33,7 @@ const AdminApplications = lazy(() => import("./pages/AdminApplications"));
 const AdminDealers = lazy(() => import("./pages/admin/AdminDealers"));
 const AdminInventoryHealth = lazy(() => import("./pages/admin/AdminInventoryHealth"));
 const AdminOneAutoImport = lazy(() => import("./pages/admin/AdminOneAutoImport"));
+const DealerClawAdmin = lazy(() => import("./pages/admin/DealerClawAdmin"));
 
 // Dealer pages
 const DealerDashboard = lazy(() => import("./pages/dealer/DealerDashboard"));
@@ -88,6 +89,7 @@ function Router() {
         <Route path="/admin/dealers" component={AdminDealers} />
         <Route path="/admin/inventory-health" component={AdminInventoryHealth} />
         <Route path="/admin/oneauto-import" component={AdminOneAutoImport} />
+        <Route path="/admin/dealerclaw" component={DealerClawAdmin} />
         <Route path="/cars/:id" component={CarDetail} />
         <Route path="/lifestyle-search" component={LifestyleSearch} />
         <Route path="/compare" component={Compare} />

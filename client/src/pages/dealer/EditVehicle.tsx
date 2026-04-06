@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -12,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, Search, CheckCircle2 } from "lucide-react";
 import DealerLayout from "@/components/DealerLayout";
 import InspectionReportsUpload from "@/components/InspectionReportsUpload";
 import { useLocation, useParams } from "wouter";
@@ -54,7 +55,35 @@ export default function EditVehicle() {
     conditionNotes: "",
   });
 
+  const [evdbVehicleId, setEvdbVehicleId] = useState<number | null>(null);
+  const [vrmInput, setVrmInput] = useState("");
+  const [vrmLookupEnabled, setVrmLookupEnabled] = useState(false);
+
   const { data: vehicle, isLoading: vehicleLoading } = trpc.cars.getById.useQuery({ id: vehicleId });
+
+  // VRM lookup query
+  const vrmQuery = trpc.dealer.lookupVrm.useQuery(
+    { vrm: vrmInput.replace(/\s/g, "").toUpperCase() },
+    { enabled: vrmLookupEnabled && vrmInput.length >= 2, retry: false }
+  );
+
+  useEffect(() => {
+    if (!vrmLookupEnabled) return;
+    if (vrmQuery.isSuccess) {
+      setVrmLookupEnabled(false);
+      const data = vrmQuery.data as any;
+      if (data?.evdbVehicleId) {
+        setEvdbVehicleId(data.evdbVehicleId);
+        toast.success(`Linked to EV Database: ${data.make} ${data.model}`);
+      } else {
+        toast.info("No EV Database match found for this VRM");
+      }
+    }
+    if (vrmQuery.isError) {
+      setVrmLookupEnabled(false);
+      toast.error("VRM lookup failed \u2014 check the registration and try again");
+    }
+  }, [vrmQuery.isSuccess, vrmQuery.isError, vrmLookupEnabled]);
 
   const updateMutation = trpc.dealer.updateVehicle.useMutation({
     onSuccess: () => {
@@ -66,9 +95,10 @@ export default function EditVehicle() {
     },
   });
 
-  // Load vehicle data into form when available
+  // Load vehicle data and evdbVehicleId into form when available
   useEffect(() => {
     if (vehicle) {
+      if ((vehicle as any).evdbVehicleId) setEvdbVehicleId((vehicle as any).evdbVehicleId);
       setFormData({
         make: vehicle.make || "",
         model: vehicle.model || "",
@@ -230,6 +260,7 @@ export default function EditVehicle() {
       submitData.features = formData.features.split(",").map((f) => f.trim()).filter(Boolean);
     }
 
+    if (evdbVehicleId) submitData.evdbVehicleId = evdbVehicleId;
     updateMutation.mutate({ id: vehicleId, ...submitData });
   };
 
@@ -316,6 +347,65 @@ export default function EditVehicle() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* VRM Lookup — EV Database Link */}
+          <Card className="border-purple-200 bg-purple-50/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-purple-800">
+                <Search className="h-5 w-5" /> EV Database Link
+              </CardTitle>
+              <CardDescription>
+                Look up this car's registration to link it to the EV Database and show the BEV/PHEV badge.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {evdbVehicleId ? (
+                <div className="flex items-center gap-2 text-green-700">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span className="text-sm font-medium">Linked to EV Database (ID: {evdbVehicleId})</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-muted-foreground h-6"
+                    onClick={() => setEvdbVehicleId(null)}
+                  >
+                    Remove link
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Enter registration e.g. AB23 EVC"
+                    value={vrmInput}
+                    onChange={(e) => setVrmInput(e.target.value)}
+                    className="max-w-xs"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        setVrmLookupEnabled(true);
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setVrmLookupEnabled(true)}
+                    disabled={vrmQuery.isFetching || vrmInput.length < 2}
+                  >
+                    {vrmQuery.isFetching ? (
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Looking up…</>
+                    ) : (
+                      <><Search className="mr-2 h-4 w-4" /> Look Up VRM</>
+                    )}
+                  </Button>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Linking to the EV Database adds the ⚡ BEV / 🔌 PHEV badge to this listing and enables the "View Full EV Specs" button for buyers.
+              </p>
             </CardContent>
           </Card>
 

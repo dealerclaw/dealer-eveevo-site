@@ -267,6 +267,15 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         await db.updateReservationStatus(input.id, input.status);
+        // Notify DealerClaw if the reservation was cancelled (non-blocking)
+        if (input.status === 'cancelled') {
+          const reservation = await db.getReservationById(input.id);
+          if (reservation?.carId) {
+            notifyDealerClawForCar(reservation.carId, 'reservation_cancelled', {
+              eveevoReservationId: input.id,
+            }).catch(() => {});
+          }
+        }
         return { success: true };
       }),
   }),
@@ -2499,6 +2508,61 @@ export const appRouter = router({
         
         await db.updateApplicationStatus(input.applicationId, 'rejected');
         
+        return { success: true };
+      }),
+
+    // DealerClaw admin
+    getDealerClawCars: protectedProcedure
+      .input(z.object({
+        limit: z.number().optional().default(100),
+        offset: z.number().optional().default(0),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') throw new Error('Unauthorized: Admin access required');
+        const { getDb } = await import('./db');
+        const { cars, dealers } = await import('../drizzle/schema');
+        const { isNotNull, desc, eq: eqFn } = await import('drizzle-orm');
+        const eq = eqFn;
+        const db = await getDb();
+        if (!db) return [];
+        return await db
+          .select({
+            id: cars.id,
+            make: cars.make,
+            model: cars.model,
+            year: cars.year,
+            price: cars.price,
+            isAvailable: cars.isAvailable,
+            mainImage: cars.mainImage,
+            dealerClawCarId: cars.dealerClawCarId,
+            dealerClawDealerId: cars.dealerClawDealerId,
+            dealerId: cars.dealerId,
+            dealerName: dealers.name,
+            dealerEmail: dealers.email,
+            createdAt: cars.createdAt,
+            updatedAt: cars.updatedAt,
+          })
+          .from(cars)
+          .leftJoin(dealers, eq(cars.dealerId, dealers.id))
+          .where(isNotNull(cars.dealerClawCarId))
+          .orderBy(desc(cars.updatedAt))
+          .limit(input.limit)
+          .offset(input.offset);
+      }),
+
+    setDealerClawDealerId: protectedProcedure
+      .input(z.object({
+        dealerId: z.number(),
+        dealerClawDealerId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') throw new Error('Unauthorized: Admin access required');
+        const { getDb } = await import('./db');
+        const { dealers } = await import('../drizzle/schema');
+        const { eq: eqLocal } = await import('drizzle-orm');
+        const db = await getDb();
+        if (!db) throw new Error('DB unavailable');
+        await db.update(dealers).set({ dealerClawDealerId: input.dealerClawDealerId }).where(eqLocal(dealers.id, input.dealerId));
         return { success: true };
       }),
 

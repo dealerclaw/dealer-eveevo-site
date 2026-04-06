@@ -405,6 +405,13 @@ export async function updateReservationStatus(id: number, status: 'pending' | 'c
   await db.update(reservations).set({ status }).where(eq(reservations.id, id));
 }
 
+export async function getReservationById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(reservations).where(eq(reservations.id, id)).limit(1);
+  return rows[0] ?? null;
+}
+
 // Favorites queries
 export async function getUserFavorites(userId: number) {
   const db = await getDb();
