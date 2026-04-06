@@ -2541,6 +2541,7 @@ export const appRouter = router({
             dealerId: cars.dealerId,
             dealerName: dealers.name,
             dealerEmail: dealers.email,
+            rebeccaReview: cars.rebeccaReview,
             createdAt: cars.createdAt,
             updatedAt: cars.updatedAt,
           })

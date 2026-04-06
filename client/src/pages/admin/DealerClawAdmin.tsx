@@ -122,6 +122,7 @@ export default function DealerClawAdmin() {
                     <TableHead>DealerClaw Dealer ID</TableHead>
                     <TableHead>EVEEVO Dealer</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Reviewed</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -159,6 +160,7 @@ type CarRow = {
   dealerId: number | null;
   dealerName: string | null;
   dealerEmail: string | null;
+  rebeccaReview: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
 };
@@ -267,6 +269,15 @@ function DealerClawRow({
         >
           {car.isAvailable ? "Available" : "Unavailable"}
         </Badge>
+      </TableCell>
+      <TableCell>
+        {car.rebeccaReview ? (
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">
+            ⭐ Reviewed
+          </span>
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        )}
       </TableCell>
       <TableCell>
         {car.price ? `£${(Number(car.price) / 100).toLocaleString()}` : "—"}

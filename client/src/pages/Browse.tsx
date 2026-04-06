@@ -42,6 +42,7 @@ export default function Browse() {
   const [mileageFilter, setMileageFilter] = useState([0, 100000]);
   const [condition, setCondition] = useState<"all" | "new" | "used">("all");
   const [drivetrainFilter, setDrivetrainFilter] = useState<string[]>([]);
+  const [rebeccaReviewedOnly, setRebeccaReviewedOnly] = useState(false);
   const [sortBy, setSortBy] = useState<string>("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
@@ -200,9 +201,13 @@ export default function Browse() {
     if (drivetrainFilter.length > 0) {
       result = result.filter(car => car.drivetrainType && drivetrainFilter.includes(car.drivetrainType));
     }
+
+    if (rebeccaReviewedOnly) {
+      result = result.filter(car => !!car.rebeccaReview);
+    }
     
     return result;
-  }, [cars, searchTerm, drivetrainFilter]);
+  }, [cars, searchTerm, drivetrainFilter, rebeccaReviewedOnly]);
 
   // Sort cars
   const sortedCars = useMemo(() => {
@@ -304,7 +309,7 @@ export default function Browse() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedMake, selectedModel, priceRange, rangeFilter, condition, searchTerm, drivetrainFilter]);
+  }, [selectedMake, selectedModel, priceRange, rangeFilter, condition, searchTerm, drivetrainFilter, rebeccaReviewedOnly]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -452,6 +457,19 @@ export default function Browse() {
                     />
                   </div>
 
+                  {/* Rebecca Reviewed Filter */}
+                  <div>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        className="rounded border-border accent-primary w-4 h-4"
+                        checked={rebeccaReviewedOnly}
+                        onChange={(e) => setRebeccaReviewedOnly(e.target.checked)}
+                      />
+                      <span className="text-sm font-medium text-violet-600">⭐ Rebecca Reviewed only</span>
+                    </label>
+                  </div>
+
                   {/* Drivetrain Type Filter */}
                   <div>
                     <Label className="mb-2 block">Drivetrain Type</Label>
@@ -565,6 +583,7 @@ export default function Browse() {
                       setMileageFilter([0, 100000]);
                       setCondition("all");
                       setDrivetrainFilter([]);
+                      setRebeccaReviewedOnly(false);
                     }}
                   >
                     Reset Filters
@@ -713,6 +732,18 @@ export default function Browse() {
                                   </span>
                                 </div>
                               )}
+                              {car.rebeccaReview && (() => {
+                                try {
+                                  const review = JSON.parse(car.rebeccaReview);
+                                  const verdict = review?.verdict || review?.summary || review?.rebeccaSays;
+                                  if (!verdict) return null;
+                                  return (
+                                    <p className="text-xs italic text-violet-600 line-clamp-2 pt-0.5">
+                                      💬 &ldquo;{verdict}&rdquo;
+                                    </p>
+                                  );
+                                } catch { return null; }
+                              })()}
                               {car.realRange && (
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-muted-foreground flex items-center">

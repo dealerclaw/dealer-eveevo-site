@@ -1943,3 +1943,9 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add rebeccaReview textarea to AddVehicle form (with JSON validation)
 - [x] Add rebeccaReview textarea to EditVehicle form (with JSON validation + pre-fill)
 - [x] Wire rebeccaReview through addVehicle and updateVehicle tRPC procedures
+
+## Rebecca Review UX Improvements (Apr 2026)
+- [x] Add "Rebecca Reviewed only" filter checkbox to Browse sidebar
+- [x] Show verdict snippet on Browse listing cards (italic 💬 quote below price)
+- [x] Add ⭐ Reviewed indicator column to DealerClaw admin panel table
+- [x] Add rebeccaReview to getDealerClawCars select in routers.ts
