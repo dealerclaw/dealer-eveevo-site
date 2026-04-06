@@ -199,6 +199,15 @@ export default function CarDetail() {
                           🐾 via DealerClaw
                         </Badge>
                       )}
+                      {car.rebeccaReview && (
+                        <Badge
+                          variant="outline"
+                          className="font-semibold text-sm px-3 py-1 bg-amber-100 text-amber-800 border-amber-300 cursor-pointer hover:bg-amber-200 transition-colors"
+                          onClick={() => document.getElementById('rebecca-review')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                        >
+                          ⭐ Rebecca Reviewed — scroll to read
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <Button
@@ -330,11 +339,15 @@ export default function CarDetail() {
                 </Card>
               )}
 
-              {/* Rebecca Review Panel */}
-              <RebeccaReviewPanel
-                rebeccaReview={car.rebeccaReview}
-                carTitle={`${car.year} ${car.make} ${car.model}`}
-              />
+              {/* Rebecca Review Panel — anchored so the badge above can scroll to it */}
+              {car.rebeccaReview && (
+                <div id="rebecca-review">
+                  <RebeccaReviewPanel
+                    rebeccaReview={car.rebeccaReview}
+                    carTitle={`${car.year} ${car.make} ${car.model}`}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Right column - Reservation card and Finance Calculator */}
