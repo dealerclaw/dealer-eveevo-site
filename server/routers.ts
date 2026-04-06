@@ -8,7 +8,7 @@ import { ONE_YEAR_MS } from "@shared/const";
 import { z } from "zod";
 import * as db from "./db";
 import * as evDb from "./evDatabase";
-import { syncRouter } from "./syncRouter";
+import { syncRouter, notifyDealerClawForCar } from "./syncRouter";
 import { importRouter } from "./importCars";
 import { financeRouter } from "./financeRouter";
 import { enquiriesRouter } from "./enquiriesRouter";
@@ -247,10 +247,17 @@ export const appRouter = router({
         stripeSessionId: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        return await db.createReservation({
+        const reservation = await db.createReservation({
           userId: ctx.user.id,
           ...input,
         });
+        // Notify DealerClaw if this is a DealerClaw-sourced car (non-blocking)
+        notifyDealerClawForCar(input.carId, "reserved", {
+          eveevoReservationId: (reservation as any)?.id,
+          buyerEmail: input.userEmail ?? ctx.user.email ?? undefined,
+          buyerName: input.userName ?? ctx.user.name ?? undefined,
+        }).catch(() => {});
+        return reservation;
       }),
 
     updateStatus: protectedProcedure
@@ -2836,6 +2843,13 @@ export const appRouter = router({
             content: `Your vehicle ${car.make} ${car.model} ${car.year} has been sold via Buy Now for £${buyNowPrice.toLocaleString()}.\n\nBuyer: ${dealer.name}\nContact: ${dealer.email || 'N/A'}\n\nPlease arrange delivery or pickup with the buyer.`,
           });
         }
+
+        // Notify DealerClaw if this is a DealerClaw-sourced car (non-blocking)
+        notifyDealerClawForCar(input.carId, "sold", {
+          buyerEmail: ctx.user.email,
+          buyerName: ctx.user.name ?? dealer.name,
+          salePrice: buyNowPrice.toString(),
+        }).catch(() => {});
 
         return { success: true, price: buyNowPrice, checkoutUrl: session.url };
       }),

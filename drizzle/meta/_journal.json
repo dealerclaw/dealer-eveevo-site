@@ -232,6 +232,13 @@
       "when": 1775506060591,
       "tag": "0032_motionless_spitfire",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1775506839883,
+      "tag": "0033_remarkable_micromax",
+      "breakpoints": true
     }
   ]
 }

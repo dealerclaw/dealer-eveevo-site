@@ -7,7 +7,7 @@ import { publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { syncCarsFromFirebase, syncDealersFromFirebase } from "./firebaseSync";
 import { getDb } from "./db";
-import { cars } from "../drizzle/schema";
+import { cars, dealers } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 const DEALERCLAW_SECRET = process.env.DEALERCLAW_SYNC_SECRET || "";
@@ -178,6 +178,20 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
   const priceInPounds = input.price ? String(Math.round(input.price / 100)) : null;
   const mainImage = input.photoUrls[0] || null;
 
+  // Auto-link to EVEEVO dealer account if dealerClawDealerId matches
+  let linkedDealerId: number | null = null;
+  if (input.dealerClawDealerId) {
+    const matchedDealer = await db
+      .select({ id: dealers.id })
+      .from(dealers)
+      .where(eq(dealers.dealerClawDealerId, input.dealerClawDealerId))
+      .limit(1);
+    if (matchedDealer.length > 0) {
+      linkedDealerId = matchedDealer[0].id;
+      console.log(`[DealerClaw] Linked to EVEEVO dealer ID ${linkedDealerId} (DealerClaw dealer ${input.dealerClawDealerId})`);
+    }
+  }
+
   if (existing.length > 0) {
     await db
       .update(cars)
@@ -196,6 +210,7 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
         images: input.photoUrls.length > 0 ? input.photoUrls : null,
         mainImage,
         isAvailable: true,
+        ...(linkedDealerId ? { dealerId: linkedDealerId } : {}),
         updatedAt: new Date(),
       })
       .where(eq(cars.dealerClawCarId, input.dealerClawCarId));
@@ -206,6 +221,7 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
     const result = await db.insert(cars).values({
       dealerClawCarId: input.dealerClawCarId,
       dealerClawDealerId: input.dealerClawDealerId,
+      ...(linkedDealerId ? { dealerId: linkedDealerId } : {}),
       make: input.make,
       model: input.model,
       year: input.year,
@@ -253,4 +269,85 @@ export async function softDeleteDealerClawCar(dealerClawCarId: number) {
 
   console.log(`[DealerClaw] Soft-deleted car ID ${existing[0].id} (DealerClaw car ${dealerClawCarId})`);
   return { action: "deleted" as const, id: existing[0].id };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Outbound webhook: notify DealerClaw when a car is reserved or sold
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DEALERCLAW_WEBHOOK_URL = process.env.DEALERCLAW_WEBHOOK_URL || "";
+
+export type DealerClawEventType = "reserved" | "sold" | "reservation_cancelled";
+
+export interface DealerClawNotifyPayload {
+  event: DealerClawEventType;
+  dealerClawCarId: number;
+  dealerClawDealerId?: number | null;
+  eveevoCarId: number;
+  eveevoReservationId?: number;
+  buyerEmail?: string;
+  buyerName?: string;
+  salePrice?: string | null;
+  timestamp: string;
+}
+
+/**
+ * Notify DealerClaw of a status change on one of their synced cars.
+ * Non-blocking — logs errors but never throws, so it won't break the main flow.
+ */
+export async function notifyDealerClaw(payload: DealerClawNotifyPayload): Promise<void> {
+  if (!DEALERCLAW_WEBHOOK_URL) {
+    console.log("[DealerClaw] DEALERCLAW_WEBHOOK_URL not set, skipping notification");
+    return;
+  }
+
+  try {
+    const res = await fetch(DEALERCLAW_WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-EVEEVO-Secret": DEALERCLAW_SECRET,
+      },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (!res.ok) {
+      console.warn(`[DealerClaw] Webhook responded ${res.status} for event ${payload.event} on car ${payload.dealerClawCarId}`);
+    } else {
+      console.log(`[DealerClaw] Webhook sent: ${payload.event} for DealerClaw car ${payload.dealerClawCarId}`);
+    }
+  } catch (err) {
+    console.error("[DealerClaw] Webhook failed (non-fatal):", err);
+  }
+}
+
+/**
+ * Convenience: look up a car's DealerClaw IDs and fire the webhook if it's a DealerClaw car.
+ * Pass carId (EVEEVO DB id) and the event type.
+ */
+export async function notifyDealerClawForCar(
+  carId: number,
+  event: DealerClawEventType,
+  extras: Partial<Omit<DealerClawNotifyPayload, "event" | "dealerClawCarId" | "eveevoCarId" | "timestamp">> = {}
+): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  const row = await db
+    .select({ dealerClawCarId: cars.dealerClawCarId, dealerClawDealerId: cars.dealerClawDealerId })
+    .from(cars)
+    .where(eq(cars.id, carId))
+    .limit(1);
+
+  if (!row.length || !row[0].dealerClawCarId) return; // Not a DealerClaw car
+
+  await notifyDealerClaw({
+    event,
+    dealerClawCarId: row[0].dealerClawCarId,
+    dealerClawDealerId: row[0].dealerClawDealerId,
+    eveevoCarId: carId,
+    timestamp: new Date().toISOString(),
+    ...extras,
+  });
 }

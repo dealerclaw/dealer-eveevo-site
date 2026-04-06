@@ -57,7 +57,10 @@ export const dealers = mysqlTable("dealers", {
   referralCode: varchar("referralCode", { length: 20 }).unique(),
   referredBy: int("referredBy"),
   referralCredits: decimal("referralCredits", { precision: 10, scale: 2 }).default("0"),
-  
+
+  // DealerClaw integration
+  dealerClawDealerId: int("dealerClawDealerId"),  // DealerClaw dealer ID for linking pushed cars
+
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

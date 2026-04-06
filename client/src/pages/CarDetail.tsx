@@ -190,6 +190,14 @@ export default function CarDetail() {
                           {drivetrainBadge.label}
                         </Badge>
                       )}
+                      {car.dealerClawCarId && (
+                        <Badge
+                          variant="outline"
+                          className="font-semibold text-sm px-3 py-1 bg-purple-100 text-purple-800 border-purple-300"
+                        >
+                          🐾 via DealerClaw
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <Button

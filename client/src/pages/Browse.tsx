@@ -669,6 +669,11 @@ export default function Browse() {
                                   {car.drivetrainType}
                                 </span>
                               )}
+                              {car.dealerClawCarId && (
+                                <span className="px-2 py-0.5 bg-purple-700 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+                                  🐾 DealerClaw
+                                </span>
+                              )}
                             </div>
                             {car.images && car.images.length > 1 && (
                               <div className="absolute bottom-2 left-2">

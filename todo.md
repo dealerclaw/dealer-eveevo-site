@@ -1902,3 +1902,13 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add DEALERCLAW_SYNC_SECRET secret
 - [x] Run pnpm db:push migration (migrations 0027-0031 back-filled, 0032 applied)
 - [x] Write 8 vitest tests for DealerClaw sync (all passing)
+
+## DealerClaw Enhancements (Apr 2026)
+- [x] Add "via DealerClaw" badge to Browse listing cards (when dealerClawCarId is set)
+- [x] Add "via DealerClaw" badge to consumer CarDetail page
+- [x] Add dealerClawDealerId column to dealers table in schema (applied via direct SQL)
+- [x] Auto-link pushed cars to EVEEVO dealer account when dealerClawDealerId matches
+- [x] Add outbound webhook helper notifyDealerClaw + notifyDealerClawForCar to syncRouter.ts
+- [x] Call DealerClaw webhook from reservations.create procedure (event: reserved)
+- [x] Call DealerClaw webhook from dealer marketplace buyNow procedure (event: sold)
+- [ ] Add DEALERCLAW_WEBHOOK_URL secret once DealerClaw provides their endpoint URL
