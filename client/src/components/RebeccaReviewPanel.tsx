@@ -23,6 +23,7 @@ interface FinalVerdict {
 // DealerClaw schema
 interface DealerClawReview {
   overallScore?: number;
+  openingHook?: string;
   exterior?: ReviewSection;
   interior?: ReviewSection;
   performance?: ReviewSection;
@@ -123,6 +124,19 @@ function DealerClawPanel({ review, carTitle }: { review: DealerClawReview; carTi
       </div>
 
       <CardContent className="p-6 space-y-6">
+        {/* Opening Hook with funny remark */}
+        {review.openingHook && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 rounded-xl p-4 border border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl flex-shrink-0">😆</span>
+              <p className="text-base font-semibold text-foreground leading-snug">
+                {review.openingHook}
+              </p>
+              <span className="text-2xl flex-shrink-0">⚡</span>
+            </div>
+          </div>
+        )}
+
         {/* Overall star rating */}
         {review.overallScore !== undefined && (
           <div className="flex items-center gap-3">
@@ -396,8 +410,8 @@ export default function RebeccaReviewPanel({ rebeccaReview, carTitle }: RebeccaR
     return null;
   }
 
-  // Detect DealerClaw schema by presence of 'overallScore' or 'finalVerdict'
-  if ("overallScore" in parsed || "finalVerdict" in parsed) {
+  // Detect DealerClaw schema by presence of 'overallScore', 'finalVerdict', or 'openingHook'
+  if ("overallScore" in parsed || "finalVerdict" in parsed || "openingHook" in parsed) {
     return <DealerClawPanel review={parsed as DealerClawReview} carTitle={carTitle} />;
   }
 

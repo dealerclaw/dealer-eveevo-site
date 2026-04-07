@@ -1951,3 +1951,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add rebeccaReview to getDealerClawCars select in routers.ts
 - [x] Make Rebecca Review more prominent on CarDetail page (move above specs, add highlighted section anchor)
 - [x] Fix RebeccaReviewPanel to render actual DealerClaw JSON schema (overallScore, exterior/interior/performance/efficiency/valueMoney/ownership, buyerSuitability, finalVerdict)
+- [x] Display opening hook with funny remark in RebeccaReviewPanel
