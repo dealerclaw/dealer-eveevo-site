@@ -1952,3 +1952,6 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Make Rebecca Review more prominent on CarDetail page (move above specs, add highlighted section anchor)
 - [x] Fix RebeccaReviewPanel to render actual DealerClaw JSON schema (overallScore, exterior/interior/performance/efficiency/valueMoney/ownership, buyerSuitability, finalVerdict)
 - [x] Display opening hook with funny remark in RebeccaReviewPanel
+- [x] Re-generate reviews for older cars missing openingHook field via admin tRPC procedure
+- [x] Add openingHook teaser to Browse listing cards
+- [x] Add Rebecca's Funniest Picks section to Home page

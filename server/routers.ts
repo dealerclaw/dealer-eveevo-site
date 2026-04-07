@@ -17,6 +17,7 @@ import { PRODUCTS } from "./products";
 import { notifyOwner } from "./_core/notification";
 import { calculatePostcodeDistance } from "./postcodeDistance";
 import { storagePut } from "./storage";
+import { invokeLLM } from "./_core/llm";
 
 export const appRouter = router({
   system: systemRouter,
@@ -93,6 +94,13 @@ export const appRouter = router({
         const vehicle = await db.getEvDbVehicleById(input.evdbId);
         if (!vehicle) throw new Error('EV Database vehicle not found');
         return vehicle;
+      }),
+
+    // Cars with openingHook in their Rebecca review (for Funniest Picks section)
+    getFunniestPicks: publicProcedure
+      .input(z.object({ limit: z.number().default(6) }).optional())
+      .query(async ({ input }) => {
+        return await db.getCarsWithOpeningHook(input?.limit ?? 6);
       }),
   }),
 
@@ -2679,6 +2687,67 @@ export const appRouter = router({
       }))
       .query(async ({ input }) => {
         return await db.getBookedTimeSlots(input.dealerId, new Date(input.date));
+      }),
+   }),
+
+  // Admin review regeneration
+  reviewAdmin: router({
+    regenerateHooks: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const dbConn = await import('./db').then(m => m.getDb());
+        if (!dbConn) throw new Error('Database not available');
+        const { cars: carsTable } = await import('../drizzle/schema');
+        const { isNull, like, not } = await import('drizzle-orm');
+        // Get cars with reviews that are missing openingHook
+        const carsToUpdate = await dbConn
+          .select({ id: carsTable.id, year: carsTable.year, make: carsTable.make, model: carsTable.model, mileage: carsTable.mileage, condition: carsTable.condition, price: carsTable.price, rebeccaReview: carsTable.rebeccaReview })
+          .from(carsTable)
+          .where(
+            (await import('drizzle-orm')).and(
+              (await import('drizzle-orm')).isNotNull(carsTable.rebeccaReview),
+              not(like(carsTable.rebeccaReview, '%openingHook%'))
+            )
+          )
+          .limit(50);
+        let updated = 0;
+        for (const car of carsToUpdate) {
+          try {
+            const existingReview = JSON.parse(car.rebeccaReview as string);
+            const prompt = `You are Rebecca, a witty and direct British car reviewer. Write a short, punchy opening hook (2-3 sentences max) for this car review in this EXACT format:
+
+"The [MODEL] is [SHORT DESCRIPTION]. It's got [FEATURE 1], [FEATURE 2], and [FEATURE 3]. But let's be honest, you're really here because [FUNNY REMARK]!"
+
+Car details:
+- ${car.year} ${car.make} ${car.model}
+- Mileage: ${car.mileage?.toLocaleString() ?? 'unknown'} miles
+- Condition: ${car.condition}
+- Price: £${parseFloat(car.price?.toString() ?? '0').toLocaleString()}
+- Existing verdict: ${existingReview?.finalVerdict?.oneLineSummary ?? existingReview?.finalVerdict?.rebeccaVerdict ?? 'N/A'}
+
+Return ONLY the opening hook text, no quotes around it, no extra commentary.`;
+            const response = await invokeLLM({
+              messages: [
+                { role: 'system', content: 'You are Rebecca, a witty British car reviewer. Be funny, direct, and concise.' },
+                { role: 'user', content: prompt },
+              ],
+            });
+            const rawContent = response.choices[0]?.message?.content;
+            const hookText = typeof rawContent === 'string' ? rawContent.trim() : null;
+            if (hookText) {
+              existingReview.openingHook = hookText;
+              await dbConn.update(carsTable)
+                .set({ rebeccaReview: JSON.stringify(existingReview) })
+                .where((await import('drizzle-orm')).eq(carsTable.id, car.id));
+              updated++;
+            }
+          } catch (e) {
+            console.error(`Failed to regenerate hook for car ${car.id}:`, e);
+          }
+        }
+        return { updated, total: carsToUpdate.length };
       }),
   }),
 

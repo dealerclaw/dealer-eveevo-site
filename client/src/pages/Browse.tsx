@@ -735,11 +735,18 @@ export default function Browse() {
                               {car.rebeccaReview && (() => {
                                 try {
                                   const review = JSON.parse(car.rebeccaReview);
-                                  const verdict = review?.verdict || review?.summary || review?.rebeccaSays;
-                                  if (!verdict) return null;
+                                  const hook = review?.openingHook;
+                                  const fallback = review?.finalVerdict?.oneLineSummary || review?.finalVerdict?.rebeccaVerdict || review?.verdict || review?.summary;
+                                  const text = hook || fallback;
+                                  if (!text) return null;
+                                  // Show first sentence of hook as teaser
+                                  const teaser = hook
+                                    ? (text.split(/\.\s/)[0] + '.').replace(/^"|"$/g, '')
+                                    : text;
                                   return (
-                                    <p className="text-xs italic text-violet-600 line-clamp-2 pt-0.5">
-                                      💬 &ldquo;{verdict}&rdquo;
+                                    <p className="text-xs italic text-amber-700 dark:text-amber-400 line-clamp-2 pt-0.5 flex items-start gap-1">
+                                      <span className="flex-shrink-0">😆</span>
+                                      <span>&ldquo;{teaser}&rdquo;</span>
                                     </p>
                                   );
                                 } catch { return null; }

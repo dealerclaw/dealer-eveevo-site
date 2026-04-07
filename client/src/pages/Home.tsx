@@ -7,9 +7,59 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 
+function RebeccaPickCard({ car }: { car: any }) {
+  let hook = '';
+  let overallScore: number | undefined;
+  try {
+    const review = JSON.parse(car.rebeccaReview);
+    hook = review?.openingHook || '';
+    overallScore = review?.overallScore ?? review?.finalVerdict?.overallRating;
+  } catch { /* ignore */ }
+  const teaser = hook ? (hook.split(/\. /)[0] + '.').replace(/^"|"$/g, '') : '';
+  return (
+    <Link href={`/cars/${car.id}`}>
+      <Card className="group cursor-pointer hover:shadow-lg transition-all duration-200 border-amber-200 dark:border-amber-800 hover:border-amber-400 dark:hover:border-amber-600 overflow-hidden h-full">
+        {car.mainImage && (
+          <div className="relative h-40 overflow-hidden">
+            <img
+              src={car.mainImage}
+              alt={`${car.year} ${car.make} ${car.model}`}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            {overallScore !== undefined && (
+              <div className="absolute top-2 right-2 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                {overallScore}/10
+              </div>
+            )}
+          </div>
+        )}
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold line-clamp-1">
+            {car.year} {car.make} {car.model}
+          </CardTitle>
+          {car.price && (
+            <p className="text-base font-bold text-primary">
+              £{parseFloat(car.price).toLocaleString()}
+            </p>
+          )}
+        </CardHeader>
+        {teaser && (
+          <CardContent className="pt-0">
+            <p className="text-xs italic text-amber-700 dark:text-amber-400 line-clamp-3 flex items-start gap-1">
+              <span className="flex-shrink-0">😆</span>
+              <span>&ldquo;{teaser}&rdquo;</span>
+            </p>
+          </CardContent>
+        )}
+      </Card>
+    </Link>
+  );
+}
+
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const { data: featuredCars, isLoading } = trpc.cars.featured.useQuery();
+  const { data: funniestPicks } = trpc.cars.getFunniestPicks.useQuery({ limit: 6 });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -306,6 +356,41 @@ export default function Home() {
             )}
           </div>
         </section>
+
+        {/* Rebecca's Funniest Picks */}
+        {funniestPicks && funniestPicks.length > 0 && (
+          <section className="py-16 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+            <div className="container">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">😆</span>
+                    <h2 className="text-3xl font-bold">Rebecca's Funniest Picks</h2>
+                    <span className="text-2xl">⚡</span>
+                  </div>
+                  <p className="text-muted-foreground">Cars that made Rebecca laugh — and might make you too</p>
+                </div>
+                <Link href="/browse?rebeccaReviewed=true">
+                  <Button variant="outline" className="hidden sm:flex items-center gap-2 border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30">
+                    All Reviewed Cars <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {funniestPicks.map((car: any) => (
+                  <RebeccaPickCard key={car.id} car={car} />
+                ))}
+              </div>
+              <div className="mt-6 text-center sm:hidden">
+                <Link href="/browse?rebeccaReviewed=true">
+                  <Button variant="outline" className="border-amber-300">
+                    All Reviewed Cars <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Features Section */}
         <section className="py-16 bg-muted/30">

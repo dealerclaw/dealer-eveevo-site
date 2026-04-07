@@ -3071,3 +3071,36 @@ export async function getEvDbVehicleById(evdbId: number) {
 
   return rows[0] || null;
 }
+
+/**
+ * Get cars that have a Rebecca review with an openingHook field (for Funniest Picks)
+ */
+export async function getCarsWithOpeningHook(limit: number = 6) {
+  const db = await getDb();
+  if (!db) return [];
+  const result = await db
+    .select({
+      id: cars.id,
+      make: cars.make,
+      model: cars.model,
+      year: cars.year,
+      price: cars.price,
+      mileage: cars.mileage,
+      condition: cars.condition,
+      mainImage: cars.mainImage,
+      rebeccaReview: cars.rebeccaReview,
+      dealerName: dealers.name,
+    })
+    .from(cars)
+    .leftJoin(dealers, eq(cars.dealerId, dealers.id))
+    .where(
+      and(
+        eq(cars.isAvailable, true),
+        eq(cars.marketplace, 'consumer'),
+        like(cars.rebeccaReview, '%openingHook%')
+      )
+    )
+    .orderBy(desc(cars.createdAt))
+    .limit(limit);
+  return result;
+}
