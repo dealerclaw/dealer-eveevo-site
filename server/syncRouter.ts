@@ -178,7 +178,23 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
     .limit(1);
 
   const priceInPounds = input.price ? String(Math.round(input.price / 100)) : null;
-  const mainImage = input.photoUrls[0] || null;
+
+  // Normalise photoUrls — DealerClaw may send plain strings or objects like {full_url: '...'}
+  const normalisePhotoUrl = (url: unknown): string | null => {
+    if (!url) return null;
+    if (typeof url === 'string') return url.startsWith('http') ? url : null;
+    if (typeof url === 'object' && url !== null) {
+      const obj = url as Record<string, unknown>;
+      const full = obj.full_url || obj.url || obj.src;
+      return typeof full === 'string' ? full : null;
+    }
+    return null;
+  };
+  const normalisedPhotoUrls = (input.photoUrls as unknown[])
+    .map(normalisePhotoUrl)
+    .filter((u): u is string => u !== null);
+
+  const mainImage = normalisedPhotoUrls[0] || null;
 
   // Auto-link to EVEEVO dealer account if dealerClawDealerId matches
   let linkedDealerId: number | null = null;
@@ -209,7 +225,7 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
         bodyType: input.bodyType,
         registrationNumber: input.registration,
         description: input.description,
-        images: input.photoUrls.length > 0 ? input.photoUrls : null,
+        images: normalisedPhotoUrls.length > 0 ? normalisedPhotoUrls : null,
         mainImage,
         isAvailable: true,
         ...(linkedDealerId ? { dealerId: linkedDealerId } : {}),
@@ -236,7 +252,7 @@ export async function upsertDealerClawCar(input: DealerClawCarInput) {
       bodyType: input.bodyType,
       registrationNumber: input.registration,
       description: input.description,
-      images: input.photoUrls.length > 0 ? input.photoUrls : null,
+      images: normalisedPhotoUrls.length > 0 ? normalisedPhotoUrls : null,
       mainImage,
       isAvailable: true,
       isFeatured: false,
