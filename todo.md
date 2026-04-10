@@ -1955,3 +1955,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Re-generate reviews for older cars missing openingHook field via admin tRPC procedure
 - [x] Add openingHook teaser to Browse listing cards
 - [x] Add Rebecca's Funniest Picks section to Home page
+- [x] Add Google Merchant Center site verification meta tag to index.html
