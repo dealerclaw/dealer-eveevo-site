@@ -1956,3 +1956,4 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add openingHook teaser to Browse listing cards
 - [x] Add Rebecca's Funniest Picks section to Home page
 - [x] Add Google Merchant Center site verification meta tag to index.html
+- [x] Add dynamic Open Graph meta tags for car detail pages (og:title, og:image, og:description, og:url)

@@ -97,6 +97,76 @@ async function startServer() {
     }
   });
 
+  // Dynamic Open Graph meta tags for car detail pages
+  // Must be registered before serveStatic/setupVite so it intercepts /cars/:id
+  app.get('/cars/:id', async (req, res, next) => {
+    try {
+      const carId = parseInt(req.params.id);
+      if (isNaN(carId)) return next();
+      const { getDb } = await import('../db');
+      const db = await getDb();
+      if (!db) return next();
+      const { cars } = await import('../../drizzle/schema');
+      const { eq } = await import('drizzle-orm');
+      const result = await db.select({
+        make: cars.make,
+        model: cars.model,
+        year: cars.year,
+        price: cars.price,
+        mainImage: cars.mainImage,
+        description: cars.description,
+        rebeccaReview: cars.rebeccaReview,
+      }).from(cars).where(eq(cars.id, carId)).limit(1);
+      if (result.length === 0) return next();
+      const car = result[0];
+      const title = `${car.year || ''} ${car.make} ${car.model}`.trim();
+      const priceStr = car.price ? `£${Number(car.price).toLocaleString('en-GB')}` : '';
+      // Extract Rebecca verdict snippet if available
+      let rebeccaSnippet = '';
+      if (car.rebeccaReview) {
+        try {
+          const review = JSON.parse(car.rebeccaReview as string);
+          rebeccaSnippet = review.openingHook
+            ? ` | ${review.openingHook.split('.')[0]}.`
+            : review.verdict
+              ? ` | Rebecca says: "${review.verdict.substring(0, 80)}..."`
+              : '';
+        } catch {}
+      }
+      const ogDescription = `${priceStr}${rebeccaSnippet || (car.description ? ` | ${car.description.substring(0, 120)}` : ' | View full specs, finance options & book a test drive on EVEEVO.')}`;
+      const ogImage = car.mainImage || 'https://dealer.eveevo.co.uk/eveevo-logo.png';
+      const ogUrl = `https://dealer.eveevo.co.uk/cars/${carId}`;
+      const ogTags = `
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="EVEEVO" />
+    <meta property="og:title" content="${title.replace(/"/g, '&quot;')} | EVEEVO" />
+    <meta property="og:description" content="${ogDescription.replace(/"/g, '&quot;')}" />
+    <meta property="og:image" content="${ogImage}" />
+    <meta property="og:url" content="${ogUrl}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${title.replace(/"/g, '&quot;')} | EVEEVO" />
+    <meta name="twitter:description" content="${ogDescription.replace(/"/g, '&quot;')}" />
+    <meta name="twitter:image" content="${ogImage}" />`;
+      // Read and modify the index.html
+      const fs = await import('fs');
+      const path = await import('path');
+      const htmlPath = process.env.NODE_ENV === 'development'
+        ? path.resolve(import.meta.dirname, '../..', 'client', 'index.html')
+        : path.resolve(import.meta.dirname, 'public', 'index.html');
+      let html = await fs.promises.readFile(htmlPath, 'utf-8');
+      html = html.replace('</head>', `${ogTags}\n  </head>`);
+      // In dev, also update the title
+      html = html.replace(
+        '<title>EVEEVO - Smart, Easy, Electric EVs</title>',
+        `<title>${title} | EVEEVO</title>`
+      );
+      return res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+    } catch (err) {
+      console.error('[OG Tags] Error generating meta tags:', err);
+      return next();
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
