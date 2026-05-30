@@ -18,13 +18,20 @@ if (!CLERK_PUBLISHABLE_KEY) {
 
 const queryClient = new QueryClient();
 
-const redirectToLoginIfUnauthorized = (error: unknown) => {
+const redirectToLoginIfUnauthorized = (error: unknown, isBackgroundRefetch = false) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
 
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
-
   if (!isUnauthorized) return;
+
+  // Never redirect on background refetches (e.g. the 30-second unreadCount poll).
+  // Only redirect when the user explicitly triggered the request (fetchStatus === 'idle'
+  // means the query errored on a background interval, not a fresh user-initiated fetch).
+  if (isBackgroundRefetch) {
+    console.warn('[Auth] Background poll returned UNAUTHED — ignoring (will retry next interval)');
+    return;
+  }
 
   window.location.href = "/sign-in";
 };
@@ -32,7 +39,10 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 queryClient.getQueryCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.query.state.error;
-    redirectToLoginIfUnauthorized(error);
+    // fetchStatus 'idle' after an error means the query failed during a background refetch
+    // (refetchInterval), not a user-initiated fetch. Don't redirect in that case.
+    const isBackground = event.query.state.fetchStatus === 'idle' && event.query.state.dataUpdatedAt > 0;
+    redirectToLoginIfUnauthorized(error, isBackground);
     console.error("[API Query Error]", error);
   }
 });
@@ -40,7 +50,7 @@ queryClient.getQueryCache().subscribe(event => {
 queryClient.getMutationCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.mutation.state.error;
-    redirectToLoginIfUnauthorized(error);
+    redirectToLoginIfUnauthorized(error, false);
     console.error("[API Mutation Error]", error);
   }
 });

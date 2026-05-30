@@ -85,6 +85,8 @@ export default function DealerLayout({ children }: DealerLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: unreadData } = trpc.enquiries.unreadCount.useQuery(undefined, {
     refetchInterval: 30000, // Poll every 30 seconds for new enquiries
+    retry: false,           // Don't retry on auth errors — just wait for next interval
+    throwOnError: false,    // Swallow errors silently; don't propagate to error boundaries
   });
   const unreadCount = unreadData?.count ?? 0;
 

@@ -1957,3 +1957,10 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Add Rebecca's Funniest Picks section to Home page
 - [x] Add Google Merchant Center site verification meta tag to index.html
 - [x] Add dynamic Open Graph meta tags for car detail pages (og:title, og:image, og:description, og:url)
+
+## Auth Redirect Bug Fix (May 2026)
+- [x] Identify duplicate user rows for anthony.perry@eveevo.com (IDs 2520001 and 2640001)
+- [x] Merge duplicate user: re-point dealers/testDriveBookings FK refs from 2640001 to 2520001
+- [x] Delete duplicate user row 2640001 — only one row remains (2520001)
+- [x] Fix main.tsx: background refetch errors no longer trigger redirect to /sign-in
+- [x] Fix DealerLayout.tsx: unreadCount poll uses retry:false + throwOnError:false to swallow auth errors silently
