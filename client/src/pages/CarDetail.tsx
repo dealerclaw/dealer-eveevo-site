@@ -66,9 +66,15 @@ export default function CarDetail() {
     }
   }, [car, id]);
 
-  // Favorites
+  // Favorites — only fire when we have a real DB user id (not 0, which means
+  // the backend auth.me hasn't resolved yet and the token cache is cold).
   const utils = trpc.useUtils();
-  const { data: favoritesList } = trpc.favorites.list.useQuery(undefined, { enabled: isAuthenticated });
+  const hasRealUserId = isAuthenticated && (user?.id ?? 0) > 0;
+  const { data: favoritesList } = trpc.favorites.list.useQuery(undefined, {
+    enabled: hasRealUserId,
+    retry: false,
+    throwOnError: false,
+  });
   const carId = parseInt(id || "0");
   const isFavorited = (favoritesList ?? []).some((f: any) => (f.favorite?.carId ?? f.car?.id) === carId);
   const addFavoriteMutation = trpc.favorites.add.useMutation({

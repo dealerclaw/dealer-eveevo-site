@@ -18,6 +18,23 @@ if (!CLERK_PUBLISHABLE_KEY) {
 
 const queryClient = new QueryClient();
 
+// Pages that are intentionally public — never redirect from these even if a protected
+// sub-query (e.g. favorites.list) fails with UNAUTHED.
+const PUBLIC_PATHS = [
+  /^\/cars\//, // car detail pages — publicly shareable
+  /^\/browse/,
+  /^\/$/, // home
+  /^\/lifestyle-search/,
+  /^\/compare/,
+  /^\/become-a-dealer/,
+  /^\/finance/,
+  /^\/ev-specs\//,
+  /^\/sign-in/,
+  /^\/sign-up/,
+];
+
+const isPublicPath = (pathname: string) => PUBLIC_PATHS.some(re => re.test(pathname));
+
 const redirectToLoginIfUnauthorized = (error: unknown, isBackgroundRefetch = false) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
@@ -26,10 +43,15 @@ const redirectToLoginIfUnauthorized = (error: unknown, isBackgroundRefetch = fal
   if (!isUnauthorized) return;
 
   // Never redirect on background refetches (e.g. the 30-second unreadCount poll).
-  // Only redirect when the user explicitly triggered the request (fetchStatus === 'idle'
-  // means the query errored on a background interval, not a fresh user-initiated fetch).
   if (isBackgroundRefetch) {
     console.warn('[Auth] Background poll returned UNAUTHED — ignoring (will retry next interval)');
+    return;
+  }
+
+  // Never redirect from public pages — they show optional auth-gated UI
+  // (e.g. favourites button on car detail) but the page itself is public.
+  if (isPublicPath(window.location.pathname)) {
+    console.warn('[Auth] Protected sub-query failed on public page — ignoring, not redirecting');
     return;
   }
 
