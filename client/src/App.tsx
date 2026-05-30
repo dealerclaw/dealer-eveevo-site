@@ -61,6 +61,9 @@ const DealerSettings = lazy(() => import("./pages/dealer/DealerSettings"));
 const DealerInventoryHealth = lazy(() => import("./pages/dealer/DealerInventoryHealth"));
 const DealerInbox = lazy(() => import("./pages/dealer/DealerInbox"));
 const EvSpecs = lazy(() => import("./pages/EvSpecs"));
+const DealerClawCars = lazy(() => import("./pages/DealerClawCars"));
+const ForDealers = lazy(() => import("./pages/ForDealers"));
+const AutoSwipe = lazy(() => import("./pages/AutoSwipe"));
 
 // Lightweight page loading skeleton
 function PageLoader() {
@@ -84,6 +87,9 @@ function Router() {
         <Route path="/sign-up" component={SignUpWithRole} />
         <Route path="/sign-up/:rest*" component={SignUpWithRole} />
         <Route path="/browse" component={Browse} />
+        <Route path="/dealerclaw-cars" component={DealerClawCars} />
+        <Route path="/for-dealers" component={ForDealers} />
+        <Route path="/autoswipe" component={AutoSwipe} />
         <Route path="/admin/sync" component={AdminSync} />
         <Route path="/admin/applications" component={AdminApplications} />
         <Route path="/admin/dealers" component={AdminDealers} />

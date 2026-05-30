@@ -1964,3 +1964,18 @@ Note: Notification system for matching vehicles can be implemented as a future e
 - [x] Delete duplicate user row 2640001 — only one row remains (2520001)
 - [x] Fix main.tsx: background refetch errors no longer trigger redirect to /sign-in
 - [x] Fix DealerLayout.tsx: unreadCount poll uses retry:false + throwOnError:false to swallow auth errors silently
+
+## DealerClaw Cars Feature (May 2026)
+- [x] Update main navigation: Electric Cars, Hybrid Cars, DealerClaw Cars, AutoSwipe, For Dealers tabs
+- [x] Add /electric-cars redirect to /browse?type=electric
+- [x] Add /hybrid-cars redirect to /browse?type=hybrid
+- [x] Create /dealerclaw-cars page with hero, explanatory sections, and full filter panel
+- [x] Create /for-dealers landing page (DealerClaw B2B)
+- [x] Create /autoswipe placeholder page (coming soon)
+- [x] Add DealerClaw badge to car cards for DealerClaw-sourced vehicles
+- [x] Add DealerClaw notice block to car detail pages for non-EV DealerClaw cars
+- [x] Add "Thinking about going electric?" comparison block to non-EV car detail pages
+- [x] Add "Not ready to switch to electric yet?" section to homepage
+- [x] Update footer with DealerClaw Cars, Electric Cars, Hybrid Cars, AutoSwipe, For Dealers links
+- [x] Add SEO meta tags (title, description, OG) to all new pages (static meta via page titles)
+- [x] Ensure new pages have H1/H2/H3 structure for crawlability

@@ -55,11 +55,16 @@ export const appRouter = router({
         condition: z.enum(['new', 'used']).optional(),
         dealerId: z.number().optional(),
         isFeatured: z.boolean().optional(),
+        source: z.enum(['dealerclaw', 'eveevo']).optional(),
+        fuelType: z.string().optional(),
+        bodyType: z.string().optional(),
+        transmission: z.string().optional(),
         limit: z.number().optional(),
         offset: z.number().optional(),
       }).optional())
       .query(async ({ input }) => {
-        return await db.getCars(input);
+        const cars = await db.getCars(input);
+        return { cars, total: cars.length };
       }),
 
     getById: publicProcedure

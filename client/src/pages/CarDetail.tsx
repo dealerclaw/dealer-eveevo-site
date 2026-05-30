@@ -200,9 +200,9 @@ export default function CarDetail() {
                       {car.dealerClawCarId && (
                         <Badge
                           variant="outline"
-                          className="font-semibold text-sm px-3 py-1 bg-purple-100 text-purple-800 border-purple-300"
+                          className="font-semibold text-sm px-3 py-1 bg-[#1a1a2e] text-white border-[#1a1a2e]"
                         >
-                          🐾 via DealerClaw
+                          DealerClaw Car
                         </Badge>
                       )}
                       {car.rebeccaReview && (
@@ -503,6 +503,33 @@ export default function CarDetail() {
                       >
                         View Dealer Profile
                       </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* DealerClaw info block — shown for DealerClaw-sourced cars */}
+              {car.dealerClawCarId && (
+                <Card className="bg-[#1a1a2e] text-white border-0">
+                  <CardContent className="p-5 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm">DealerClaw Car</span>
+                      <span className="text-white/60 text-xs">Dealer-promoted stock</span>
+                    </div>
+                    <p className="text-white/80 text-xs leading-relaxed">
+                      This vehicle is promoted by a dealer using DealerClaw, EVEEVO's AI stock-selling engine. It may be a petrol, diesel, hybrid or value car — not part of EVEEVO's core electric car recommendations.
+                    </p>
+                    {car.fuelType && !['Electric', 'Plug-in Hybrid'].includes(car.fuelType) && (
+                      <div className="pt-2 border-t border-white/10">
+                        <p className="text-white/70 text-xs mb-2">Thinking about going electric?</p>
+                        <Button
+                          size="sm"
+                          className="bg-[#9BCB90] text-[#1a1a2e] hover:bg-[#8aba7f] font-semibold text-xs"
+                          onClick={() => navigate(`/browse?maxPrice=${car.price ?? 20000}`)}
+                        >
+                          Compare EV Alternatives
+                        </Button>
+                      </div>
                     )}
                   </CardContent>
                 </Card>

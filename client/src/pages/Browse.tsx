@@ -163,7 +163,7 @@ export default function Browse() {
   const { data: dealersList } = trpc.dealers.listForFilter.useQuery();
 
   // Fetch cars with filters
-  const { data: cars, isLoading } = trpc.cars.list.useQuery({
+  const { data: carsData, isLoading } = trpc.cars.list.useQuery({
     make: selectedMake && selectedMake !== 'all_makes' ? selectedMake : undefined,
     model: selectedModel || undefined,
     dealerId: selectedDealer && selectedDealer !== 'all_dealers' ? parseInt(selectedDealer) : undefined,
@@ -176,11 +176,12 @@ export default function Browse() {
     condition: condition === "all" ? undefined : condition,
     limit: 1000,
   });
+  const cars = carsData?.cars ?? [];
 
   // Get unique makes from cars
   const makes = useMemo(() => {
     if (!cars) return [];
-    const uniqueMakes = new Set(cars.map(car => car.make));
+    const uniqueMakes = new Set(cars.map((car: any) => car.make));
     return Array.from(uniqueMakes).sort();
   }, [cars]);
 

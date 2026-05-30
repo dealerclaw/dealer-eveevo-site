@@ -6,6 +6,7 @@ import { ArrowRight, Battery, Car, DollarSign, Heart, MapPin, Search, Zap, Store
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 function RebeccaPickCard({ car }: { car: any }) {
   let hook = '';
@@ -440,6 +441,36 @@ export default function Home() {
           </div>
         </section>
 
+        {/* DealerClaw Cars Section */}
+        <section className="py-16 bg-[#1a1a2e] text-white">
+          <div className="container max-w-4xl">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex-1">
+                <span className="inline-block bg-white/10 border border-white/20 text-white text-xs font-bold px-3 py-1 rounded-full mb-4">DealerClaw Cars</span>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">Not ready to switch to electric yet?</h2>
+                <p className="text-white/80 mb-6 leading-relaxed">
+                  Browse DealerClaw Cars — practical petrol, diesel, hybrid and value cars from dealers using DealerClaw. EVEEVO stays EV-first, but we help every buyer find the right car for today and compare future EV options.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button asChild size="lg" className="bg-[#9BCB90] text-[#1a1a2e] hover:bg-[#8aba7f] font-bold">
+                    <Link href="/dealerclaw-cars">View DealerClaw Cars</Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10">
+                    <Link href="/compare">Compare Running Costs</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="hidden md:flex flex-col gap-3 text-sm text-white/70">
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-orange-400"></span>Petrol</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-yellow-400"></span>Diesel</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-teal-400"></span>Hybrid</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-400"></span>Plug-in Hybrid</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-green-400"></span>Electric</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-20 bg-primary text-primary-foreground">
           <div className="container text-center">
@@ -467,44 +498,7 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t py-8 bg-muted/30">
-        <div className="container">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-semibold mb-4">EVEEVO</h3>
-              <p className="text-sm text-muted-foreground">
-                Smart, Easy, Electric EVs for everyone
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Browse</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/browse" className="text-muted-foreground hover:text-foreground">All EVs</Link></li>
-                <li><Link href="/dealer/dashboard" className="text-muted-foreground hover:text-foreground">Dealers</Link></li>
-                <li><Link href="/compare" className="text-muted-foreground hover:text-foreground">Compare</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/finance" className="text-muted-foreground hover:text-foreground">Finance</Link></li>
-                <li><Link href="/lifestyle-search" className="text-muted-foreground hover:text-foreground">Lifestyle Search</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="https://eveevo.uk/privacy/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">Privacy Policy</a></li>
-                <li><a href="https://eveevo.uk/idd/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">Terms of Service</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} EVEEVO. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

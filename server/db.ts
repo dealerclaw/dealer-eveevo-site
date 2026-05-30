@@ -177,6 +177,10 @@ export async function getCars(filters?: {
   dealerId?: number;
   isFeatured?: boolean;
   marketplace?: 'consumer' | 'dealer_only';
+  source?: 'dealerclaw' | 'eveevo';
+  fuelType?: string;
+  bodyType?: string;
+  transmission?: string;
   limit?: number;
   offset?: number;
 }) {
@@ -222,9 +226,24 @@ export async function getCars(filters?: {
   }
   if (filters?.marketplace) {
     conditions.push(eq(cars.marketplace, filters.marketplace));
-  } else {
-    // Default to consumer marketplace if not specified
+  } else if (!filters?.source) {
+    // Default to consumer marketplace if not specified and no source filter
     conditions.push(eq(cars.marketplace, 'consumer'));
+  }
+  if (filters?.source === 'dealerclaw') {
+    conditions.push(isNotNull(cars.dealerClawCarId));
+  } else if (filters?.source === 'eveevo') {
+    // eveevo-native stock: no dealerClawCarId
+    conditions.push(sql`${cars.dealerClawCarId} IS NULL`);
+  }
+  if (filters?.fuelType) {
+    conditions.push(like(cars.fuelType, `%${filters.fuelType}%`));
+  }
+  if (filters?.bodyType) {
+    conditions.push(like(cars.bodyType, `%${filters.bodyType}%`));
+  }
+  if (filters?.transmission) {
+    conditions.push(like(cars.transmission, `%${filters.transmission}%`));
   }
 
   const result = await db
