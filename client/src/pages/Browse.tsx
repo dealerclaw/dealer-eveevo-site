@@ -26,7 +26,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Battery, Car, Heart, Search, Zap, Save, Bookmark, GitCompare, X, CalendarPlus, Images, Store, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
-import RecentlyViewed from "@/components/RecentlyViewed";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -325,9 +324,6 @@ export default function Browse() {
             </p>
           </div>
           
-          {/* Recently Viewed Section */}
-          <RecentlyViewed />
-
           {/* Mobile Filter Toggle */}
           <div className="lg:hidden mb-4">
             <Button
