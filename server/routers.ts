@@ -27,10 +27,18 @@ export const appRouter = router({
   enquiries: enquiriesRouter,
   
   auth: router({
-    me: publicProcedure.query(opts => ({
-      user: opts.ctx.user,
-      adminUser: opts.ctx.adminUser,
-    })),
+    me: publicProcedure.query(opts => {
+      // Never expose credential material to the client
+      const sanitize = <T extends { passwordHash?: unknown; verificationToken?: unknown; resetPasswordToken?: unknown; resetPasswordExpires?: unknown } | null>(u: T) => {
+        if (!u) return null;
+        const { passwordHash, verificationToken, resetPasswordToken, resetPasswordExpires, ...safe } = u as any;
+        return safe;
+      };
+      return {
+        user: sanitize(opts.ctx.user),
+        adminUser: sanitize(opts.ctx.adminUser),
+      };
+    }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
