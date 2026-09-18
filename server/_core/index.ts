@@ -52,6 +52,9 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Image upload endpoint
   app.use("/api", uploadImageRouter);
+  // Uploaded files (local-disk storage; mount a volume at STORAGE_DIR)
+  const { STORAGE_DIR } = await import("../storage");
+  app.use("/uploads", express.static(STORAGE_DIR, { maxAge: "7d" }));
 
   // DealerClaw REST API endpoints
   // POST /api/dealerclaw/push  — upsert a car listing from DealerClaw
