@@ -1,8 +1,10 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
-import { createClerkClient, verifyToken } from "@clerk/express";
+import { jwtVerify } from "jose";
+import { COOKIE_NAME } from "@shared/const";
 import { ENV } from "./env";
 import * as db from "../db";
+import { isAdminEmail } from "../localAuth";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -14,23 +16,13 @@ export type TrpcContext = {
 
 const IMPERSONATION_COOKIE = 'eveevo_impersonate';
 
-// Admin email allowlist — these accounts always get admin role regardless of Clerk metadata
-const ADMIN_EMAIL_ALLOWLIST = [
-  'anthony.perry@eveevo.com',
-  'anthony.perry@eveevo.co.uk',
-  'anthony.m.perry@gmail.com',
-  'rebecca.jackson@eveevo.co.uk',
-  'rebecca@rebeccaracer.com',
-];
-
 // ---------------------------------------------------------------------------
-// In-memory cache for verified JWT tokens → User
-// Key: session token (JWT)
-// Value: { user, expiresAt } where expiresAt mirrors the JWT exp claim
-// This avoids calling verifyToken + Clerk API on every single tRPC request.
+// In-memory cache for verified session tokens → user id
+// Avoids re-verifying the JWT on every request; the user row itself is
+// re-read so role changes take effect quickly.
 // ---------------------------------------------------------------------------
 interface CacheEntry {
-  user: User;
+  userId: number;
   expiresAt: number; // Unix timestamp (ms)
 }
 
@@ -46,6 +38,28 @@ setInterval(() => {
   });
 }, 5 * 60 * 1000);
 
+async function resolveUserId(sessionToken: string): Promise<number | null> {
+  const cached = tokenCache.get(sessionToken);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.userId;
+  }
+
+  if (!ENV.cookieSecret) return null;
+  try {
+    const secret = new TextEncoder().encode(ENV.cookieSecret);
+    const { payload } = await jwtVerify(sessionToken, secret, {
+      algorithms: ["HS256"],
+    });
+    const userId = typeof payload.uid === "number" ? payload.uid : null;
+    if (!userId) return null;
+    const expiresAt = payload.exp ? payload.exp * 1000 : Date.now() + 60 * 60 * 1000;
+    tokenCache.set(sessionToken, { userId, expiresAt });
+    return userId;
+  } catch {
+    return null;
+  }
+}
+
 export async function createContext(
   opts: CreateExpressContextOptions
 ): Promise<TrpcContext> {
@@ -53,107 +67,33 @@ export async function createContext(
   let adminUser: User | null = null;
 
   try {
-    // Get Clerk session token from Authorization header
+    // Session token from cookie (preferred) or Authorization header
     const authHeader = opts.req.headers.authorization;
-    const sessionToken = authHeader?.replace('Bearer ', '');
-    
+    const sessionToken =
+      opts.req.cookies?.[COOKIE_NAME] || authHeader?.replace('Bearer ', '');
+
     if (!sessionToken) {
       // Silent fail for public procedures
       return { req: opts.req, res: opts.res, user: null, adminUser: null };
     }
 
-    // ------------------------------------------------------------------
-    // Fast path: check in-memory cache first
-    // ------------------------------------------------------------------
-    const cached = tokenCache.get(sessionToken);
-    if (cached && cached.expiresAt > Date.now()) {
-      user = cached.user;
-      // Still handle impersonation even on cache hit
-      const impersonateCookie = opts.req.cookies?.[IMPERSONATION_COOKIE];
-      if (impersonateCookie && user.role === 'admin') {
-        const impersonatedUserId = parseInt(impersonateCookie, 10);
-        if (!isNaN(impersonatedUserId)) {
-          const impersonatedUser = await db.getUserById(impersonatedUserId);
-          if (impersonatedUser) {
-            return { req: opts.req, res: opts.res, user: impersonatedUser, adminUser: user };
-          }
-        }
-      }
-      return { req: opts.req, res: opts.res, user, adminUser: null };
-    }
-
-    // ------------------------------------------------------------------
-    // Slow path: verify JWT with Clerk (only on first request per token)
-    // ------------------------------------------------------------------
-    let sessionClaims;
-    try {
-      sessionClaims = await verifyToken(sessionToken, {
-        secretKey: ENV.clerkSecretKey,
-      });
-    } catch (error) {
-      console.log('[Auth Context] Token verification failed:', error instanceof Error ? error.message : 'Unknown error');
-      return { req: opts.req, res: opts.res, user: null, adminUser: null };
-    }
-    
-    if (!sessionClaims || !sessionClaims.sub) {
-      console.log('[Auth Context] Invalid Clerk session: No user ID');
+    const userId = await resolveUserId(sessionToken);
+    if (!userId) {
       return { req: opts.req, res: opts.res, user: null, adminUser: null };
     }
 
-    const clerkUserId = sessionClaims.sub;
-    // JWT exp is in seconds; convert to ms for Date.now() comparison
-    const tokenExpiresAt = sessionClaims.exp ? sessionClaims.exp * 1000 : Date.now() + 60 * 60 * 1000;
-    
-    // Try to get user from database first (faster and more reliable)
-    let authenticatedUser = (await db.getUserByOpenId(clerkUserId)) ?? null;
-    
+    let authenticatedUser = (await db.getUserById(userId)) ?? null;
     if (!authenticatedUser) {
-      console.log('[Auth Context] User not in database, fetching from Clerk API');
-      
-      // Get Clerk user using backend SDK
-      const client = createClerkClient({ secretKey: ENV.clerkSecretKey });
-      let clerkUser;
-      try {
-        clerkUser = await client.users.getUser(clerkUserId);
-      } catch (error) {
-        console.log('[Auth Context] Failed to fetch user from Clerk:', error instanceof Error ? error.message : 'Unknown error');
-        return { req: opts.req, res: opts.res, user: null, adminUser: null };
-      }
-      
-      if (!clerkUser) {
-        console.log('[Auth Context] Clerk user not found');
-        return { req: opts.req, res: opts.res, user: null, adminUser: null };
-      }
-
-      // Get role and accountType from Clerk metadata
-      const rawRole = (clerkUser.unsafeMetadata?.role as string) || 'user';
-      const rawAccountType = (clerkUser.unsafeMetadata?.accountType as string) || 'individual';
-      const email = clerkUser.primaryEmailAddress?.emailAddress || '';
-      // Admin allowlist overrides Clerk metadata
-      const isAdminEmail = ADMIN_EMAIL_ALLOWLIST.includes(email.toLowerCase());
-      const role = isAdminEmail ? 'admin' : (rawRole === 'dealer' ? 'dealer' : rawRole === 'admin' ? 'admin' : 'user');
-      const accountType = isAdminEmail ? 'business' : (rawAccountType === 'business' ? 'business' : 'individual');
-
-      // Sync or get user from database
-      await db.upsertUser({
-        openId: clerkUser.id,
-        name: clerkUser.fullName || email.split('@')[0] || 'User',
-        email: email,
-        loginMethod: 'clerk',
-        role: role as 'user' | 'dealer' | 'admin',
-        accountType: accountType as 'individual' | 'business',
-        lastSignedIn: new Date(),
-      });
-
-      authenticatedUser = (await db.getUserByOpenId(clerkUser.id)) ?? null;
-    }
-    
-    if (!authenticatedUser) {
-      console.log('[Auth Context] Failed to get/sync user');
       return { req: opts.req, res: opts.res, user: null, adminUser: null };
     }
 
-    // Auto-provision dealer record for new dealer users (idempotent)
+    // Admin email allowlist always wins over the stored role
+    if (isAdminEmail(authenticatedUser.email) && authenticatedUser.role !== 'admin') {
+      await db.updateUserFields(authenticatedUser.id, { role: 'admin' });
+      authenticatedUser = { ...authenticatedUser, role: 'admin' };
+    }
+
+    // Auto-provision dealer record for dealer users (idempotent)
     if (authenticatedUser.role === 'dealer') {
       db.ensureDealerRecord(
         authenticatedUser.id,
@@ -162,21 +102,19 @@ export async function createContext(
       ).catch(err => console.error('[Auth Context] ensureDealerRecord failed:', err));
     }
 
-    // Store in cache so subsequent requests skip verification
-    tokenCache.set(sessionToken, { user: authenticatedUser, expiresAt: tokenExpiresAt });
-
     // Check for admin impersonation cookie
     const impersonateCookie = opts.req.cookies?.[IMPERSONATION_COOKIE];
-    
     if (impersonateCookie && authenticatedUser.role === 'admin') {
-      // Admin is impersonating another user
       const impersonatedUserId = parseInt(impersonateCookie, 10);
       if (!isNaN(impersonatedUserId)) {
         const impersonatedUser = await db.getUserById(impersonatedUserId);
         if (impersonatedUser) {
-          adminUser = authenticatedUser;
-          user = impersonatedUser;
-          return { req: opts.req, res: opts.res, user, adminUser };
+          return {
+            req: opts.req,
+            res: opts.res,
+            user: impersonatedUser,
+            adminUser: authenticatedUser,
+          };
         }
       }
     }

@@ -4,7 +4,6 @@ import { createServer } from "http";
 import net from "net";
 import cookieParser from "cookie-parser";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -38,18 +37,15 @@ async function startServer() {
   const { handleStripeWebhook } = await import('./stripe-webhook');
   app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
   
-  // Clerk webhook MUST be registered before body parsers
-  const { handleClerkWebhook } = await import('./clerk-webhook');
-  app.post('/api/clerk/webhook', express.raw({ type: 'application/json' }), handleClerkWebhook);
-  
   // Configure cookie parser (must be before tRPC)
   app.use(cookieParser());
   
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "200mb" }));
   app.use(express.urlencoded({ limit: "200mb", extended: true }));
-  // OAuth callback under /api/oauth/callback
-  registerOAuthRoutes(app);
+  // Local email/password + Google SSO auth
+  const { default: localAuthRouter } = await import("../localAuth");
+  app.use("/api", localAuthRouter);
   // Image upload endpoint
   app.use("/api", uploadImageRouter);
   // Uploaded files (local-disk storage; mount a volume at STORAGE_DIR)

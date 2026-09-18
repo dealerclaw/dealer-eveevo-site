@@ -4,7 +4,16 @@ import * as db from "../db";
 import { notifyOwner } from "./notification";
 import { sendEmail } from "../email";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not configured");
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  return _stripe;
+}
 
 /**
  * Handle Stripe webhook events
@@ -26,7 +35,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
   console.log(`[Webhook] Using signing secret from ${secretSource}:`, secretPreview);
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       req.body,
       sig,
       webhookSecret!

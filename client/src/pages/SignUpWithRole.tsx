@@ -1,11 +1,44 @@
-import { SignUp } from '@clerk/clerk-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, Store, ArrowLeft } from 'lucide-react';
+import { GoogleButton } from '@/components/GoogleButton';
 
 export default function SignUpWithRole() {
   const [selectedRole, setSelectedRole] = useState<'consumer' | 'dealer' | null>(null);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const role = selectedRole === 'dealer' ? 'dealer' : 'user';
+  const accountType = selectedRole === 'dealer' ? 'business' : 'individual';
+  const afterSignUpUrl = selectedRole === 'dealer' ? '/dealer/dashboard' : '/';
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ name, email, password, role, accountType }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Sign up failed');
+        return;
+      }
+      window.location.href = afterSignUpUrl;
+    } catch {
+      setError('Sign up failed — please try again');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Step 1 — Role selection screen
   if (!selectedRole) {
@@ -133,15 +166,76 @@ export default function SignUpWithRole() {
           <p className="text-gray-500 text-sm mt-1">Create your account to get started</p>
         </div>
 
-        <SignUp
-          routing="virtual"
-          signInUrl="/sign-in"
-          afterSignUpUrl={selectedRole === 'dealer' ? '/dealer/dashboard' : '/'}
-          unsafeMetadata={{
-            role: selectedRole === 'consumer' ? 'user' : 'dealer',
-            accountType: selectedRole === 'consumer' ? 'individual' : 'business',
-          }}
-        />
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <GoogleButton
+            href={`/api/auth/google?returnTo=${encodeURIComponent(afterSignUpUrl)}&role=${role}&accountType=${accountType}`}
+            label="Sign up with Google"
+          />
+
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400 uppercase">or</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">
+                {selectedRole === 'dealer' ? 'Dealership name' : 'Full name'}
+              </label>
+              <input
+                id="name"
+                type="text"
+                required
+                autoComplete="name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <p className="text-xs text-gray-400 mt-1">At least 8 characters</p>
+            </div>
+
+            {error && <p className="text-sm text-red-600">{error}</p>}
+
+            <Button
+              type="submit"
+              className={`w-full ${selectedRole === 'dealer' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+              size="lg"
+              disabled={submitting}
+            >
+              {submitting ? 'Creating account…' : 'Create account'}
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );

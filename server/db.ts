@@ -130,6 +130,42 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 }
 
+export async function createEmailUser(input: {
+  name: string;
+  email: string;
+  passwordHash: string | null;
+  role: "user" | "dealer" | "admin";
+  accountType: "individual" | "business";
+  openId?: string;
+  loginMethod?: string;
+  emailVerified?: boolean;
+}): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [result] = await db.insert(users).values({
+    name: input.name,
+    email: input.email,
+    passwordHash: input.passwordHash,
+    role: input.role,
+    accountType: input.accountType,
+    openId: input.openId ?? null,
+    loginMethod: input.loginMethod ?? "email",
+    emailVerified: input.emailVerified ?? false,
+    lastSignedIn: new Date(),
+  });
+  return result.insertId;
+}
+
+export async function updateUserFields(
+  id: number,
+  fields: Partial<InsertUser>
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users).set(fields).where(eq(users.id, id));
+}
+
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
   if (!db) {
